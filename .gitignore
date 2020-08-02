@@ -1,0 +1,11 @@
+.vs/
+StrykerDG.FarmForge.Api/appsettings.Development.json
+StrykerDG.FarmForge.Api/appsettings.json
+StrykerDG.FarmForge.Api/FarmForge.db
+StrykerDG.FarmForge.Api/StrykerDG.FarmForge.LocalApi.csproj.user
+StrykerDG.FarmForge.Api/bin/
+StrykerDG.FarmForge.Api/obj/
+StrykerDG.FarmForge.Migrations/bin/
+StrykerDG.FarmForge.Migrations/obj/
+StykerDG.FarmForge.DataModel/bin/
+StykerDG.FarmForge.DataModel/obj/

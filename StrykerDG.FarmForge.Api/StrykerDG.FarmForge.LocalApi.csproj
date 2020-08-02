@@ -1,0 +1,24 @@
+<Project Sdk="Microsoft.NET.Sdk.Web">
+
+  <PropertyGroup>
+    <TargetFramework>netcoreapp3.1</TargetFramework>
+    <UserSecretsId>25021117-7cb3-4b87-b7f4-4c180add4e38</UserSecretsId>
+    <DockerDefaultTargetOS>Linux</DockerDefaultTargetOS>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="FluentMigrator.Runner" Version="3.2.8" />
+    <PackageReference Include="FluentMigrator.Runner.Core" Version="3.2.8" />
+    <PackageReference Include="FluentMigrator.Runner.SQLite" Version="3.2.8" />
+    <PackageReference Include="Microsoft.AspNetCore.Mvc.Versioning" Version="4.1.1" />
+    <PackageReference Include="Microsoft.VisualStudio.Azure.Containers.Tools.Targets" Version="1.10.9" />
+    <PackageReference Include="NSwag.AspNetCore" Version="13.6.2" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\StrykerDG.FarmForge.Migrations\StrykerDG.FarmForge.Migrations.csproj" />
+    <ProjectReference Include="..\StykerDG.FarmForge.DataModel\StrykerDG.FarmForge.DataModel.csproj" />
+  </ItemGroup>
+
+
+</Project>
