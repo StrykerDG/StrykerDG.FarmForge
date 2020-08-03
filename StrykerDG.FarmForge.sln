@@ -9,6 +9,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "StrykerDG.FarmForge.DataMod
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "StrykerDG.FarmForge.Migrations", "StrykerDG.FarmForge.Migrations\StrykerDG.FarmForge.Migrations.csproj", "{A47CD9ED-D62F-4AB7-9A65-EB328D19CB5C}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "StrykerDG.FarmForge.Actors", "StrykerDG.FarmForge.Actors\StrykerDG.FarmForge.Actors.csproj", "{4E105BDF-2701-46FE-B2C0-3E283C7780CF}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -27,6 +29,10 @@ Global
 		{A47CD9ED-D62F-4AB7-9A65-EB328D19CB5C}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{A47CD9ED-D62F-4AB7-9A65-EB328D19CB5C}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{A47CD9ED-D62F-4AB7-9A65-EB328D19CB5C}.Release|Any CPU.Build.0 = Release|Any CPU
+		{4E105BDF-2701-46FE-B2C0-3E283C7780CF}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{4E105BDF-2701-46FE-B2C0-3E283C7780CF}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{4E105BDF-2701-46FE-B2C0-3E283C7780CF}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{4E105BDF-2701-46FE-B2C0-3E283C7780CF}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

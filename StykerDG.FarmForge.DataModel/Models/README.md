@@ -22,6 +22,7 @@ The following tables make up the FarmForge Data Model
 | Name | String | A friendly name of the connected device |
 | IpAddress | String | The IP Address of the connected device |
 | SerialNumber | String | A unique identifier that ties the FarmForge device to the physical device |
+| SecurityToken | String | A security token that allows the api to make POST requests to the device |
 | Status | Int | The current status of the device (connected, disconnected, etc) |
 
 - **Interface**: Represents an interface on a device, such as a sensor, screen, motor, etc

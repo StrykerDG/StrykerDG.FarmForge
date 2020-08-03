@@ -12,6 +12,10 @@ namespace StrykerDG.FarmForge.DataModel.Models
         public string Name { get; set; }
         public string IpAddress { get; set; }
         public string SerialNumber { get; set; }
+        public string SecurityToken { get; set; }
+        public int StatusId { get; set; }
+        [ForeignKey("StatusId")]
+        public Status Status { get; set; }
         public ICollection<Interface> Interfaces { get; set; }
     }
 }
