@@ -11,3 +11,5 @@ StykerDG.FarmForge.DataModel/bin/
 StykerDG.FarmForge.DataModel/obj/
 StrykerDG.FarmForge.Actors/bin/
 StrykerDG.FarmForge.Actors/obj/
+StrykerDG.FarmForge.Devices/BasicMoistureSensor_v1/src/private.h
+StrykerDG.FarmForge.Devices/BasicMoistureSensor_v1/.vscode/extensions.json
