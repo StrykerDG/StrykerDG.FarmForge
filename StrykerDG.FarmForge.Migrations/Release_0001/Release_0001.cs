@@ -52,6 +52,12 @@ namespace StrykerDG.FarmForge.Migrations.Release_0001
                 .WithColumn("Label").AsString(255).NotNullable()
                 .WithBaseModel();
 
+            Create.Table("Log")
+                .WithId("LogId")
+                .WithColumn("TimeStamp").AsDateTime().NotNullable()
+                .WithColumn("Message").AsString(int.MaxValue).Nullable()
+                .WithColumn("Data").AsString(int.MaxValue).Nullable();
+
             var now = DateTime.Now;
 
             Insert.IntoTable("Status")
@@ -69,7 +75,7 @@ namespace StrykerDG.FarmForge.Migrations.Release_0001
                     EntityType = "Device.Status",
                     Name = "connected",
                     Label = "Connected",
-                    Create = now,
+                    Created = now,
                     Modified = now,
                     IsDeleted = false
                 });
@@ -82,6 +88,7 @@ namespace StrykerDG.FarmForge.Migrations.Release_0001
             Delete.Table("InterfaceType");
             Delete.Table("Telemetry");
             Delete.Table("Status");
+            Delete.Table("Log");
         }
     }
 }

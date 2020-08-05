@@ -1,16 +1,12 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
+using Akka.Actor;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.HttpsPolicy;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-using Microsoft.Extensions.Logging;
+using StrykerDG.FarmForge.Actors.Devices;
 using StrykerDG.FarmForge.DataModel.Contexts;
 using StrykerDG.FarmForge.LocalApi.Configuration;
 
@@ -19,6 +15,7 @@ namespace StrykerDG.FarmForge.Api
     public class Startup
     {
         public IConfiguration Configuration { get; }
+        IActorRef DeviceActor { get; set; }
 
         public Startup(IConfiguration configuration)
         {
@@ -68,11 +65,27 @@ namespace StrykerDG.FarmForge.Api
             // Add the DbContext
             services.AddDbContext<FarmForgeDataContext>(options => options.UseSqlite(settings.ConnectionStrings["Database"]));
 
+            // Add Akka.net
+            services.AddSingleton((serviceProvider) =>
+            {
+                // Create the actor system
+                var actorSystem = ActorSystem.Create("FarmForge");
+
+                // Register the actors
+                var serviceScopeFactory = serviceProvider.GetService<IServiceScopeFactory>();
+                DeviceActor = actorSystem.ActorOf(Props.Create(() => new DeviceActor(serviceScopeFactory)), "DeviceActor");
+
+                return actorSystem;
+            });
+
+            // Access Actors via Dependency Injection
+            services.AddSingleton(_ => DeviceActor);
+
             services.AddControllers();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
-        public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
+        public void Configure(IApplicationBuilder app, IWebHostEnvironment env, IHostApplicationLifetime lifetime)
         {
             if (env.IsDevelopment())
             {
@@ -91,6 +104,18 @@ namespace StrykerDG.FarmForge.Api
             app.UseEndpoints(endpoints =>
             {
                 endpoints.MapControllers();
+            });
+
+            lifetime.ApplicationStarted.Register(() =>
+            {
+                // Start Akka.net
+                app.ApplicationServices.GetService<ActorSystem>();
+            });
+
+            lifetime.ApplicationStopping.Register(() =>
+            {
+                // Stop Akka.net
+                app.ApplicationServices.GetService<ActorSystem>().Terminate().Wait();
             });
         }
     }

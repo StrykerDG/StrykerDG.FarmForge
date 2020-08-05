@@ -27,12 +27,24 @@ namespace StrykerDG.FarmForge.Actors.Devices
         // Message Methods
         public void RegisterDevice(AskToRegisterDevice message)
         {
+            // TODO: Return information instead of true / false
+            // Make sure we have everything needed
+            if(
+                message.DeviceName == null || 
+                message.IpAddress == null || 
+                message.SerialNumber == null ||
+                message.SecurityToken == null
+            )
+            {
+                Sender.Tell(false);
+                return;
+            }
+
+
             using (var scope = ServiceScopeFactory.CreateScope())
             {
                 using (var context = scope.ServiceProvider.GetService<FarmForgeDataContext>())
                 {
-                    // TODO: Implement Authorization
-
                     // See if the device has been registered before
                     var registeredDevice = context.Devices
                         .Where(d =>
@@ -60,6 +72,8 @@ namespace StrykerDG.FarmForge.Actors.Devices
                         registeredDevice.IpAddress = message.IpAddress;
                         registeredDevice.SecurityToken = message.SecurityToken;
                         registeredDevice.StatusId = connectedStatus;
+
+                        context.SaveChanges();
                     }
                     // Otherwise, request the device information and create a new device
                     else
@@ -90,12 +104,32 @@ namespace StrykerDG.FarmForge.Actors.Devices
                                     SerialNumber = deviceInterface.SerialNumber
                                 });
                             }
+
+                            context.SaveChanges();
                         }
                         catch(Exception ex)
                         {
-                            // TODO: Log the error
+                            var logMessage = "Error Registering Device";
+                            var logData = new
+                            {
+                                ex.Message,
+                                InnerException = ex.InnerException?.ToString(),
+                                ex.StackTrace
+                            };
+                            var logDataString = JsonConvert.SerializeObject(logData);
+
+                            context.Logs.Add(new Log
+                            {
+                                TimeStamp = DateTime.Now,
+                                Message = logMessage,
+                                Data = logDataString
+                            });
+
+                            context.SaveChanges();
                         }
                     }
+
+                    Sender.Tell(true);
                 }
             }
         }
@@ -103,7 +137,7 @@ namespace StrykerDG.FarmForge.Actors.Devices
         // Helper Methods
         private List<Interface> GetDeviceInterfaces(FarmForgeDataContext context, AskToRegisterDevice message)
         {
-            var client = new RestClient(message.IpAddress);
+            var client = new RestClient(new Uri($"http://{message.IpAddress}"));
             var request = new RestRequest($"{message.InterfaceEndpoint}", Method.GET);
             // TODO: Add security
             // request.AddHeader("Authorization", message.SecurityToken);
@@ -114,7 +148,24 @@ namespace StrykerDG.FarmForge.Actors.Devices
                 return JsonConvert.DeserializeObject<List<Interface>>(response.Content);
             else
             {
-                // TODO: Log the error
+                var logMessage = $"Error getting Interfaces from {message.DeviceName}:{message.IpAddress}";
+                var logData = new
+                {
+                    Response = response.StatusCode.ToString(),
+                    response?.Content,
+                    response?.ErrorMessage
+                };
+                var logDataString = JsonConvert.SerializeObject(logData);
+
+                context.Logs.Add(new Log
+                {
+                    TimeStamp = DateTime.Now,
+                    Message = logMessage,
+                    Data = logDataString
+                });
+
+                context.SaveChanges();
+
                 return new List<Interface>();
             }
         }

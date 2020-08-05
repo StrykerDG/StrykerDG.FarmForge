@@ -55,6 +55,15 @@ The following tables make up the FarmForge Data Model
 | StringValue | String | The string value of the telemetry |
 | BoolValue | Bool | The bool value of the telemetry |
 
+- **Log**: Table for logging FarmForge events and messages
+
+| Column        | Type          | Description  |
+|:-------------:|:-------------:|:------------:|
+| LogId | Int | Primary Key |
+| TimeStamp | DateTime | The time when the log was created |
+| Message | String | The message from the log |
+| Data | String | A JSON representation of any data related to the logged event |
+
 # Example Object
 An example of an object would be a FarmForge device that has multiple interfaces, each of which send telemetry back to the main system.
 

@@ -7,6 +7,7 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <PackageReference Include="Akka" Version="1.4.9" />
     <PackageReference Include="FluentMigrator.Runner" Version="3.2.8" />
     <PackageReference Include="FluentMigrator.Runner.Core" Version="3.2.8" />
     <PackageReference Include="FluentMigrator.Runner.SQLite" Version="3.2.8" />
@@ -19,6 +20,10 @@
     <ProjectReference Include="..\StrykerDG.FarmForge.Actors\StrykerDG.FarmForge.Actors.csproj" />
     <ProjectReference Include="..\StrykerDG.FarmForge.Migrations\StrykerDG.FarmForge.Migrations.csproj" />
     <ProjectReference Include="..\StykerDG.FarmForge.DataModel\StrykerDG.FarmForge.DataModel.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="Controllers\DTO\Responses\" />
   </ItemGroup>
 
 
