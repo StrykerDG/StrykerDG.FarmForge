@@ -15,6 +15,6 @@ namespace StrykerDG.FarmForge.DataModel.Models
         public int InterfaceTypeId { get; set; }
         [ForeignKey("InterfaceTypeId")]
         public InterfaceType InterfaceType { get; set; }
-        public ICollection<Telemetry> Telemtry { get; set; }
+        public ICollection<Telemetry> Telemetry { get; set; }
     }
 }
