@@ -1,4 +1,5 @@
 #include <Arduino.h>
+#include <ArduinoJson.h>
 #include <ESP8266WiFi.h>
 #include <ESP8266mDNS.h>
 #include <ESP8266WebServer.h>
@@ -20,6 +21,8 @@ IPAddress subnet(255,255,255,0);
 
 ESP8266WebServer server(80);
 WebSocketsServer webSocket(81);
+
+BaseDevice device; 
 
 unsigned long previousTime = millis();
 const unsigned long interval = 500;
@@ -53,6 +56,7 @@ void setup() {
   InitWebServer();
   InitWebSockets();
 
+  device = BaseDevice();
   pinMode(LED, OUTPUT);
 }
 
@@ -60,6 +64,7 @@ void setup() {
 void loop() {
   server.handleClient();
   ArduinoOTA.handle();
+  webSocket.loop();
 
   unsigned long diff = millis() - previousTime;
   if(diff > interval) {
@@ -154,21 +159,37 @@ void HandleWebNotFound() {
     server.send(404, "text/plain", "404: Not Found");
 }
 
-void HandleWebSocketEvent(uint8_t num, WStype_t type, uint8_t* payload, size_t length) {
+void HandleWebSocketEvent(uint8_t clientId, WStype_t type, uint8_t* payload, size_t length) {
   switch(type) {
     case WStype_DISCONNECTED: {
-      Serial.printf("[%u] CDisconnected!\n", num);
+      Serial.printf("[%u] CDisconnected!\n", clientId);
       break;
     }
       
     case WStype_CONNECTED: {
-      IPAddress ip = webSocket.remoteIP(num);
-      Serial.printf("[%u] Connected from %d.%d.%d.%d url: %s\n", num, ip[0], ip[1], ip[2], ip[3], payload);
+      IPAddress ip = webSocket.remoteIP(clientId);
+      Serial.printf("[%u] Connected from %d.%d.%d.%d url: %s\n", clientId, ip[0], ip[1], ip[2], ip[3], payload);
+      //const int capacity = JSON_ARRAY_SIZE(2)
+
+      StaticJsonDocument<200> doc;
+      doc["type"] = "config";
+      JsonArray data = doc.createNestedArray("data");
+
+      int deviceCount = device.GetNumberOfInterfaces();
+      for(int i = 0; i < deviceCount; i++) {
+        data.add(device.GetInterfaceName(i));
+      }
+
+      String text;
+      serializeJson(doc, text);
+
+      webSocket.sendTXT(clientId, text);
       break;
     }
       
     case WStype_TEXT: {
-      Serial.printf("[%u] get Text: %s\n", num, payload);
+      Serial.printf("[%u] get Text: %s\n", clientId, payload);
+      webSocket.sendTXT(clientId, "sending data!");
       break;
     }
   }
@@ -179,8 +200,6 @@ bool HandleFileRead(String path) {
   Serial.printf("Attempting to access %s\n", &path);
   if (path.endsWith("/")) 
     path += "index.html";
-  else
-    path += ".html";
 
   String contentType = GetContentType(path);
 

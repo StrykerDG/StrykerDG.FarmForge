@@ -1,7 +1,62 @@
-<form action="/Login" method="POST">
-    <input type="text" name="username" placeholder="Username">
-    </br>
-    <input type="password" name="password" placeholder="Password">
-    </br>
-    <input type="submit" value="Login">
-</form>
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <title>BaseDevice</title>
+        <link rel="stylesheet" href="./index.css">
+        <script type="text/javascript" src="./index.js"></script>
+    </head>
+    <body id="container" onload="websocketConnect()">
+        <div id="header">
+            <p class="header_text">FarmForge</p>
+            <p class="header_text">BaseDevice</p>
+        </div>
+        <div id="content">
+            <div id="image">Image goes here</div>
+            <div id="description">
+                BaseDevice is an example device meant as a starting
+                point for other FarmForge Devices. It has a single LED and 
+                Temperature / Humidity Sensor
+            </div>
+            <div id="device_content" class="content">
+                <div id="information">
+                    <div id="temperature" class="info_panel">
+                        <span class="info_title">Temperature: </span>
+                        <span id="temp_value">xx</span>
+                    </div>
+                    <div id="humidity" class="info_panel">
+                        <span class="info_title">Humidity:</span>
+                        <span id="humidity_value">xx</span>
+                    </div>
+                    <div id="led" class="info_panel">
+                        <span class="info_title">LED:</span>
+                        <span id="led_value">xx</span>
+                    </div>
+                </div>
+                <div id="actions">
+                    <input 
+                        type="button" 
+                        onclick="getTempAndHumidity()"
+                        value="Update Temp" 
+                    />
+                    <input
+                        type="button"
+                        onclick="toggleLed()"
+                        value="Toggle LED"
+                    />
+                </div>
+            </div>
+        </div>
+        <div id="footer">
+            <div id="created">
+                StrykerDG 2020
+            </div>
+            <div id="contact">
+                <a href="https://github.com/StrykerDG">GitHub</a>
+                <a href="mailto:stryker@strykerdg.com">Email</a>
+            </div>
+            <div id="firmware">
+                v0.1
+            </div>
+        </div>
+    </body>
+</html>
