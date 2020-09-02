@@ -12,9 +12,6 @@
 // Definition of the FarmForge device
 #include "BaseDevice.h"
 
-#define DNS_NAME "basic_device"
-#define LED 2
-
 IPAddress localIp(192,168,100,2);
 IPAddress gateway(192,168,100,1);
 IPAddress subnet(255,255,255,0);
@@ -22,7 +19,7 @@ IPAddress subnet(255,255,255,0);
 ESP8266WebServer server(80);
 WebSocketsServer webSocket(81);
 
-BaseDevice device; 
+BaseDevice device(LED);
 
 unsigned long previousTime = millis();
 const unsigned long interval = 500;
@@ -56,8 +53,8 @@ void setup() {
   InitWebServer();
   InitWebSockets();
 
-  device = BaseDevice();
   pinMode(LED, OUTPUT);
+  digitalWrite(LED, LOW);
 }
 
 // Runtime loop
@@ -65,12 +62,6 @@ void loop() {
   server.handleClient();
   ArduinoOTA.handle();
   webSocket.loop();
-
-  unsigned long diff = millis() - previousTime;
-  if(diff > interval) {
-    digitalWrite(LED, !digitalRead(LED));
-    previousTime += diff;
-  }
 }
 
 
@@ -108,8 +99,8 @@ void InitDns() {
 }
 
 void InitOta() {
-  ArduinoOTA.setHostname("basic_device");
-  ArduinoOTA.setPassword("test");
+  ArduinoOTA.setHostname(OTA_HOSTNAME);
+  ArduinoOTA.setPassword(OTA_PASSWORD);
 
   ArduinoOTA.onStart(OtaStart);
   ArduinoOTA.onEnd(OtaEnd);
@@ -168,11 +159,13 @@ void HandleWebSocketEvent(uint8_t clientId, WStype_t type, uint8_t* payload, siz
       
     case WStype_CONNECTED: {
       IPAddress ip = webSocket.remoteIP(clientId);
-      Serial.printf("[%u] Connected from %d.%d.%d.%d url: %s\n", clientId, ip[0], ip[1], ip[2], ip[3], payload);
-      //const int capacity = JSON_ARRAY_SIZE(2)
+      // Object will be {type, token, [led, ledValue, dht11, temp, humidity]}
+      const int capacity = JSON_ARRAY_SIZE(5) + JSON_OBJECT_SIZE(3)
 
-      StaticJsonDocument<200> doc;
+      // TODO: add values to data array
+      StaticJsonDocument<capacity> doc;
       doc["type"] = "config";
+      doc["token"] = TOKEN;
       JsonArray data = doc.createNestedArray("data");
 
       int deviceCount = device.GetNumberOfInterfaces();
@@ -188,9 +181,9 @@ void HandleWebSocketEvent(uint8_t clientId, WStype_t type, uint8_t* payload, siz
     }
       
     case WStype_TEXT: {
-      Serial.printf("[%u] get Text: %s\n", clientId, payload);
-      webSocket.sendTXT(clientId, "sending data!");
-      break;
+      char* stringData = (char*)payload;
+      device.HandleMessage(stringData);
+      // TODO: Send response
     }
   }
 }

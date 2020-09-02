@@ -7,5 +7,6 @@
 #define AP_PASSWORD "<AP_PASSWORD>"
 
 // Admin user
-#define ADMIN_USER "<ADMIN_USER>"
-#define ADMIN_PASSWORD "<ADMIN_PASSWORD>"
+#define OTA_HOSTNAME "<HOST>"
+#define OTA_PASSWORD "<PASSWORD>"
+#define TOKEN "<TOKEN>"
