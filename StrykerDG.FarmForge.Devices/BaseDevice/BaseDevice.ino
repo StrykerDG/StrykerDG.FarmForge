@@ -19,7 +19,8 @@ IPAddress subnet(255,255,255,0);
 ESP8266WebServer server(80);
 WebSocketsServer webSocket(81);
 
-BaseDevice device(LED);
+DHT dht(DHTPIN, DHTTYPE);
+BaseDevice device;
 
 unsigned long previousTime = millis();
 const unsigned long interval = 500;
@@ -55,6 +56,7 @@ void setup() {
 
   pinMode(LED, OUTPUT);
   digitalWrite(LED, LOW);
+  dht.begin();
 }
 
 // Runtime loop
@@ -160,18 +162,23 @@ void HandleWebSocketEvent(uint8_t clientId, WStype_t type, uint8_t* payload, siz
     case WStype_CONNECTED: {
       IPAddress ip = webSocket.remoteIP(clientId);
       // Object will be {type, token, [led, ledValue, dht11, temp, humidity]}
-      const int capacity = JSON_ARRAY_SIZE(5) + JSON_OBJECT_SIZE(3)
+      const int capacity = JSON_ARRAY_SIZE(5) + JSON_OBJECT_SIZE(3);
 
-      // TODO: add values to data array
+      float dhtValues[2];
+      int ledValue;
+      device.QueryDHT11(dht, dhtValues);
+      device.QueryLED(ledValue);
+
       StaticJsonDocument<capacity> doc;
       doc["type"] = "config";
       doc["token"] = TOKEN;
       JsonArray data = doc.createNestedArray("data");
 
-      int deviceCount = device.GetNumberOfInterfaces();
-      for(int i = 0; i < deviceCount; i++) {
-        data.add(device.GetInterfaceName(i));
-      }
+      data.add(LED_INTERFACE);
+      data.add(ledValue);
+      data.add(DHT_INTERFACE);
+      data.add(dhtValues[0]);
+      data.add(dhtValues[1]);
 
       String text;
       serializeJson(doc, text);
@@ -182,8 +189,8 @@ void HandleWebSocketEvent(uint8_t clientId, WStype_t type, uint8_t* payload, siz
       
     case WStype_TEXT: {
       char* stringData = (char*)payload;
-      device.HandleMessage(stringData);
-      // TODO: Send response
+      String response = device.HandleMessage(stringData, dht);
+      webSocket.sendTXT(clientId, response);
     }
   }
 }

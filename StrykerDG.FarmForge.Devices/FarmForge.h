@@ -17,10 +17,12 @@ struct Interface {
         the FarmForge device and the web interface
     Properties:
         type: String - The type of message. Can have a value of "request", "action"
-            or "config". "request" means we're requesting information of some sort
-            while "action" means we're attempting to interact with one of the 
-            devices interfaces in some way. "config" is a response sent from
-            the device upon successful connection with a list of interface names
+            "config", or "response". "request" means we're requesting information 
+            of some sort while "action" means we're attempting to interact with 
+            one of the devices interfaces in some way. "response" is a message
+            returning from the device due to receiving a "request" or "action" 
+            message, and "config" is a response sent from the device upon 
+            successful connection with a list of interface names
         interface: String - Specifies the name of the interface we want to 
             interact with
         data: Array<String> - A list of values that will be dictated by what 

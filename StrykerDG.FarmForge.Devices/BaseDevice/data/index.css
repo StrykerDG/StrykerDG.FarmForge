@@ -7,6 +7,8 @@
 @media only screen and (max-width: 500px) {
     .content { 
         flex-direction: column;
+        height: 100%;
+        justify-content: space-evenly;
     }
 }
 
@@ -34,6 +36,8 @@ html, body {
     flex-grow: 2;
     display: flex;
     flex-direction: column;
+    margin-left: 15px;
+    margin-right: 15px;
 }
 
 #image {
@@ -55,6 +59,7 @@ html, body {
     display: flex;
     flex-direction: column;
     justify-content: space-evenly;
+    min-height: 100px;
 }
 
 #footer {

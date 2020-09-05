@@ -13,16 +13,12 @@ function websocketConnect() {
 }
 
 function handleMessage(event) {
-    console.log('Server:', event.data);    
     try {
         let dataObject = JSON.parse(event.data.toString());
-        console.log("Testing?", dataObject);
         if(dataObject.type === "config")
             handleConfigMessage(dataObject.token, dataObject.data);
-        if(dataObject.type === "request")
-            handleRequestMessage(dataObject.data);
-        if(dataObject.type === "action")
-            handleActionMessage(dataObject.data);
+        if(dataObject.type === "response")
+            handleResponseMessage(dataObject.interface, dataObject.data);
     }
     catch(e) {
         console.log("Error:", e.toString());
@@ -41,28 +37,34 @@ function handleConfigMessage(token, data) {
             humidity
         ]
     */
-    if(Array.isArray(data) && data.length >= 2) {
+    if(Array.isArray(data) && data.length === 5) {
         ledInterface = data[0];
-        tempInterface = data[1];
+        tempInterface = data[2];
+
+        setLed(data[1]);
+        setTemp(data[3]);
+        setHumidity(data[4]);
     }
 }
 
-function handleActionMessage(data) {
-
-}
-
-function handleRequestMessage(data) {
-
+function handleResponseMessage(interface, data) {
+    if(interface === ledInterface)
+        setLed(data[0]);
+    if(interface === tempInterface) {
+        setTemp(data[0]);
+        setHumidity(data[1]);
+    }
 }
 
 function getTempAndHumidity() {
-    console.log("getting temperature...");
+    let messageObject = {
+        type: "request",
+        interface: tempInterface
+    }
 
-    console.log("Temp interface?", tempInterface);
-    console.log("LED?", ledInterface);
-    console.log("token?", securityToken);
+    let message = JSON.stringify(messageObject);
 
-    connection.send("ask:temp");
+    connection.send(message);
 }
 
 function toggleLed() {
@@ -75,3 +77,16 @@ function toggleLed() {
 
     connection.send(message);
 }
+
+function setLed(value) {
+    document.getElementById("led_value").innerHTML = value ? "On" : "Off";
+}
+
+function setTemp(value) {
+    document.getElementById("temp_value").innerHTML = value + '&#176;F';
+}
+
+function setHumidity(value) {
+    document.getElementById("humidity_value").innerText = `${value}%`;
+}
+    
