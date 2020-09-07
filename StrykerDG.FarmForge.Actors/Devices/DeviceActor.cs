@@ -13,14 +13,10 @@ using System.Net;
 
 namespace StrykerDG.FarmForge.Actors.Devices
 {
-    public class DeviceActor : ReceiveActor
+    public class DeviceActor : FarmForgeActor
     {
-        private IServiceScopeFactory ServiceScopeFactory { get; set; }
-
-        public DeviceActor(IServiceScopeFactory factory)
+        public DeviceActor(IServiceScopeFactory factory) : base(factory)
         {
-            ServiceScopeFactory = factory;
-
             Receive<AskToRegisterDevice>(RegisterDevice);
         }
 

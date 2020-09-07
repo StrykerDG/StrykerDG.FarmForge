@@ -13,9 +13,12 @@ namespace StrykerDG.FarmForge.Api
     {
         public static void Main(string[] args)
         {
+            var env = Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT");
+
             // Get the appsettings connection string
             var config = new ConfigurationBuilder()
                 .AddJsonFile("appsettings.json", optional: false)
+                .AddJsonFile($"appsettings.{env}.json", optional: false)
                 .Build();
 
             var settings = new ApiSettings();

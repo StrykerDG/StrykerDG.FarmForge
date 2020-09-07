@@ -15,3 +15,7 @@ StrykerDG.FarmForge.Devices/BasicMoistureSensor_v1/src/private.h
 StrykerDG.FarmForge.Devices/BasicMoistureSensor_v1/.vscode/extensions.json
 
 .vscode/
+
+StrykerDG.FarmForge.Api/appsettings.Production.json
+
+StrykerDG.FarmForge.Api/appsettings.Test.json
