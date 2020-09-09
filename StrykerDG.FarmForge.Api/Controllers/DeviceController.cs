@@ -15,7 +15,7 @@ namespace StrykerDG.FarmForge.LocalApi.Controllers
     {
         private IActorRef DeviceActor { get; set; }
 
-        public DeviceController(IEnumerable<IActorRef> actorRefs)
+        public DeviceController(List<IActorRef> actorRefs)
         {
             DeviceActor = actorRefs
                 .Where(ar => ar.Path.ToString().Contains("DeviceActor"))

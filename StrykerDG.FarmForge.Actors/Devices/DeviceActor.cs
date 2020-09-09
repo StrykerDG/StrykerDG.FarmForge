@@ -37,97 +37,94 @@ namespace StrykerDG.FarmForge.Actors.Devices
             }
 
 
-            using (var scope = ServiceScopeFactory.CreateScope())
+            Using<FarmForgeDataContext>((context) =>
             {
-                using (var context = scope.ServiceProvider.GetService<FarmForgeDataContext>())
+                // See if the device has been registered before
+                var registeredDevice = context.Devices
+                    .Where(d =>
+                        d.Name == message.DeviceName &&
+                        d.SerialNumber == message.SerialNumber &&
+                        d.IsDeleted == false
+                    )
+                    .FirstOrDefault();
+
+                var connectedStatus = context.Statuses
+                    .Where(s =>
+                        s.EntityType == "Device.Status" &&
+                        s.Name == "connected" &&
+                        s.IsDeleted == false
+                    )
+                    .Select(s => s.StatusId)
+                    .FirstOrDefault();
+
+                // If it has, update the token, ip, and status
+                if (registeredDevice != null)
                 {
-                    // See if the device has been registered before
-                    var registeredDevice = context.Devices
-                        .Where(d =>
-                            d.Name == message.DeviceName &&
-                            d.SerialNumber == message.SerialNumber &&
-                            d.IsDeleted == false
-                        )
-                        .FirstOrDefault();
+                    // TODO: Hash the security token?
+                    // var hashedToken = SecurityUtility.GenerateSecurityTokenHash(message.SecurityToken);
 
-                    var connectedStatus = context.Statuses
-                        .Where(s =>
-                            s.EntityType == "Device.Status" &&
-                            s.Name == "connected" &&
-                            s.IsDeleted == false
-                        )
-                        .Select(s => s.StatusId)
-                        .FirstOrDefault();
+                    registeredDevice.IpAddress = message.IpAddress;
+                    registeredDevice.SecurityToken = message.SecurityToken;
+                    registeredDevice.StatusId = connectedStatus;
 
-                    // If it has, update the token, ip, and status
-                    if (registeredDevice != null)
+                    context.SaveChanges();
+                }
+                // Otherwise, request the device information and create a new device
+                else
+                {
+                    try
                     {
-                        // TODO: Hash the security token?
-                        // var hashedToken = SecurityUtility.GenerateSecurityTokenHash(message.SecurityToken);
+                        // TODO: Wrap in a transaction
+                        var interfaces = GetDeviceInterfaces(context, message);
+                        var newDevice = context.Devices.Add(new Device
+                        {
+                            Name = message.DeviceName,
+                            IpAddress = message.IpAddress,
+                            SerialNumber = message.SerialNumber,
+                            SecurityToken = message.SecurityToken,
+                            StatusId = connectedStatus
+                        }).Entity;
 
-                        registeredDevice.IpAddress = message.IpAddress;
-                        registeredDevice.SecurityToken = message.SecurityToken;
-                        registeredDevice.StatusId = connectedStatus;
+                        // Save to generate an ID for newDevice
+                        context.SaveChanges();
+
+                        foreach (var deviceInterface in interfaces)
+                        {
+                            // TODO: implement interface types
+                            context.Interfaces.Add(new Interface
+                            {
+                                DeviceId = newDevice.DeviceId,
+                                Name = deviceInterface.Name,
+                                SerialNumber = deviceInterface.SerialNumber
+                            });
+                        }
 
                         context.SaveChanges();
                     }
-                    // Otherwise, request the device information and create a new device
-                    else
+                    catch (Exception ex)
                     {
-                        try
+                        var logMessage = "Error Registering Device";
+                        var logData = new
                         {
-                            // TODO: Wrap in a transaction
-                            var interfaces = GetDeviceInterfaces(context, message);
-                            var newDevice = context.Devices.Add(new Device
-                            {
-                                Name = message.DeviceName,
-                                IpAddress = message.IpAddress,
-                                SerialNumber = message.SerialNumber,
-                                SecurityToken = message.SecurityToken,
-                                StatusId = connectedStatus
-                            }).Entity;
+                            ex.Message,
+                            InnerException = ex.InnerException?.ToString(),
+                            ex.StackTrace
+                        };
+                        var logDataString = JsonConvert.SerializeObject(logData);
 
-                            // Save to generate an ID for newDevice
-                            context.SaveChanges();
-
-                            foreach(var deviceInterface in interfaces)
-                            {
-                                // TODO: implement interface types
-                                context.Interfaces.Add(new Interface
-                                {
-                                    DeviceId = newDevice.DeviceId,
-                                    Name = deviceInterface.Name,
-                                    SerialNumber = deviceInterface.SerialNumber
-                                });
-                            }
-
-                            context.SaveChanges();
-                        }
-                        catch(Exception ex)
+                        context.Logs.Add(new Log
                         {
-                            var logMessage = "Error Registering Device";
-                            var logData = new
-                            {
-                                ex.Message,
-                                InnerException = ex.InnerException?.ToString(),
-                                ex.StackTrace
-                            };
-                            var logDataString = JsonConvert.SerializeObject(logData);
+                            TimeStamp = DateTime.Now,
+                            Message = logMessage,
+                            Data = logDataString
+                        });
 
-                            context.Logs.Add(new Log
-                            {
-                                TimeStamp = DateTime.Now,
-                                Message = logMessage,
-                                Data = logDataString
-                            });
-
-                            context.SaveChanges();
-                        }
+                        context.SaveChanges();
                     }
-
-                    Sender.Tell(true);
                 }
-            }
+
+                Sender.Tell(true);
+            });
         }
 
         // Helper Methods

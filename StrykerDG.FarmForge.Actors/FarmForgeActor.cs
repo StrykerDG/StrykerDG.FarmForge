@@ -14,5 +14,16 @@ namespace StrykerDG.FarmForge.Actors
         {
             ServiceScopeFactory = factory;
         }
+
+        protected void Using<T>(Action<T> func) where T : IDisposable
+        {
+            using (var scope = ServiceScopeFactory.CreateScope())
+            {
+                using (var obj = scope.ServiceProvider.GetService<T>())
+                {
+                    func(obj);
+                }
+            }
+        }
     }
 }

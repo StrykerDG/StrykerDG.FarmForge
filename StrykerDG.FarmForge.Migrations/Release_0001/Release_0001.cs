@@ -1,6 +1,8 @@
 ﻿using FluentMigrator;
+using Microsoft.AspNetCore.Cryptography.KeyDerivation;
 using StrykerDG.FarmForge.Migrations.Extensions;
 using System;
+using System.Security.Cryptography;
 
 namespace StrykerDG.FarmForge.Migrations.Release_0001
 {
@@ -58,6 +60,12 @@ namespace StrykerDG.FarmForge.Migrations.Release_0001
                 .WithColumn("Message").AsString(int.MaxValue).Nullable()
                 .WithColumn("Data").AsString(int.MaxValue).Nullable();
 
+            Create.Table("User")
+                .WithId("UserId")
+                .WithColumn("Username").AsString(255).NotNullable()
+                .WithColumn("Password").AsString(int.MaxValue).NotNullable()
+                .WithBaseModel();
+
             var now = DateTime.Now;
 
             Insert.IntoTable("Status")
@@ -79,6 +87,17 @@ namespace StrykerDG.FarmForge.Migrations.Release_0001
                     Modified = now,
                     IsDeleted = false
                 });
+
+            var adminPassword = GenerateAdminPassword();
+            Insert.IntoTable("User")
+                .Row(new
+                {
+                    Username = "Admin",
+                    Password = adminPassword,
+                    Created = now,
+                    Modified = now,
+                    IsDeleted = false
+                });
         }
 
         public override void Down()
@@ -89,6 +108,22 @@ namespace StrykerDG.FarmForge.Migrations.Release_0001
             Delete.Table("Telemetry");
             Delete.Table("Status");
             Delete.Table("Log");
+        }
+
+        private string GenerateAdminPassword()
+        {
+            // Generate salt
+            byte[] salt;
+            new RNGCryptoServiceProvider().GetBytes(salt = new byte[16]);
+            var pbkdf2 = KeyDerivation.Pbkdf2("FarmForgeAdmin", salt, KeyDerivationPrf.HMACSHA256, 10000, 20);
+
+            // Combine the two 
+            byte[] hashBytes = new byte[36];
+            Array.Copy(salt, 0, hashBytes, 0, 16);
+            Array.Copy(pbkdf2, 0, hashBytes, 16, 20);
+
+            var savedHash = Convert.ToBase64String(hashBytes);
+            return savedHash;
         }
     }
 }

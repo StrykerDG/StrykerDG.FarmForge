@@ -7,13 +7,17 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using Microsoft.Extensions.Options;
 using Newtonsoft.Json;
+using StrykerDG.FarmForge.Actors.Authentication;
 using StrykerDG.FarmForge.Actors.Devices;
 using StrykerDG.FarmForge.Actors.WebSockets;
 using StrykerDG.FarmForge.Actors.WebSockets.Messages;
 using StrykerDG.FarmForge.DataModel.Contexts;
 using StrykerDG.FarmForge.LocalApi.Configuration;
 using System;
+using System.Collections.Generic;
+using System.Linq;
 using System.Net.WebSockets;
 using System.Text;
 using System.Threading;
@@ -24,8 +28,7 @@ namespace StrykerDG.FarmForge.Api
     public class Startup
     {
         public IConfiguration Configuration { get; }
-        IActorRef DeviceActor { get; set; }
-        IActorRef WebSocketActor { get; set; }
+        List<IActorRef> Actors { get; set; } = new List<IActorRef>();
 
         public Startup(IConfiguration configuration)
         {
@@ -38,8 +41,12 @@ namespace StrykerDG.FarmForge.Api
             var settings = new ApiSettings();
             Configuration.GetSection("ApiSettings").Bind(settings);
 
+            var securitySettings = new SecuritySettings();
+            Configuration.GetSection("SecuritySettings").Bind(securitySettings);
+
             // Allow DI for Settings
             services.Configure<ApiSettings>(Configuration.GetSection("ApiSettings"));
+            services.Configure<SecuritySettings>(Configuration.GetSection("SecuritySettings"));
 
             // Add versioning
             services.AddApiVersioning(config =>
@@ -83,15 +90,31 @@ namespace StrykerDG.FarmForge.Api
 
                 // Register the actors
                 var serviceScopeFactory = serviceProvider.GetService<IServiceScopeFactory>();
-                DeviceActor = actorSystem.ActorOf(Props.Create(() => new DeviceActor(serviceScopeFactory)), "DeviceActor");
-                WebSocketActor = actorSystem.ActorOf(Props.Create(() => new WebSocketActor(serviceScopeFactory)), "WebSocketActor");
+
+                Actors.Add(
+                    actorSystem.ActorOf(Props.Create(() =>
+                        new DeviceActor(serviceScopeFactory)), 
+                        "DeviceActor"
+                ));
+                Actors.Add(
+                    actorSystem.ActorOf(Props.Create(() =>
+                        new WebSocketActor(serviceScopeFactory)),
+                        "WebSocketActor"
+                ));
+                Actors.Add(
+                    actorSystem.ActorOf(Props.Create(() =>
+                        new AuthenticationActor(
+                            serviceScopeFactory, 
+                            securitySettings
+                        )),
+                        "AuthenticationActor")
+                );
 
                 return actorSystem;
             });
 
             // Access Actors via Dependency Injection
-            services.AddSingleton(_ => DeviceActor);
-            services.AddSingleton(_ => WebSocketActor);
+            services.AddSingleton(_ => Actors);
 
             services.AddControllers();
         }
@@ -145,6 +168,10 @@ namespace StrykerDG.FarmForge.Api
 
         private async Task HandleWebSocket(WebSocket webSocket)
         {
+            var webSocketActor = Actors
+                .Where(ar => ar.Path.ToString().Contains("WebSocketActor"))
+                .FirstOrDefault();
+
             var token = CancellationToken.None;
             var buffer = new ArraySegment<byte>(new byte[4096]);
             var received = await webSocket.ReceiveAsync(buffer, token);
@@ -157,7 +184,7 @@ namespace StrykerDG.FarmForge.Api
                     {
                         var message = JsonConvert
                             .DeserializeObject<AskToHandleWebSocketRequest>(request);
-                        var askResult = await WebSocketActor.Ask(message);
+                        var askResult = await webSocketActor.Ask(message);
                         var response = JsonConvert.SerializeObject(askResult);
                         var responseData = Encoding.UTF8.GetBytes(response);
                         buffer = new ArraySegment<byte>(responseData);

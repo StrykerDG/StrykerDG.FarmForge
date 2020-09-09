@@ -15,5 +15,6 @@ namespace StrykerDG.FarmForge.DataModel.Contexts
         public DbSet<Telemetry> Telemetry { get; set; }
         public DbSet<Status> Statuses { get; set; }
         public DbSet<Log> Logs { get; set; }
+        public DbSet<User> Users { get; set; }
     }
 }
