@@ -23,9 +23,5 @@
     <ProjectReference Include="..\StykerDG.FarmForge.DataModel\StrykerDG.FarmForge.DataModel.csproj" />
   </ItemGroup>
 
-  <ItemGroup>
-    <Folder Include="Controllers\DTO\Responses\" />
-  </ItemGroup>
-
 
 </Project>

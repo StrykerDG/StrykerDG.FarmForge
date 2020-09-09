@@ -57,7 +57,7 @@ namespace StrykerDG.FarmForge.Actors.Authentication
             }
             catch(Exception ex)
             {
-                Sender.Tell(ex.Message);
+                Sender.Tell(ex);
             }
         }
 

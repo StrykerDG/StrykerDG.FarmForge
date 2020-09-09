@@ -48,6 +48,21 @@ namespace StrykerDG.FarmForge.Api
             services.Configure<ApiSettings>(Configuration.GetSection("ApiSettings"));
             services.Configure<SecuritySettings>(Configuration.GetSection("SecuritySettings"));
 
+            // Setup CORS
+            if(settings.CORS != null)
+            {
+                services.AddCors(options =>
+                {
+                    options.AddPolicy(
+                        "CorsPolicy",
+                        builder => builder.WithOrigins(settings.CORS)
+                        .AllowAnyMethod()
+                        .AllowAnyHeader()
+                        .AllowCredentials()
+                    );
+                });
+            }
+
             // Add versioning
             services.AddApiVersioning(config =>
             {
@@ -126,6 +141,8 @@ namespace StrykerDG.FarmForge.Api
             {
                 app.UseDeveloperExceptionPage();
             }
+
+            app.UseCors("CorsPolicy");
 
             app.UseHttpsRedirection();
 

@@ -1,7 +1,10 @@
 ﻿using Akka.Actor;
+using Akka.Util;
 using Microsoft.AspNetCore.Mvc;
+using StrykerDG.FarmForge.Actors;
 using StrykerDG.FarmForge.Actors.Authentication.Messages;
 using StrykerDG.FarmForge.LocalApi.Controllers.DTO.Requests;
+using StrykerDG.FarmForge.LocalApi.Controllers.DTO.Responses;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -29,7 +32,15 @@ namespace StrykerDG.FarmForge.LocalApi.Controllers
                 return BadRequest("No login credentials present");
 
             var result = await AuthActor.Ask(new AskToLogin(login.Username, login.Password));
-            return Ok(result);
+
+            var resultType = result.GetType();
+            if(resultType == typeof(Exception) || resultType == typeof(UnauthorizedAccessException))
+            {
+                var ex = (Exception)result;
+                return Ok(FarmForgeApiResponse.Failure(ex.Message));
+            }
+            else
+                return Ok(FarmForgeApiResponse.Success(result));
         }
     }
 }

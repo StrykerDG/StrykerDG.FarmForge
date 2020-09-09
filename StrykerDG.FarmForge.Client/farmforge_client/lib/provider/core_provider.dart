@@ -1,3 +1,4 @@
+import 'package:farmforge_client/services/farmforge_api_service.dart';
 import 'package:flutter/material.dart';
 
 import '../utilities/themes.dart';
@@ -9,6 +10,7 @@ enum ThemeType {
 }
 
 class CoreProvider extends ChangeNotifier {
+  FarmForgeApiService farmForgeService = FarmForgeApiService();
   ThemeData currentTheme = primaryTheme;
 
   void toggleTheme(ThemeType type) {

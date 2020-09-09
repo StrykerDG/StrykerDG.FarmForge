@@ -1,4 +1,13 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+
+import 'package:farmforge_client/provider/core_provider.dart';
+
+import 'package:farmforge_client/models/farmforge_response.dart';
+
+import 'package:farmforge_client/utilities/ui_utility.dart';
+import 'package:farmforge_client/utilities/utility.dart';
+import 'package:farmforge_client/utilities/validation.dart';
 
 class Login extends StatefulWidget {
   static const String id = "login";
@@ -8,8 +17,52 @@ class Login extends StatefulWidget {
 }
 
 class _LoginState extends State<Login> {
-  TextEditingController username = new TextEditingController();
-  TextEditingController password = new TextEditingController();
+  bool isLoading = false;
+  final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
+  TextEditingController _usernameController = new TextEditingController();
+  TextEditingController _passwordController = new TextEditingController();
+
+  void handleSignIn() async {
+    if(_formKey.currentState.validate()) {
+      setState(() {
+        isLoading = true;
+      });
+
+      try {
+        FarmForgeResponse tokenResponse = await Provider
+          .of<CoreProvider>(context, listen: false)
+          .farmForgeService
+          .login(_usernameController.text, _passwordController.text);
+
+        if(tokenResponse.data != null) {
+          Map<String, dynamic> tokenInfo = Utility.parseJwt(tokenResponse.data);
+
+          print('Login? $tokenInfo');
+          // Set user in state
+          // Navigate to home
+        }
+        else {
+          UiUtility.handleError(
+            context: context, 
+            title: 'Login Error', 
+            error: tokenResponse.error
+          );
+        }
+      }
+      catch(e) {
+        UiUtility.handleError(
+          context: context, 
+          title: 'Login Error', 
+          error: e.toString()
+        );
+      }
+      finally {
+        setState(() {
+          isLoading = false;
+        });
+      }
+    }
+  }
   
   @override
   Widget build(BuildContext context) {
@@ -26,12 +79,14 @@ class _LoginState extends State<Login> {
           width: 300,
           child: SingleChildScrollView(
             child: Form(
+              key: _formKey,
               child: Column(
                 mainAxisSize: MainAxisSize.min,
                 children: [
+
                   // Username
                   TextFormField(
-                    controller: username,
+                    controller: _usernameController,
                     decoration: InputDecoration(
                       prefixIcon: Icon(Icons.account_circle),
                       hintText: 'Username',
@@ -42,10 +97,12 @@ class _LoginState extends State<Login> {
                         )
                       )
                     ),
+                    validator: Validation.isNotEmpty,
                   ),
+
                   // Password
                   TextFormField(
-                    controller: password,
+                    controller: _passwordController,
                     decoration: InputDecoration(
                       prefixIcon: Icon(Icons.lock),
                       hintText: 'Password',
@@ -56,14 +113,19 @@ class _LoginState extends State<Login> {
                         )
                       )
                     ),
+                    validator: Validation.isNotEmpty,
                   ),
-                  RaisedButton(
-                    child: Text("Sign In"),
-                    onPressed: () {},
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular((20))
-                    ),
-                  )
+
+                  // Login button
+                  isLoading == true
+                    ? CircularProgressIndicator()
+                    : RaisedButton(
+                        child: Text("Sign In"),
+                        onPressed: handleSignIn,
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular((20))
+                        ),
+                      )
                 ],
               ),
             ),

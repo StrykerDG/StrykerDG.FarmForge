@@ -26,6 +26,8 @@ dependencies:
 
   # State Management
   provider: ^4.3.2+2
+  # Web requests
+  http: ^0.12.2
 
 dev_dependencies:
   flutter_test:
