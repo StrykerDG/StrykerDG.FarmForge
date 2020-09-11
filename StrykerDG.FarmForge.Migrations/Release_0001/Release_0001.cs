@@ -11,6 +11,42 @@ namespace StrykerDG.FarmForge.Migrations.Release_0001
     {
         public override void Up()
         {
+            // Generic Tables
+            Create.Table("Status")
+                .WithId("StatusId")
+                .WithColumn("EntityType").AsString(255).NotNullable()
+                .WithColumn("Name").AsString(255).NotNullable()
+                .WithColumn("Label").AsString(255).NotNullable()
+                .WithBaseModel();
+
+            Create.Table("Log")
+                .WithId("LogId")
+                .WithColumn("TimeStamp").AsDateTime().NotNullable()
+                .WithColumn("Message").AsString(int.MaxValue).Nullable()
+                .WithColumn("Data").AsString(int.MaxValue).Nullable()
+                .WithColumn("LogTypeId").AsInt32().NotNullable();
+
+            Create.Table("LogType")
+                .WithId("LogTypeId")
+                .WithColumn("Name").AsString(255).NotNullable()
+                .WithColumn("Label").AsString(255).NotNullable()
+                .WithColumn("Description").AsString(255).NotNullable()
+                .WithBaseModel();
+
+            Create.Table("Location")
+                .WithId("LocationId")
+                .WithColumn("Name").AsString(255).NotNullable()
+                .WithColumn("Label").AsString(255).NotNullable()
+                .WithBaseModel();
+
+            // User Tables
+            Create.Table("User")
+                .WithId("UserId")
+                .WithColumn("Username").AsString(255).NotNullable()
+                .WithColumn("Password").AsString(int.MaxValue).NotNullable()
+                .WithBaseModel();
+
+            // Device Tables
             Create.Table("Device")
                 .WithId("DeviceId")
                 .WithColumn("Name").AsString(255).NotNullable()
@@ -47,27 +83,57 @@ namespace StrykerDG.FarmForge.Migrations.Release_0001
                 .WithColumn("BoolValue").AsBoolean().Nullable()
                 .WithBaseModel();
 
-            Create.Table("Status")
-                .WithId("StatusId")
-                .WithColumn("EntityType").AsString(255).NotNullable()
+            // Crop Tables
+            Create.Table("Crop")
+                .WithId("CropId")
+                .WithColumn("CropTypeId").AsInt32().NotNullable()
+                .WithColumn("CropVarietyId").AsInt32().NotNullable()
+                .WithColumn("LocationId").AsInt32().NotNullable()
+                .WithColumn("StatusId").AsInt32().NotNullable()
+                .WithColumn("PlantedAt").AsDateTime().NotNullable()
+                .WithColumn("GerminatedAt").AsDateTime().Nullable()
+                .WithColumn("HarvestedAt").AsDateTime().Nullable()
+                .WithColumn("TimeToGerminate").AsInt64().Nullable()
+                .WithColumn("TimeToHarvest").AsInt64().Nullable()
+                .WithColumn("Quantity").AsInt32().NotNullable()
+                .WithColumn("QuantityHarvested").AsInt32().Nullable()
+                .WithColumn("Yield").AsDouble().Nullable()
+                .WithBaseModel();
+
+            Create.Table("CropType")
+                .WithId("CropTypeId")
+                .WithColumn("CropClassificationId").AsInt32().NotNullable()
+                .WithColumn("Name").AsString(255).NotNullable()
+                .WithColumn("Label").AsString(255).NotNullable()
+                .WithColumn("AverageGermination").AsInt64().Nullable()
+                .WithColumn("AverageTimeToHarvest").AsInt64().Nullable()
+                .WithColumn("AverageYield").AsDouble().Nullable()
+                .WithBaseModel();
+
+            Create.Table("CropVariety")
+                .WithId("CropVarietyId")
+                .WithColumn("CropTypeId").AsInt32().NotNullable()
                 .WithColumn("Name").AsString(255).NotNullable()
                 .WithColumn("Label").AsString(255).NotNullable()
                 .WithBaseModel();
 
-            Create.Table("Log")
-                .WithId("LogId")
-                .WithColumn("TimeStamp").AsDateTime().NotNullable()
-                .WithColumn("Message").AsString(int.MaxValue).Nullable()
-                .WithColumn("Data").AsString(int.MaxValue).Nullable();
+            Create.Table("CropClassification")
+                .WithId("CropClassificationId")
+                .WithColumn("Name").AsString(255).NotNullable()
+                .WithColumn("Label").AsString(255).NotNullable()
+                .WithColumn("Description").AsString(255).NotNullable()
+                .WithBaseModel();
 
-            Create.Table("User")
-                .WithId("UserId")
-                .WithColumn("Username").AsString(255).NotNullable()
-                .WithColumn("Password").AsString(int.MaxValue).NotNullable()
+            Create.Table("CropLog")
+                .WithId("CropLogId")
+                .WithColumn("CropId").AsInt32().NotNullable()
+                .WithColumn("LogTypeId").AsInt32().NotNullable()
+                .WithColumn("Notes").AsString(int.MaxValue).Nullable()
                 .WithBaseModel();
 
             var now = DateTime.Now;
 
+            // Generic Inserts
             Insert.IntoTable("Status")
                 .Row(new
                 {
@@ -86,8 +152,63 @@ namespace StrykerDG.FarmForge.Migrations.Release_0001
                     Created = now,
                     Modified = now,
                     IsDeleted = false
+                })
+                .Row(new
+                {
+                    EntityType = "Crop.Status",
+                    Name = "seed",
+                    Label = "Seed",
+                    Created = now,
+                    Modified = now,
+                    IsDeleted = false
+                })
+                .Row(new
+                {
+                    EntityType = "Crop.Status",
+                    Name = "germinating",
+                    Label = "Germinating",
+                    Created = now,
+                    Modified = now,
+                    IsDeleted = false
+                })
+                .Row(new
+                {
+                    EntitType = "Crop.Status",
+                    Name = "growing",
+                    Label = "Growing",
+                    Created = now,
+                    Modified = now,
+                    IsDeleted = false,
+                })
+                .Row(new
+                {
+                    EntityType = "Crop.Status",
+                    Name = "flowering",
+                    Label = "Flowering",
+                    Created = now,
+                    Modified = now,
+                    IsDeleted = false
+                })
+                .Row(new
+                {
+                    EntityType = "Crop.Status",
+                    Name = "ripening",
+                    Label = "Ripening",
+                    Created = now,
+                    Modified = now,
+                    IsDeleted = false
+                })
+                .Row(new
+                {
+                    EntityType = "Crop.Status",
+                    Name = "harvested",
+                    Label = "Harvested",
+                    Created = now,
+                    Modified = now,
+                    IsDeleted = false
                 });
 
+            // User Inserts
             var adminPassword = GenerateAdminPassword();
             Insert.IntoTable("User")
                 .Row(new
@@ -98,16 +219,58 @@ namespace StrykerDG.FarmForge.Migrations.Release_0001
                     Modified = now,
                     IsDeleted = false
                 });
+
+            // Crop Inserts
+            Insert.IntoTable("CropClassification")
+                .Row(new
+                {
+                    Name = "fruit",
+                    Label = "Fruit",
+                    Description = "A Fruit"
+                })
+                .Row(new
+                {
+                    Name = "vegetable",
+                    Label = "Vegetable",
+                    Description = "A Vegetable"
+                })
+                .Row(new
+                {
+                    Name = "herb",
+                    Label = "Herb",
+                    Description = "An Herb"
+                })
+                .Row(new
+                {
+                    Name = "tree",
+                    Label = "Tree",
+                    Description = "A Tree"
+                });
         }
 
         public override void Down()
         {
+            // Generic Tables
+            Delete.Table("Status");
+            Delete.Table("Log");
+            Delete.Table("LogType");
+            Delete.Table("Location");
+
+            // User Tables
+            Delete.Table("User");
+
+            // Device Tables
             Delete.Table("Device");
             Delete.Table("Interface");
             Delete.Table("InterfaceType");
             Delete.Table("Telemetry");
-            Delete.Table("Status");
-            Delete.Table("Log");
+
+            // Crop Tables
+            Delete.Table("Crop");
+            Delete.Table("CropType");
+            Delete.Table("CropVariety");
+            Delete.Table("CropClassification");
+            Delete.Table("CropLog");
         }
 
         private string GenerateAdminPassword()

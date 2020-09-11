@@ -12,5 +12,8 @@ namespace StrykerDG.FarmForge.DataModel.Models
         public DateTime TimeStamp { get; set; }
         public string Message { get; set; }
         public string Data { get; set; }
+        public int LogTypeId { get; set; }
+        [ForeignKey("LogTypeId")]
+        public LogType LogType { get; set; }
     }
 }
