@@ -1,4 +1,5 @@
 ﻿using Akka.Actor;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using StrykerDG.FarmForge.Actors.Devices.Messages;
 using StrykerDG.FarmForge.LocalApi.Controllers.DTO.Requests;
@@ -20,6 +21,19 @@ namespace StrykerDG.FarmForge.LocalApi.Controllers
             DeviceActor = actorRefs
                 .Where(ar => ar.Path.ToString().Contains("DeviceActor"))
                 .FirstOrDefault();
+        }
+
+        [HttpGet]
+        public IActionResult TestOne()
+        {
+            return Ok(true);
+        }
+
+        [HttpGet("Test")]
+        [Authorize(Policy = "AuthenticatedWebClient")]
+        public IActionResult TestTwo()
+        {
+            return Ok(true);
         }
 
         // TODO: Add Authorization

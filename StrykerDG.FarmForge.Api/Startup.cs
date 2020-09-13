@@ -1,4 +1,6 @@
 using Akka.Actor;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
@@ -8,12 +10,15 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Options;
+using Microsoft.IdentityModel.Tokens;
 using Newtonsoft.Json;
 using StrykerDG.FarmForge.Actors.Authentication;
 using StrykerDG.FarmForge.Actors.Devices;
 using StrykerDG.FarmForge.Actors.WebSockets;
 using StrykerDG.FarmForge.Actors.WebSockets.Messages;
 using StrykerDG.FarmForge.DataModel.Contexts;
+using StrykerDG.FarmForge.LocalApi.Authorization.Handlers;
+using StrykerDG.FarmForge.LocalApi.Authorization.Policies;
 using StrykerDG.FarmForge.LocalApi.Configuration;
 using System;
 using System.Collections.Generic;
@@ -131,6 +136,34 @@ namespace StrykerDG.FarmForge.Api
             // Access Actors via Dependency Injection
             services.AddSingleton(_ => Actors);
 
+            // Access HttpContext within AuthenticationHandlers
+            services.AddHttpContextAccessor();
+
+            // Add Authorization policies
+            services.AddSingleton<IAuthorizationHandler, AuthenticatedWebClientHandler>();
+            services.AddAuthorization(options =>
+            {
+                options.AddPolicy("AuthenticatedWebClient", policy =>
+                    policy.Requirements.Add(new AuthenticatedWebClient()));
+            });
+
+            // Add JWT options
+            services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
+                .AddJwtBearer(options =>
+                {
+                    options.TokenValidationParameters = new TokenValidationParameters
+                    {
+                        ValidateIssuer = true,
+                        ValidateAudience = true,
+                        ValidateLifetime = true,
+                        ValidateIssuerSigningKey = true,
+
+                        ValidIssuer = securitySettings.Issuer,
+                        ValidAudience = securitySettings.Audience,
+                        IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(securitySettings.SecretKey))
+                    };
+                });
+
             services.AddControllers();
         }
 
@@ -152,6 +185,9 @@ namespace StrykerDG.FarmForge.Api
 
             app.UseOpenApi();
             app.UseSwaggerUi3();
+
+            app.UseAuthentication();
+            app.UseAuthorization();
 
             app.UseWebSockets();
             app.Use(async (context, next) =>

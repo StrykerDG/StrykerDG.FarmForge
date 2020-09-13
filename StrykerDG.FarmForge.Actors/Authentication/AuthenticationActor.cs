@@ -28,6 +28,7 @@ namespace StrykerDG.FarmForge.Actors.Authentication
             Settings = settings;
 
             Receive<AskToLogin>(HandleLogin);
+            Receive<AskToRetrieveToken>(HandleRetrieveToken);
         }
 
         // Message Methods
@@ -54,6 +55,19 @@ namespace StrykerDG.FarmForge.Actors.Authentication
 
                     Sender.Tell(token);
                 });
+            }
+            catch(Exception ex)
+            {
+                Sender.Tell(ex);
+            }
+        }
+
+        public void HandleRetrieveToken(AskToRetrieveToken message)
+        {
+            try
+            {
+                var jwt = RetrieveToken(message.Token);
+                Sender.Tell(jwt);
             }
             catch(Exception ex)
             {
@@ -117,6 +131,13 @@ namespace StrykerDG.FarmForge.Actors.Authentication
             var tokenString = handler.WriteToken(tokenOptions);
 
             return tokenString;
+        }
+
+        private JwtSecurityToken RetrieveToken(string tokenString)
+        {
+            var handler = new JwtSecurityTokenHandler();
+            var jsonToken = handler.ReadToken(tokenString) as JwtSecurityToken;
+            return jsonToken;
         }
     }
 }
