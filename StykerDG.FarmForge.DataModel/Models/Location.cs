@@ -11,6 +11,7 @@ namespace StrykerDG.FarmForge.DataModel.Models
     {
         [Key]
         public int LocationId { get; set; }
+        public int? ParentLocationId {get; set;}
         public string Name { get; set; }
         public string Label { get; set; }
     }

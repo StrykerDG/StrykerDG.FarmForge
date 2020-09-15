@@ -35,6 +35,7 @@ namespace StrykerDG.FarmForge.Migrations.Release_0001
 
             Create.Table("Location")
                 .WithId("LocationId")
+                .WithColumn("LocationParentId").AsInt32().Nullable()
                 .WithColumn("Name").AsString(255).NotNullable()
                 .WithColumn("Label").AsString(255).NotNullable()
                 .WithBaseModel();
@@ -156,8 +157,8 @@ namespace StrykerDG.FarmForge.Migrations.Release_0001
                 .Row(new
                 {
                     EntityType = "Crop.Status",
-                    Name = "seed",
-                    Label = "Seed",
+                    Name = "planted",
+                    Label = "Planted",
                     Created = now,
                     Modified = now,
                     IsDeleted = false
@@ -165,15 +166,15 @@ namespace StrykerDG.FarmForge.Migrations.Release_0001
                 .Row(new
                 {
                     EntityType = "Crop.Status",
-                    Name = "germinating",
-                    Label = "Germinating",
+                    Name = "germinated",
+                    Label = "Germinated",
                     Created = now,
                     Modified = now,
                     IsDeleted = false
                 })
                 .Row(new
                 {
-                    EntitType = "Crop.Status",
+                    EntityType = "Crop.Status",
                     Name = "growing",
                     Label = "Growing",
                     Created = now,
@@ -206,6 +207,15 @@ namespace StrykerDG.FarmForge.Migrations.Release_0001
                     Created = now,
                     Modified = now,
                     IsDeleted = false
+                })
+                .Row(new
+                {
+                    EntityType = "Crop.Status",
+                    Name = "transplanted",
+                    Label = "Transplanted",
+                    Created = now,
+                    Modified = now,
+                    IsDeleted = false
                 });
 
             // User Inserts
@@ -226,25 +236,37 @@ namespace StrykerDG.FarmForge.Migrations.Release_0001
                 {
                     Name = "fruit",
                     Label = "Fruit",
-                    Description = "A Fruit"
+                    Description = "A Fruit",
+                    Created = now,
+                    Modified = now,
+                    IsDeleted = false
                 })
                 .Row(new
                 {
                     Name = "vegetable",
                     Label = "Vegetable",
-                    Description = "A Vegetable"
+                    Description = "A Vegetable",
+                    Created = now,
+                    Modified = now,
+                    IsDeleted = false
                 })
                 .Row(new
                 {
                     Name = "herb",
                     Label = "Herb",
-                    Description = "An Herb"
+                    Description = "An Herb",
+                    Created = now,
+                    Modified = now,
+                    IsDeleted = false
                 })
                 .Row(new
                 {
                     Name = "tree",
                     Label = "Tree",
-                    Description = "A Tree"
+                    Description = "A Tree",
+                    Created = now,
+                    Modified = now,
+                    IsDeleted = false
                 });
         }
 

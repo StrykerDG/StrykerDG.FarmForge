@@ -13,6 +13,7 @@ using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
 using Newtonsoft.Json;
 using StrykerDG.FarmForge.Actors.Authentication;
+using StrykerDG.FarmForge.Actors.Crops;
 using StrykerDG.FarmForge.Actors.Devices;
 using StrykerDG.FarmForge.Actors.WebSockets;
 using StrykerDG.FarmForge.Actors.WebSockets.Messages;
@@ -129,6 +130,11 @@ namespace StrykerDG.FarmForge.Api
                         )),
                         "AuthenticationActor")
                 );
+                Actors.Add(
+                    actorSystem.ActorOf(Props.Create(() =>
+                        new CropActor(serviceScopeFactory)),
+                        "CropActor"
+                ));
 
                 return actorSystem;
             });
