@@ -1,5 +1,9 @@
 import 'package:flutter/material.dart';
 
+// Device widths
+const double kMobileWidth = 415;
+const double kTabletWidth = 1200;
+
 // Colors
 const kPrimaryColor = Color(0xff4caf50);
 const kPrimaryLightColor = Color(0xff80e27e);

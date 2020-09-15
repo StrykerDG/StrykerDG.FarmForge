@@ -2,6 +2,7 @@ import 'package:http/http.dart' as http;
 import 'dart:convert' as convert;
 
 import 'package:farmforge_client/models/farmforge_response.dart';
+import 'package:farmforge_client/models/crops/crops.dart';
 
 class FarmForgeApiService {
   static String token;
@@ -47,6 +48,7 @@ class FarmForgeApiService {
     }
   }
 
+  // Authentication
   Future<FarmForgeResponse> login(String user, String password) async {
     Map<String, String> loginObject = {
       'Username': user,
@@ -59,6 +61,18 @@ class FarmForgeApiService {
     if(response.data != null)
       token = response.data;
 
+    return response;
+  }
+
+  // Crops
+  Future<FarmForgeResponse> getCrops({DateTime begin, DateTime end}) async {
+    FarmForgeResponse response = await request(
+      'Crops?begin=${begin.toString()}&end=${end.toString()}',
+      null, 
+      'GET'
+    );
+
+    print(response.data.toString());
     return response;
   }
 }
