@@ -6,6 +6,7 @@
 
   <ItemGroup>
     <PackageReference Include="FluentMigrator" Version="3.2.8" />
+    <PackageReference Include="FluentMigrator.Extensions.SqlServer" Version="3.2.9" />
     <PackageReference Include="Microsoft.AspNetCore.Cryptography.KeyDerivation" Version="3.1.6" />
   </ItemGroup>
 

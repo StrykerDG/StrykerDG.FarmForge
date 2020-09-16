@@ -14,7 +14,9 @@ using Microsoft.IdentityModel.Tokens;
 using Newtonsoft.Json;
 using StrykerDG.FarmForge.Actors.Authentication;
 using StrykerDG.FarmForge.Actors.Crops;
+using StrykerDG.FarmForge.Actors.CropTypes;
 using StrykerDG.FarmForge.Actors.Devices;
+using StrykerDG.FarmForge.Actors.Locations;
 using StrykerDG.FarmForge.Actors.WebSockets;
 using StrykerDG.FarmForge.Actors.WebSockets.Messages;
 using StrykerDG.FarmForge.DataModel.Contexts;
@@ -134,6 +136,16 @@ namespace StrykerDG.FarmForge.Api
                     actorSystem.ActorOf(Props.Create(() =>
                         new CropActor(serviceScopeFactory)),
                         "CropActor"
+                ));
+                Actors.Add(
+                    actorSystem.ActorOf(Props.Create(() =>
+                    new CropTypeActor(serviceScopeFactory)),
+                    "CropTypeActor"
+                ));
+                Actors.Add(
+                    actorSystem.ActorOf(Props.Create(() =>
+                        new LocationActor(serviceScopeFactory)),
+                        "LocationActor"
                 ));
 
                 return actorSystem;
