@@ -24,10 +24,12 @@ dependencies:
   flutter:
     sdk: flutter
 
-  # State Management
+  # State management
   provider: ^4.3.2+2
   # Web requests
   http: ^0.12.2
+  # Date formatting
+  intl: ^0.16.1
 
 dev_dependencies:
   flutter_test:

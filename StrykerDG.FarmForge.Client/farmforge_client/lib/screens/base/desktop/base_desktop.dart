@@ -7,6 +7,8 @@ import 'package:farmforge_client/screens/login/login.dart';
 import 'package:farmforge_client/screens/dashboard/dashboard.dart';
 import 'package:farmforge_client/screens/crops/crops.dart';
 
+import 'package:farmforge_client/utilities/constants.dart';
+
 class BaseDesktop extends StatefulWidget {
   final Widget content;
   final Function action;
@@ -45,7 +47,9 @@ class _BaseDesktopState extends State<BaseDesktop> {
 
     Widget actionButton = widget.action != null
       ? FloatingActionButton(
-          onPressed: widget.action,
+          onPressed: () {
+            widget.action(context);
+          },
           child: Icon(icon),
         )
       : Container();
@@ -60,10 +64,10 @@ class _BaseDesktopState extends State<BaseDesktop> {
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
             Material(
-              elevation: 5.0,
+              elevation: kDesktopNavigationElevation,
               child: Container(
                 height: MediaQuery.of(context).size.height,
-                width: 300.0,
+                width: kDesktopNavigationWidth,
                 child: ListView(
                   children: [
                     Image.network('https://k48b9e9840-flywheel.netdna-ssl.com/wp-content/uploads/2020/04/COVID-19-Relief_Small-Farms--1024x614.jpg'),
@@ -92,8 +96,8 @@ class _BaseDesktopState extends State<BaseDesktop> {
                 children: [
                   widget.content,
                   Positioned(
-                    bottom: 24,
-                    right: 24,
+                    bottom: kLargePadding,
+                    right: kLargePadding,
                     child: actionButton,
                   )
                 ],

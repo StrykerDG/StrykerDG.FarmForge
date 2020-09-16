@@ -1,8 +1,8 @@
-import 'package:farmforge_client/provider/user_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
 import 'package:farmforge_client/provider/core_provider.dart';
+import 'package:farmforge_client/provider/user_provider.dart';
 
 import 'package:farmforge_client/models/farmforge_response.dart';
 
@@ -11,6 +11,7 @@ import 'package:farmforge_client/screens/dashboard/dashboard.dart';
 import 'package:farmforge_client/utilities/ui_utility.dart';
 import 'package:farmforge_client/utilities/utility.dart';
 import 'package:farmforge_client/utilities/validation.dart';
+import 'package:farmforge_client/utilities/constants.dart';
 
 class Login extends StatefulWidget {
   static const String id = 'login';
@@ -23,14 +24,16 @@ class _LoginState extends State<Login> {
   bool isLoading = false;
   bool obscurePassword = true;
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
-  TextEditingController _usernameController = new TextEditingController();
-  TextEditingController _passwordController = new TextEditingController();
+  TextEditingController _usernameController = TextEditingController();
+  TextEditingController _passwordController = TextEditingController();
 
   void toggleObscurePassword() {
     setState(() {
       obscurePassword = !obscurePassword;
     });
   }
+
+  void handleEnter() => handleSignIn();
 
   void handleSignIn() async {
     if(_formKey.currentState.validate()) {
@@ -88,9 +91,9 @@ class _LoginState extends State<Login> {
             border: Border.all(
               color: Colors.black
             ),
-            borderRadius: BorderRadius.all(Radius.circular((20)))
+            borderRadius: BorderRadius.all(Radius.circular(kMediumRadius))
           ),
-          width: 300,
+          width: kLoginContainerWidth,
           child: SingleChildScrollView(
             child: Form(
               key: _formKey,
@@ -107,7 +110,7 @@ class _LoginState extends State<Login> {
                       border: OutlineInputBorder(
                         borderSide: BorderSide.none,
                         borderRadius: BorderRadius.all(
-                          Radius.circular(20)
+                          Radius.circular(kMediumRadius)
                         )
                       )
                     ),
@@ -128,10 +131,11 @@ class _LoginState extends State<Login> {
                       border: OutlineInputBorder(
                         borderSide: BorderSide.none,
                         borderRadius: BorderRadius.all(
-                          Radius.circular(20)
+                          Radius.circular(kMediumRadius)
                         )
                       )
                     ),
+                    onEditingComplete: handleEnter,
                     validator: Validation.isNotEmpty,
                   ),
 
@@ -142,7 +146,7 @@ class _LoginState extends State<Login> {
                         child: Text("Sign In"),
                         onPressed: handleSignIn,
                         shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular((20))
+                          borderRadius: BorderRadius.circular(kMediumRadius)
                         ),
                       )
                 ],

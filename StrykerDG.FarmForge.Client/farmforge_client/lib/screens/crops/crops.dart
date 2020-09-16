@@ -21,6 +21,8 @@ class Crops extends StatefulWidget {
 
 class _CropsState extends State<Crops> {
   List<Crop> _crops;
+  DateTime searchBegin;
+  DateTime searchEnd;
 
   void loadData() async {
     try {
@@ -39,7 +41,12 @@ class _CropsState extends State<Crops> {
   @override
   void initState() {
     super.initState();
+    
     loadData();
+    setState(() {
+       searchBegin = Provider.of<CropProvider>(context, listen: false).defaultDate;
+       searchEnd = DateTime.now();
+    });
   }
 
   @override
@@ -50,7 +57,10 @@ class _CropsState extends State<Crops> {
           ? MobileCrops()
           : constraints.maxWidth <= kTabletWidth
             ? TabletCrops()
-            : DesktopCrops();
+            : DesktopCrops(
+              searchBegin: searchBegin,
+              searchEnd: searchEnd,
+            );
       },
     );
   }

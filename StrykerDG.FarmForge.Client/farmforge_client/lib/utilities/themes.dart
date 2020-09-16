@@ -1,8 +1,6 @@
 import 'package:flutter/material.dart';
 
 import 'constants.dart';
-import 'constants.dart';
-import 'constants.dart';
 
 ThemeData primaryTheme = ThemeData(
   primaryColor: kPrimaryColor,

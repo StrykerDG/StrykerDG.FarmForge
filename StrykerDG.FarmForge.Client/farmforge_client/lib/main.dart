@@ -10,7 +10,6 @@ import 'utilities/settings.dart';
 import 'screens/login/login.dart';
 import 'screens/dashboard/dashboard.dart';
 import 'screens/crops/crops.dart';
-import 'screens/unauthorized/unauthorized.dart';
 
 void main() {
   runApp(
@@ -41,7 +40,6 @@ class FarmForge extends StatelessWidget {
         Login.id: (context) => Login(),
         Dashboard.id: (context) => Dashboard(),
         Crops.id: (context) => Crops(),
-        Unauthorized.id: (context) => Unauthorized(),
       },
     );
   }
