@@ -18,24 +18,24 @@ FarmForge can be as small as a single IoT device connected to a wireless network
 ## Local - Individual Devices
 This is the smallest, most simple configuration you can have. This is probably sufficient for a small garden or hobbyist wanting to connect a sensor to one or two of their plants. No data is saved or preserved in this configuration.
 
-![Diagram](Docs/Local_Individual.PNG)
+![Diagram](Resources/Local_Individual.PNG)
 
 ## Local - Devices and API
 This is the next stage up in configuration, and is slightly more complex. Here, a central FarmForge server is running on your local network that hosts a web client, api, and database. The primary interactions take place between your personal device and the web client, but you can still access the FarmForge devices directly should you desire. Since a database is present, historical data can be / is saved.
 
-![Diagram](Docs/Local_Api.PNG)
+![Diagram](Resources/Local_Api.PNG)
 
 ## External - Devices and API
 This configuration is the same as the previous (Local - Devices and API); however, it has an additional cloud-hosted API that connects to and interacts with the local API through an IoT hub. This allows us to reach our local devices from anywhere we have internet access.
 
-![Diagram](Docs/External_Api.PNG)
+![Diagram](Resources/External_Api.PNG)
 
 ## External - Interconnected Systems
 The Interconnected system has the same architecture as the External - Devices and API. There is just one additional link between the user's cloud-hosted API and a central FarmForge api and database. This allows FarmForge users to view device data from all other connected FarmForge systems to help them grow crops more effectively, if they desire to do so.
 
 *NOTE* - When choosing to connect your system to the central FarmForge system, you will have the ability to choose what, if anything, gets shared.
 
-![Diagram](Docs/External_Interconnected.PNG)
+![Diagram](Resources/External_Interconnected.PNG)
 
 # Components
 There are multiple components that can be utilized within FarmForge, depending on how you want to utilize the system and what your end goals are.
