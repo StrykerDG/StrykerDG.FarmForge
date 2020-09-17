@@ -1,7 +1,10 @@
+import 'package:farmforge_client/models/farmforge_response.dart';
+import 'package:farmforge_client/provider/core_provider.dart';
 import 'package:flutter/material.dart';
 
 import 'package:farmforge_client/utilities/validation.dart';
 import 'package:farmforge_client/utilities/constants.dart';
+import 'package:provider/provider.dart';
 
 class AddCrop extends StatefulWidget {
   @override
@@ -15,6 +18,49 @@ class _AddCropState extends State<AddCrop> {
   String _cropType;
   String _cropVariety;
   String _cropLocation;
+
+  void loadData() async {
+    // List<Future<FarmForgeResponse>> requestFutures = [
+    //   Provider.of<CoreProvider>(context, listen: false)
+    //     .farmForgeService.getCropTypes(includes: 'Varieties'),
+    //   Provider.of<CoreProvider>(context, listen: false)
+    //     .farmForgeService.getLocations()
+    // ];
+
+    // List<FarmForgeResponse> responses = [
+    //   await requestFutures[0],
+    //   await requestFutures[1]
+    // ];
+
+    Future<FarmForgeResponse> cropTypeFuture = Provider.of<CoreProvider>(context, listen: false)
+      .farmForgeService.getCropTypes(includes: 'Varieties');
+    Future<FarmForgeResponse> locationFuture = Provider.of<CoreProvider>(context, listen: false)
+      .farmForgeService.getLocations();
+    
+    Future.wait([cropTypeFuture, locationFuture])
+    .then((value) => 
+      value.asMap()
+      .forEach((index, response) { 
+        print('Index: $index');
+        print('Response: ${response.data}');
+
+        // If index = 1 ...
+        // If index = 2 ...
+      })
+    );
+
+    // cropTypeFuture.then((value) => print('value: ${value.data}'));
+    // locationFuture.then((value) => print('value: ${value.data}'));
+
+    // Provider.of<CoreProvider>(context, listen: false)
+    //   .farmForgeService.getCropTypes(includes: 'Varieties')
+    //   .then((value) => print('value: ${value.data}'));
+    // Provider.of<CoreProvider>(context, listen: false)
+    //   .farmForgeService.getLocations()
+    //   .then((value) => print('value: ${value.data}'));
+
+
+  }
 
   String isValidQuantity(String value) {
     String result = Validation.isNotEmpty(value);
@@ -53,6 +99,12 @@ class _AddCropState extends State<AddCrop> {
     if(_formKey.currentState.validate()) {
       print('Would be saving');
     }
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    loadData();
   }
 
   @override

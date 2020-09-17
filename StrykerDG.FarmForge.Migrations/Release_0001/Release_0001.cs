@@ -36,7 +36,7 @@ namespace StrykerDG.FarmForge.Migrations.Release_0001
 
             Create.Table("Location")
                 .WithId("LocationId")
-                .WithColumn("LocationParentId").AsInt32().Nullable()
+                .WithColumn("ParentLocationId").AsInt32().Nullable()
                 .WithColumn("Name").AsString(255).NotNullable()
                 .WithColumn("Label").AsString(255).NotNullable()
                 .WithBaseModel();

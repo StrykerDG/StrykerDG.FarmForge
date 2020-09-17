@@ -74,4 +74,31 @@ class FarmForgeApiService {
     print(response.data.toString());
     return response;
   }
+
+  Future<FarmForgeResponse> getCropTypes({String includes}) async {
+    // Future.delayed(Duration(seconds: 3), () => FarmForgeResponse);
+    String uri = includes == null
+      ? 'CropTypes'
+      : 'CropTypes?includes=$includes';
+
+    FarmForgeResponse response = await request(
+      uri,
+      null,
+      'GET'
+    );
+
+    return response;
+  }
+
+  // Locations
+  Future<FarmForgeResponse> getLocations() async {
+    // Future.delayed(Duration(seconds: 4), () => FarmForgeResponse);
+    FarmForgeResponse response = await request(
+      'Locations',
+      null,
+      'GET'
+    );
+
+    return response;
+  }
 }
