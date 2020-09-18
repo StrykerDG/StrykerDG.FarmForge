@@ -1,0 +1,1 @@
+(window.webpackJsonp=window.webpackJsonp||[]).push([[29],{84:function(a){a.exports=JSON.parse('{"allTagsPath":"/StrykerDG.FarmForge/blog/tags","slug":"hola","name":"hola","count":1,"permalink":"/StrykerDG.FarmForge/blog/tags/hola"}')}}]);
