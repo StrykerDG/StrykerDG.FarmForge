@@ -6,6 +6,7 @@ class DesktopDashboard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return BaseDesktop(
+      title: 'Dashboard',
       content: Center(child: Text("Dashboard under development"),),
     );
   }

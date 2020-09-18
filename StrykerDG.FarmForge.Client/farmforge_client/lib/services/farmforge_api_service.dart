@@ -76,7 +76,6 @@ class FarmForgeApiService {
   }
 
   Future<FarmForgeResponse> getCropTypes({String includes}) async {
-    // Future.delayed(Duration(seconds: 3), () => FarmForgeResponse);
     String uri = includes == null
       ? 'CropTypes'
       : 'CropTypes?includes=$includes';
@@ -92,7 +91,6 @@ class FarmForgeApiService {
 
   // Locations
   Future<FarmForgeResponse> getLocations() async {
-    // Future.delayed(Duration(seconds: 4), () => FarmForgeResponse);
     FarmForgeResponse response = await request(
       'Locations',
       null,
@@ -100,5 +98,17 @@ class FarmForgeApiService {
     );
 
     return response;
+  }
+
+  Future<FarmForgeResponse> addLocation(String name, int parentId) async {
+    Map<String, dynamic> locationObject = {
+      'Label': name
+    };
+
+    if(parentId != null)
+      locationObject['ParentId'] = parentId;
+
+    String jsonBody = convert.jsonEncode(locationObject);
+    return await request('Locations', jsonBody, 'POST');
   }
 }

@@ -1,6 +1,7 @@
-import 'package:farmforge_client/models/farmforge_response.dart';
-import 'package:farmforge_client/provider/core_provider.dart';
 import 'package:flutter/material.dart';
+
+import 'package:farmforge_client/provider/core_provider.dart';
+import 'package:farmforge_client/models/farmforge_response.dart';
 
 import 'package:farmforge_client/utilities/validation.dart';
 import 'package:farmforge_client/utilities/constants.dart';

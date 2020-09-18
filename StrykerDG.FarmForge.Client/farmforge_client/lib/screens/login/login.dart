@@ -55,13 +55,8 @@ class _LoginState extends State<Login> {
 
           Navigator.pushNamed(context, Dashboard.id);
         }
-        else {
-          UiUtility.handleError(
-            context: context, 
-            title: 'Login Error', 
-            error: tokenResponse.error
-          );
-        }
+        else
+          throw tokenResponse.error;
       }
       catch(e) {
         UiUtility.handleError(

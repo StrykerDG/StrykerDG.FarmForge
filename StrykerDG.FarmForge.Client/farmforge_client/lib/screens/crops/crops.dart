@@ -1,10 +1,11 @@
-import 'package:farmforge_client/models/crops/crops.dart';
-import 'package:farmforge_client/models/farmforge_response.dart';
-import 'package:farmforge_client/provider/crop_provider.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 
 import 'package:farmforge_client/provider/core_provider.dart';
-import 'package:provider/provider.dart';
+import 'package:farmforge_client/provider/data_provider.dart';
+
+import 'package:farmforge_client/models/crops/crops.dart';
+import 'package:farmforge_client/models/farmforge_response.dart';
 
 import 'mobile_crops.dart';
 import 'tablet_crops.dart';
@@ -28,7 +29,7 @@ class _CropsState extends State<Crops> {
     try {
       FarmForgeResponse cropResponse = await Provider.of<CoreProvider>(context, listen: false)
         .farmForgeService.getCrops(
-          begin: Provider.of<CropProvider>(context, listen: false).defaultDate,
+          begin: Provider.of<DataProvider>(context, listen: false).defaultDate,
           end: DateTime.now()
         );
 
@@ -44,7 +45,7 @@ class _CropsState extends State<Crops> {
     
     loadData();
     setState(() {
-       searchBegin = Provider.of<CropProvider>(context, listen: false).defaultDate;
+       searchBegin = Provider.of<DataProvider>(context, listen: false).defaultDate;
        searchEnd = DateTime.now();
     });
   }

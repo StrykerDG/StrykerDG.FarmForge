@@ -18,7 +18,7 @@ class DesktopCrops extends StatelessWidget {
     showDialog(
       context: context,
       builder: (context) => FarmForgeDialog(
-        title: "Add New Crop",
+        title: 'Add New Crop',
         content: AddCrop(),
       )
     );
@@ -32,8 +32,8 @@ class DesktopCrops extends StatelessWidget {
     String _searchEndString = DateFormat.yMd().format(searchEnd);
 
     return BaseDesktop(
+      title: 'Crops',
       action: handleAddCrop,
-
       content: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [

@@ -6,6 +6,7 @@ import 'package:farmforge_client/provider/user_provider.dart';
 import 'package:farmforge_client/screens/login/login.dart';
 import 'package:farmforge_client/screens/dashboard/dashboard.dart';
 import 'package:farmforge_client/screens/crops/crops.dart';
+import 'package:farmforge_client/screens/settings/settings.dart';
 
 import 'package:farmforge_client/utilities/constants.dart';
 
@@ -13,11 +14,13 @@ class BaseDesktop extends StatefulWidget {
   final Widget content;
   final Function action;
   final IconData fabIcon;
+  final String title;
 
   BaseDesktop({
     @required this.content,
     this.action,
-    this.fabIcon
+    this.fabIcon,
+    this.title
   });
 
   @override
@@ -54,9 +57,13 @@ class _BaseDesktopState extends State<BaseDesktop> {
         )
       : Container();
 
+    String title = widget.title != null
+      ? widget.title
+      : 'FarmForge';
+
     return Scaffold(
       appBar: AppBar(
-        title: Text('FarmForge'),
+        title: Text(title),
       ),
       body: Provider.of<UserProvider>(context, listen: false).username == null
         ? Container()
@@ -68,7 +75,8 @@ class _BaseDesktopState extends State<BaseDesktop> {
               child: Container(
                 height: MediaQuery.of(context).size.height,
                 width: kDesktopNavigationWidth,
-                child: ListView(
+                child: Column(
+                  mainAxisSize: MainAxisSize.max,
                   children: [
                     Image.network('https://k48b9e9840-flywheel.netdna-ssl.com/wp-content/uploads/2020/04/COVID-19-Relief_Small-Farms--1024x614.jpg'),
                     ListTile(
@@ -86,6 +94,17 @@ class _BaseDesktopState extends State<BaseDesktop> {
                     ListTile(
                       title: Text('Inventory'),
                       onTap: () { handleNavigation(context, ""); },
+                    ),
+                    Expanded(
+                      child: Container(),
+                    ),
+                    ListTile(
+                      title: Text('Account'),
+                      onTap: () { handleNavigation(context, ""); },
+                    ),
+                    ListTile(
+                      title: Text('Settings'),
+                      onTap: () { handleNavigation(context, Settings.id); },
                     )
                   ],
                 ),

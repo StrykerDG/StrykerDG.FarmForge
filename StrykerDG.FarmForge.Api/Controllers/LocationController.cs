@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using StrykerDG.FarmForge.Actors.Locations.Messages;
+using StrykerDG.FarmForge.LocalApi.Controllers.DTO.Requests;
 using StrykerDG.FarmForge.LocalApi.Controllers.DTO.Responses;
 using System;
 using System.Collections.Generic;
@@ -29,6 +30,27 @@ namespace StrykerDG.FarmForge.LocalApi.Controllers
         {
             var result = await LocationActor.Ask(new AskForLocations());
             return Ok(FarmForgeApiResponse.Success(result));
+        }
+
+        [HttpPost]
+        [Authorize(Policy = "AuthenticatedWebClient")]
+        public async Task<IActionResult> AddLocation([FromBody]NewLocationDTO newLocation)
+        {
+            var result = await LocationActor.Ask(
+                new AskToCreateLocation(
+                    newLocation.Label,
+                    newLocation.ParentId
+                )
+            );
+
+            var resultType = result.GetType();
+            if(resultType == typeof(Exception))
+            {
+                var ex = (Exception)result;
+                return Ok(FarmForgeApiResponse.Failure(ex.Message));
+            }
+            else
+                return Ok(FarmForgeApiResponse.Success(result));
         }
     }
 }
