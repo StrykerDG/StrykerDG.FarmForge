@@ -1,5 +1,5 @@
 module.exports = {
-  title: 'My Site',
+  title: 'FarmForge',
   tagline: 'The tagline of my site',
   url: 'https://strykerdg.github.io',
   baseUrl: '/StrykerDG.FarmForge/',
@@ -9,15 +9,15 @@ module.exports = {
   projectName: 'StrykerDG.FarmForge', // Usually your repo name.
   themeConfig: {
     navbar: {
-      title: 'My Site',
+      title: 'FarmForge',
       logo: {
         alt: 'My Site Logo',
         src: 'img/logo.svg',
       },
       items: [
         {
-          to: 'docs/',
-          activeBasePath: 'docs',
+          to: 'docs/farmforge/introduction',
+          activeBasePath: 'docs/farmforge',
           label: 'Docs',
           position: 'left',
         },
@@ -36,8 +36,8 @@ module.exports = {
           title: 'Docs',
           items: [
             {
-              label: 'Style Guide',
-              to: 'docs/',
+              label: 'Introduction',
+              to: 'docs/farmforge/introduction',
             },
             {
               label: 'Second Doc',
