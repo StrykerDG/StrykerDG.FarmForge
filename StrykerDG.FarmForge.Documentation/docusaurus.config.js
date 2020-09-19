@@ -5,8 +5,8 @@ module.exports = {
   baseUrl: '/StrykerDG.FarmForge/',
   onBrokenLinks: 'throw',
   favicon: 'img/favicon.ico',
-  organizationName: 'StrykerDG', // Usually your GitHub org/user name.
-  projectName: 'StrykerDG.FarmForge', // Usually your repo name.
+  organizationName: 'StrykerDG', 
+  projectName: 'StrykerDG.FarmForge',
   themeConfig: {
     navbar: {
       title: 'FarmForge',
@@ -23,7 +23,7 @@ module.exports = {
         },
         {to: 'blog', label: 'Blog', position: 'left'},
         {
-          href: 'https://github.com/facebook/docusaurus',
+          href: 'https://github.com/StrykerDG/StrykerDG.FarmForge',
           label: 'GitHub',
           position: 'right',
         },
@@ -40,8 +40,8 @@ module.exports = {
               to: 'docs/farmforge/introduction',
             },
             {
-              label: 'Second Doc',
-              to: 'docs/doc2/',
+              label: 'Installation',
+              to: 'docs/getting_started/installation',
             },
           ],
         },
@@ -50,15 +50,15 @@ module.exports = {
           items: [
             {
               label: 'Stack Overflow',
-              href: 'https://stackoverflow.com/questions/tagged/docusaurus',
+              href: 'https://stackoverflow.com/questions/tagged/farmforge',
             },
             {
               label: 'Discord',
-              href: 'https://discordapp.com/invite/docusaurus',
+              href: 'https://discord.gg/rfyhhTE',
             },
             {
               label: 'Twitter',
-              href: 'https://twitter.com/docusaurus',
+              href: 'https://twitter.com/StrykerDG',
             },
           ],
         },
@@ -71,12 +71,12 @@ module.exports = {
             },
             {
               label: 'GitHub',
-              href: 'https://github.com/facebook/docusaurus',
+              href: 'https://github.com/StrykerDG/StrykerDG.FarmForge',
             },
           ],
         },
       ],
-      copyright: `Copyright © ${new Date().getFullYear()} My Project, Inc. Built with Docusaurus.`,
+      copyright: `Copyright © ${new Date().getFullYear()} FarmForge, Inc. Built with Docusaurus.`,
     },
   },
   presets: [
