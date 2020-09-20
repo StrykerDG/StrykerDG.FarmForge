@@ -1,3 +1,4 @@
+import 'package:farmforge_client/models/general/location.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert' as convert;
 
@@ -28,6 +29,9 @@ class FarmForgeApiService {
           break;
         case 'PATCH':
           response = await http.patch('$apiUrl/$uri', headers: headers, body: body);
+          break;
+        case 'DELETE':
+          response = await http.delete('$apiUrl/$uri', headers: headers);
           break;
       }
 
@@ -110,5 +114,22 @@ class FarmForgeApiService {
 
     String jsonBody = convert.jsonEncode(locationObject);
     return await request('Locations', jsonBody, 'POST');
+  }
+
+  Future<FarmForgeResponse> updateLocation(
+    String fields, 
+    Location location) async {
+    
+    Map<String, dynamic> requestBody = {
+      'Fields': fields,
+      'Location': location.toMap()
+    };
+
+    String jsonBody = convert.jsonEncode(requestBody);
+    return await request('Locations', jsonBody, 'PATCH');
+  }
+
+  Future<FarmForgeResponse> deleteLocation(int id) async {
+    return await request('Locations/$id', null, 'DELETE');
   }
 }

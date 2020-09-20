@@ -1,3 +1,4 @@
+import 'package:farmforge_client/models/farmforge_response.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
@@ -14,6 +15,7 @@ import 'package:farmforge_client/widgets/settings/add_location.dart';
 import 'package:farmforge_client/widgets/farmforge_dialog.dart';
 
 import 'package:farmforge_client/utilities/constants.dart';
+import 'package:farmforge_client/utilities/ui_utility.dart';
 
 class DesktopSettings extends StatefulWidget {
 
@@ -24,6 +26,7 @@ class DesktopSettings extends StatefulWidget {
 class _DesktopSettingsState extends State<DesktopSettings> {
   List<Location> _locations = [];
   int _selectedLocation;
+  int _selectedParentLocation;
   int _selectedCropType;
 
   List<Widget> getCropContent() {
@@ -38,40 +41,90 @@ class _DesktopSettingsState extends State<DesktopSettings> {
       )
     ).toList();
 
+    Location selectedLocation = _locations
+      .firstWhere(
+        (l) => l.locationId == _selectedLocation,
+        orElse: () => null
+      );
+
+    List<DropdownMenuItem<int>> parentLocationOptions;
+    String parentLocationLabel = "";
+    Function deleteAction;
+
+    if(selectedLocation != null) {
+      parentLocationOptions = locationOptions;
+      parentLocationLabel = 'Parent Location';
+      deleteAction = handleDeleteLocation;
+    }
+
     return [
       Padding(
         padding: EdgeInsets.all(kSmallPadding),
         child: Row(
           children: [
-            DropdownButton<int>(
-              value: _selectedLocation,
-              items: locationOptions,
-              onChanged: (int value) { handleItemSelection('location', value); },
+            Container(
+              width: 200,
+              child: DropdownButtonFormField<int>(
+                value: _selectedLocation,
+                items: locationOptions,
+                onChanged: handleLocationSelection,
+                decoration: InputDecoration(
+                  labelText: 'Location'
+                ),
+              ),
             ),
-            IconButton(
-              icon: Icon(Icons.edit),
-              onPressed: handleEditLocation,
+            SizedBox(width: kSmallPadding),
+            Container(
+              width: 200,
+              child: DropdownButtonFormField<int>(
+                value: _selectedParentLocation,
+                items: parentLocationOptions,
+                disabledHint: Text('Select a Location'),
+                onChanged: handleParentLocationSelection,
+                decoration: InputDecoration(
+                  labelText: parentLocationLabel
+                ),
+              ),
             ),
             IconButton(
               icon: Icon(Icons.delete),
-              onPressed: handleDeleteLocation,
+              onPressed: deleteAction,
             ),
             IconButton(
               icon: Icon(Icons.add),
               onPressed: handleAddLocation,
-            )
+            ),
           ],
         ),
       )
     ];
   }
 
-  void handleEditLocation() {
+  void handleDeleteLocation() async {
+    try {
+      FarmForgeResponse deleteResponse = await Provider
+        .of<CoreProvider>(context, listen: false)
+        .farmForgeService
+        .deleteLocation(_selectedLocation);
 
-  }
+      if(deleteResponse.data != null) {
+        Provider.of<DataProvider>(context, listen: false)
+          .deleteLocation(_selectedLocation);
 
-  void handleDeleteLocation() {
-
+        setState(() {
+          _selectedLocation = null;
+        });
+      }
+      else
+        throw deleteResponse.error;
+    }
+    catch(e) {
+      UiUtility.handleError(
+        context: context, 
+        title: 'Delete Error', 
+        error: e.toString()
+      );
+    }
   }
 
   void handleAddLocation() {
@@ -84,11 +137,56 @@ class _DesktopSettingsState extends State<DesktopSettings> {
     );
   }
 
-  void handleItemSelection(String key, int newValue) {
+  void handleLocationSelection(int newValue) {
+    int parentId = _locations
+      .firstWhere(
+        (l) => l.locationId == newValue,
+        orElse: () => null
+      )?.parentLocationId;
+
     setState(() {
-      if(key == 'location')
-        _selectedLocation = newValue;
+      _selectedLocation = newValue;
+      _selectedParentLocation = parentId != 0
+        ? parentId
+        : null;
     });
+  }
+
+  void handleParentLocationSelection(int newValue) async {
+    setState(() {
+      _selectedParentLocation = newValue;
+    });
+
+    handleUpdateLocationParent(newValue);
+  }
+
+  void handleUpdateLocationParent(int newParent) async {
+    try {
+      FarmForgeResponse updateResponse = await Provider
+        .of<CoreProvider>(context, listen: false)
+        .farmForgeService
+        .updateLocation(
+          'ParentLocationId',
+          Location(
+            locationId: _selectedLocation, 
+            parentLocationId: newParent
+          )
+        );
+
+      if(updateResponse.data != null) {
+        Provider.of<DataProvider>(context, listen: false)
+          .updateLocation(updateResponse.data);
+      }
+      else
+        throw updateResponse.error;
+    }
+    catch(e) {
+      UiUtility.handleError(
+        context: context, 
+        title: 'Delete Error', 
+        error: e.toString()
+      );
+    }
   }
 
   List<Widget> getUserContent() {
@@ -106,7 +204,6 @@ class _DesktopSettingsState extends State<DesktopSettings> {
 
   @override
   Widget build(BuildContext context) {
-    // List<Location> locations = 
 
     List<Widget> cropContent = getCropContent();
     List<Widget> locationContent = getLocationContent();

@@ -39,4 +39,24 @@ class DataProvider extends ChangeNotifier {
     
     notifyListeners();
   }
+
+  void updateLocation(dynamic location) {
+    Location locationToUpdate = Location.fromMap(location);
+
+    int locationIndex = locations.indexWhere(
+      (l) => l.locationId == locationToUpdate.locationId,
+    );
+
+    if(locationIndex != -1) {
+      locations[locationIndex] = locationToUpdate;
+
+      notifyListeners();
+    }
+  }
+
+  void deleteLocation(int id) {
+    locations.removeWhere((l) => l.locationId == id);
+
+    notifyListeners();
+  }
 }

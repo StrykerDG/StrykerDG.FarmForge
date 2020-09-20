@@ -9,6 +9,7 @@ import 'package:farmforge_client/models/general/location.dart';
 import 'package:farmforge_client/models/farmforge_response.dart';
 
 import 'package:farmforge_client/utilities/constants.dart';
+import 'package:farmforge_client/utilities/ui_utility.dart';
 
 import 'desktop_settings.dart';
 import 'tablet_settings.dart';
@@ -40,7 +41,11 @@ class _SettingsState extends State<Settings> {
         });
     }
     catch(e) {
-      print('Error! ${e.toString()}');
+      UiUtility.handleError(
+        context: null, 
+        title: null, 
+        error: null
+      );
     }
   }
 
@@ -59,8 +64,6 @@ class _SettingsState extends State<Settings> {
 
   @override
   Widget build(BuildContext context) {
-    // List<CropType> cropTypes = Provider.of<DataProvider>(context).cropTypes;
-    // List<Location> locations = Provider.of<DataProvider>(context).locations;
 
     return LayoutBuilder(
       builder: (BuildContext context, BoxConstraints constraints) {
