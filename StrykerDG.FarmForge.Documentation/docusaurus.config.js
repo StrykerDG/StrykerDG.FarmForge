@@ -2,7 +2,7 @@ module.exports = {
   title: 'FarmForge',
   tagline: 'The tagline of my site',
   url: 'https://strykerdg.github.io',
-  baseUrl: '/StrykerDG.FarmForge/',
+  baseUrl: '/',
   onBrokenLinks: 'throw',
   favicon: 'img/favicon.ico',
   organizationName: 'StrykerDG', 
