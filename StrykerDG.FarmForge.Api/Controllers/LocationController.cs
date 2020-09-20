@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using StrykerDG.FarmForge.Actors.Locations.Messages;
+using StrykerDG.FarmForge.DataModel.Models;
 using StrykerDG.FarmForge.LocalApi.Controllers.DTO.Requests;
 using StrykerDG.FarmForge.LocalApi.Controllers.DTO.Responses;
 using System;
@@ -50,6 +51,43 @@ namespace StrykerDG.FarmForge.LocalApi.Controllers
                 return Ok(FarmForgeApiResponse.Failure(ex.Message));
             }
             else
+                return Ok(FarmForgeApiResponse.Success(result));
+        }
+
+        [HttpPatch]
+        [Authorize(Policy = "AuthenticatedWebClient")]
+        public async Task<IActionResult> UpdateLocation([FromBody]UpdateLocationDTO updatedLocation)
+        {
+            var result = await LocationActor.Ask(
+                new AskToUpdateLocation(
+                    updatedLocation.Fields,
+                    updatedLocation.Location
+               )
+            );
+
+            var resultType = result.GetType();
+            if (resultType == typeof(Exception))
+            {
+                var ex = (Exception)result;
+                return Ok(FarmForgeApiResponse.Failure(ex.Message));
+            }
+            else 
+                return Ok(FarmForgeApiResponse.Success(result));
+        }
+
+        [HttpDelete("{locationId}")]
+        [Authorize(Policy = "AuthenticatedWebClient")]
+        public async Task<IActionResult> DeleteLocation(int locationId)
+        {
+            var result = await LocationActor.Ask(new AskToDeleteLocation(locationId));
+            
+            var resultType = result.GetType();
+            if (resultType == typeof(Exception))
+            {
+                var ex = (Exception)result;
+                return Ok(FarmForgeApiResponse.Failure(ex.Message));
+            }
+            else 
                 return Ok(FarmForgeApiResponse.Success(result));
         }
     }
