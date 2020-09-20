@@ -14,11 +14,14 @@ module.exports = {
     ],
     Development: [
       'development/dev_introduction',
+      'development/devices',
       'development/client',
       'development/api',
+      'development/ext_api',
       'development/data_model',
       'development/migrations',
       'development/actors',
+      'development/iot_hub',
       'development/documentation'
     ]
   },
