@@ -14,10 +14,11 @@ namespace StrykerDG.FarmForge.DataModel.Extensions
             string includes
         ) where T : BaseModel
         {
-            var includeList = includes.Split(",");
+            var includeList = includes?.Split(",");
 
-            foreach (var include in includeList)
-                table.Include(include);
+            if(includeList != null)
+                foreach (var include in includeList)
+                    table = table.Include(include);
 
             return table;
         }

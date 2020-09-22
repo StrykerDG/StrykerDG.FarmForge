@@ -4,8 +4,6 @@ import 'package:provider/provider.dart';
 import 'package:farmforge_client/provider/core_provider.dart';
 import 'package:farmforge_client/provider/data_provider.dart';
 
-import 'package:farmforge_client/models/crops/crop_type.dart';
-import 'package:farmforge_client/models/general/location.dart';
 import 'package:farmforge_client/models/farmforge_response.dart';
 
 import 'package:farmforge_client/utilities/constants.dart';
@@ -42,9 +40,9 @@ class _SettingsState extends State<Settings> {
     }
     catch(e) {
       UiUtility.handleError(
-        context: null, 
-        title: null, 
-        error: null
+        context: context, 
+        title: 'Load Error', 
+        error: e.toString()
       );
     }
   }
