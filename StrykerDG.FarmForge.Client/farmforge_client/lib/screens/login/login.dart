@@ -72,6 +72,14 @@ class _LoginState extends State<Login> {
       }
     }
   }
+
+  @override
+  void dispose() {
+    _usernameController.dispose();
+    _passwordController.dispose();
+    
+    super.dispose();
+  }
   
   @override
   Widget build(BuildContext context) {

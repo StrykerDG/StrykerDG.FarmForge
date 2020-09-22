@@ -2,6 +2,8 @@ import 'package:http/http.dart' as http;
 import 'dart:convert' as convert;
 
 import 'package:farmforge_client/models/farmforge_response.dart';
+import 'package:farmforge_client/models/dto/new_crop_dto.dart';
+import 'package:farmforge_client/models/general/location.dart';
 
 class FarmForgeApiService {
   static String token;
@@ -28,6 +30,9 @@ class FarmForgeApiService {
           break;
         case 'PATCH':
           response = await http.patch('$apiUrl/$uri', headers: headers, body: body);
+          break;
+        case 'DELETE':
+          response = await http.delete('$apiUrl/$uri', headers: headers);
           break;
       }
 
@@ -64,15 +69,34 @@ class FarmForgeApiService {
   }
 
   // Crops
-  Future<FarmForgeResponse> getCrops({DateTime begin, DateTime end}) async {
-    FarmForgeResponse response = await request(
-      'Crops?begin=${begin.toString()}&end=${end.toString()}',
-      null, 
-      'GET'
-    );
+  Future<FarmForgeResponse> getCrops({
+    DateTime begin, 
+    DateTime end, 
+    String includes = ""
+  }) async {
+    String uri = 'Crops?begin=${begin.toString()}&end=${end.toString()}';
 
-    print(response.data.toString());
-    return response;
+    if(includes.isNotEmpty)
+      uri += '&includes=$includes';
+
+    return await request(uri, null, 'GET');
+  }
+
+  Future<FarmForgeResponse> createCrop(NewCropDTO newCrop) async {
+    Map<String, dynamic> requestObject = {
+      'CropTypeId': newCrop.cropTypeId,
+      'VarietyId': newCrop.varietyId,
+      'LocationId': newCrop.locationId,
+      'Quantity': newCrop.quantity,
+      'Date': newCrop.date.toIso8601String()
+    };
+
+    String jsonBody = convert.jsonEncode(requestObject);
+    return await request(
+      'Crops',
+      jsonBody,
+      'POST'
+    );
   }
 
   Future<FarmForgeResponse> getCropTypes({String includes}) async {
@@ -80,24 +104,20 @@ class FarmForgeApiService {
       ? 'CropTypes'
       : 'CropTypes?includes=$includes';
 
-    FarmForgeResponse response = await request(
+    return await request(
       uri,
       null,
       'GET'
     );
-
-    return response;
   }
 
   // Locations
   Future<FarmForgeResponse> getLocations() async {
-    FarmForgeResponse response = await request(
+    return await request(
       'Locations',
       null,
       'GET'
     );
-
-    return response;
   }
 
   Future<FarmForgeResponse> addLocation(String name, int parentId) async {
@@ -110,5 +130,22 @@ class FarmForgeApiService {
 
     String jsonBody = convert.jsonEncode(locationObject);
     return await request('Locations', jsonBody, 'POST');
+  }
+
+  Future<FarmForgeResponse> updateLocation(
+    String fields, 
+    Location location) async {
+    
+    Map<String, dynamic> requestBody = {
+      'Fields': fields,
+      'Location': location.toMap()
+    };
+
+    String jsonBody = convert.jsonEncode(requestBody);
+    return await request('Locations', jsonBody, 'PATCH');
+  }
+
+  Future<FarmForgeResponse> deleteLocation(int id) async {
+    return await request('Locations/$id', null, 'DELETE');
   }
 }

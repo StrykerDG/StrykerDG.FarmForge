@@ -59,6 +59,13 @@ class _AddLocationState extends State<AddLocation> {
   }
 
   @override
+  void dispose() {
+    _nameController.dispose();
+    
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
 
     List<Location> existingLocations = Provider.of<DataProvider>(context)

@@ -1,6 +1,10 @@
 class Validation {
-  static String isNotEmpty(String value) {
-    return value != null && value.isNotEmpty
+  static String isNotEmpty(dynamic value) {
+    if(value.runtimeType == String && !value.isNotEmpty) {
+      return 'Cannot be empty';
+    }
+
+    return value != null
       ? null
       : 'Cannot be empty';
   }

@@ -7,10 +7,10 @@ namespace StrykerDG.FarmForge.LocalApi.Controllers.DTO.Requests
 {
     public class NewCropDTO
     {
-        public int CropTypeId { get; private set; }
-        public int VarietyId { get; private set; }
-        public int LocationId { get; private set; }
-        public int Quantity { get; private set; }
-        public DateTime Date { get; private set; }
+        public int CropTypeId { get; set; }
+        public int VarietyId { get; set; }
+        public int LocationId { get; set; }
+        public int Quantity { get; set; }
+        public DateTime Date { get; set; }
     }
 }

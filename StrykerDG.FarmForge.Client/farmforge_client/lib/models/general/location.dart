@@ -19,4 +19,13 @@ class Location {
       label: data['label']
     );
   }
+
+  Map<String, dynamic> toMap() {
+    return {
+      'LocationId': this.locationId,
+      'ParentLocationId': this.parentLocationId,
+      'Name': this.name,
+      'Label': this.label
+    };
+  }
 }

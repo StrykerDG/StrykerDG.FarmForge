@@ -4,11 +4,10 @@ import 'package:provider/provider.dart';
 import 'package:farmforge_client/provider/core_provider.dart';
 import 'package:farmforge_client/provider/data_provider.dart';
 
-import 'package:farmforge_client/models/crops/crop_type.dart';
-import 'package:farmforge_client/models/general/location.dart';
 import 'package:farmforge_client/models/farmforge_response.dart';
 
 import 'package:farmforge_client/utilities/constants.dart';
+import 'package:farmforge_client/utilities/ui_utility.dart';
 
 import 'desktop_settings.dart';
 import 'tablet_settings.dart';
@@ -40,7 +39,11 @@ class _SettingsState extends State<Settings> {
         });
     }
     catch(e) {
-      print('Error! ${e.toString()}');
+      UiUtility.handleError(
+        context: context, 
+        title: 'Load Error', 
+        error: e.toString()
+      );
     }
   }
 
@@ -59,8 +62,6 @@ class _SettingsState extends State<Settings> {
 
   @override
   Widget build(BuildContext context) {
-    // List<CropType> cropTypes = Provider.of<DataProvider>(context).cropTypes;
-    // List<Location> locations = Provider.of<DataProvider>(context).locations;
 
     return LayoutBuilder(
       builder: (BuildContext context, BoxConstraints constraints) {

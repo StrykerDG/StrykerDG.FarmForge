@@ -18,6 +18,8 @@ namespace StrykerDG.FarmForge.Actors.Locations
         {
             Receive<AskForLocations>(HandleAskForLocations);
             Receive<AskToCreateLocation>(HandleAskToCreateLocation);
+            Receive<AskToUpdateLocation>(HandleUpdateLocation);
+            Receive<AskToDeleteLocation>(HandleDeleteLocation);
         }
 
         // Message Methods
@@ -27,6 +29,7 @@ namespace StrykerDG.FarmForge.Actors.Locations
             {
                 var results = context.Locations
                     .AsNoTracking()
+                    .Where(l => l.IsDeleted == false)
                     .ToList();
 
                 Sender.Tell(results);
@@ -39,27 +42,133 @@ namespace StrykerDG.FarmForge.Actors.Locations
             {
                 try
                 {
+                    var result = new Location();
+                    var now = DateTime.Now;
+
                     var duplicateLocation = context.Locations
                         .Where(l => l.Name == message.Name)
                         .FirstOrDefault();
 
-                    if (duplicateLocation != null)
+                    // Trying to add a Location that already exists
+                    if (duplicateLocation != null && duplicateLocation.IsDeleted == false)
                         throw new Exception("Location names must be unique");
 
-                    var now = DateTime.Now;
-                    var newLocation = new Location
+                    // Adding a Location that was previously deleted
+                    else if (duplicateLocation != null && duplicateLocation.IsDeleted == true)
                     {
-                        ParentLocationId = message.ParentId,
-                        Name = message.Name,
-                        Label = message.Label,
-                        Created = now,
-                        Modified = now,
-                        IsDeleted = false
-                    };
+                        duplicateLocation.IsDeleted = false;
+                        duplicateLocation.ParentLocationId = null;
+                        duplicateLocation.Modified = now;
+                        result = duplicateLocation;
+                    }
 
-                    context.Add(newLocation);
+                    // Adding a location that is new
+                    else
+                    {
+                        var newLocation = new Location
+                        {
+                            ParentLocationId = message.ParentId,
+                            Name = message.Name,
+                            Label = message.Label,
+                            Created = now,
+                            Modified = now,
+                            IsDeleted = false
+                        };
+
+                        context.Add(newLocation);
+                        result = newLocation;
+                    }
+
                     context.SaveChanges();
-                    Sender.Tell(newLocation);
+                    Sender.Tell(result);
+                }
+                catch(Exception ex)
+                {
+                    Sender.Tell(ex);
+                }
+            });
+        }
+
+        public void HandleUpdateLocation(AskToUpdateLocation message)
+        {
+            Using<FarmForgeDataContext>((context) =>
+            {
+                try
+                {
+                    var now = DateTime.Now;
+
+                    var dbLocation = context.Locations
+                        .Where(l => 
+                            l.LocationId == message.Location.LocationId &&
+                            l.IsDeleted == false
+                        )
+                        .FirstOrDefault();
+
+                    if (dbLocation == null)
+                        throw new Exception("Location not found");
+
+                    var updatedFields = message.Fields.Split(",");
+
+                    // TODO: Figure out how to do this without reflection
+                    foreach(var field in updatedFields)
+                    {
+                        var providedValue = message
+                            .Location
+                            .GetType()
+                            .GetProperty(field)
+                            .GetValue(message.Location, null);
+
+                        dbLocation
+                            .GetType()
+                            .GetProperty(field)
+                            .SetValue(dbLocation, providedValue);
+                    }
+
+                    dbLocation.Modified = now;
+
+                    context.SaveChanges();
+                    Sender.Tell(dbLocation);
+                }
+                catch(Exception ex)
+                {
+                    Sender.Tell(ex);
+                }
+            });
+        }
+
+        public void HandleDeleteLocation(AskToDeleteLocation message)
+        {
+            Using<FarmForgeDataContext>((context) =>
+            {
+                try
+                {
+                    var now = DateTime.Now;
+
+                    var existingLocation = context.Locations
+                        .Where(l =>
+                            l.LocationId == message.LocationId &&
+                            l.IsDeleted == false
+                        )
+                        .FirstOrDefault();
+
+                    if (existingLocation == null)
+                        throw new Exception("Location not found");
+
+                    existingLocation.IsDeleted = true;
+                    existingLocation.Modified = now;
+
+                    var childLocations = context.Locations
+                        .Where(l => l.ParentLocationId == message.LocationId)
+                        .ToList();
+
+                    foreach(var location in childLocations)
+                    {
+                        location.ParentLocationId = null;
+                        location.Modified = now;
+                    }
+
+                    context.SaveChanges();
+                    Sender.Tell(true);
                 }
                 catch(Exception ex)
                 {

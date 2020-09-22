@@ -26,14 +26,18 @@ namespace StrykerDG.FarmForge.LocalApi.Controllers
 
         [HttpGet]
         [Authorize(Policy = "AuthenticatedWebClient")]
-        public async Task<IActionResult> GetCrops(string begin, string end)
+        public async Task<IActionResult> GetCrops(string begin, string end, string includes)
         {
             if (
                 DateTime.TryParse(begin, out var beginDateTime) &&
                 DateTime.TryParse(end, out var endDateTime)
             )
             {
-                var result = await CropActor.Ask(new AskForCrops(beginDateTime, endDateTime));
+                var result = await CropActor.Ask(new AskForCrops(
+                    beginDateTime, 
+                    endDateTime,
+                    includes
+                ));
                 return Ok(FarmForgeApiResponse.Success(result));
             }
             else
@@ -52,7 +56,14 @@ namespace StrykerDG.FarmForge.LocalApi.Controllers
                 newCrop.Date
             ));
 
-            return Ok(FarmForgeApiResponse.Success(result));
+            var resultType = result.GetType();
+            if(resultType == typeof(Exception))
+            {
+                var ex = (Exception)result;
+                return Ok(FarmForgeApiResponse.Failure(ex.Message));
+            }
+            else
+                return Ok(FarmForgeApiResponse.Success(result));
         }
     }
 }
