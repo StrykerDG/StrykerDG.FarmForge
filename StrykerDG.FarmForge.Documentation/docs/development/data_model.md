@@ -12,7 +12,7 @@ This section is broken out into different areas based on how the tables are rela
 ## Generic Tables
 Generic tables are used throughout the app in a number of different areas and ways.
 
-**FarmForgeBaseModel**: A base model that all other tables inherit.
+**BaseModel**: A base model that all other tables inherit.
 
 | Column        | Type          | Description  |
 |:-------------:|:-------------:|:------------:|
@@ -101,3 +101,61 @@ Device tables are all related to storing data for FarmForge IoT devices.
 | BoolValue | Bool | The bool value of the telemetry |
 
 ## Crop Tables
+
+**Crop**: Represents a specific crop that is planted and grown
+
+| Column        | Type          | Description  |
+|:-------------:|:-------------:|:------------:|
+| CropId | Int | Primary Key |
+| CropTypeId | Int | Foreign key to the type of crop |
+| CropVarietyId | Int | Foreign key to the variety of crop |
+| LocationId | Int | Foreign key to the location at which the crop is planted |
+| StatusId | Int | Foreign key to the status of the crop |
+| PlantedAt | DateTime | The time at which the crop was planted |
+| GerminatedAt | DateTime | The time at which the crop germinated |
+| HarvestedAt | DateTime | The time at which the crop was first harvested |
+| TimeToGerminate | Long | The number of days required for the crop to germinate |
+| TimeToHarvest | Long | The number of days required for the crop to be harvested |
+| Quantity | Int | The number of items planted |
+| QuantityHarvested | Int | The number of items harvested |
+| Yield | Double | The yield percentage of the crop |
+
+**CropType**: Defines a type of crop, such as apples, corn, mushrooms, etc
+
+| Column        | Type          | Description  |
+|:-------------:|:-------------:|:------------:|
+| CropTypeId | Int | Primary Key |
+| CropClassificationId | Int | Foreign key to the classification of the crop |
+| Name | String | The name of the crop type |
+| Label | String | The user facing label of the crop type |
+| AverageGermination | Long | The average germination time (in days) for this type of crop |
+| AverageTimeToHarvest | Long | The average time to harvest (int days) for this type of crop |
+| AverageYield | Double | The average yield percentage for this type of crop |
+
+**CropClassification**: The classification of a crop, such as fruit or vegetable
+
+| Column        | Type          | Description  |
+|:-------------:|:-------------:|:------------:|
+| CropClassificationId | Int | Primary Key |
+| Name | String | The name of the classification |
+| Label | String | The user facing label for the classification |
+| Description | String | A description of the classification | 
+
+**CropVariety**: The variety of a crop, such as Sugarbaby (watermelon) or Red
+Delicious (apple)
+
+| Column        | Type          | Description  |
+|:-------------:|:-------------:|:------------:|
+| CropVarietyId | Int | Primary Key |
+| CropTypeId | Int | Foreign key to the type of crop that this variety belongs to |
+| Name | String | The name of the variety |
+| Label | String | The user facing label for the variety |
+
+**CropLog**: A log specific to a particular crop
+
+| Column        | Type          | Description  |
+|:-------------:|:-------------:|:------------:|\
+| CropLogId | Int | Primary Key |
+| CropId | Int | Foreign key to the crop that this log is for |
+| LogTypeId | Int | Foreign key to the type of log this is (observation, input, etc) |
+| Notes | String | Notes specific to this log |
