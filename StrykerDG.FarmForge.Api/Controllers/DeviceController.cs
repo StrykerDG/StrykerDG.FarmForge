@@ -12,7 +12,7 @@ namespace StrykerDG.FarmForge.LocalApi.Controllers
 {
     [ApiController]
     [Route("Device")]
-    public class DeviceController : ControllerBase
+    public class DeviceController : FarmForgeController
     {
         private IActorRef DeviceActor { get; set; }
 

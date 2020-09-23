@@ -14,7 +14,7 @@ namespace StrykerDG.FarmForge.LocalApi.Controllers
 {
     [ApiController]
     [Route("Auth")]
-    public class AuthenticationController : ControllerBase
+    public class AuthenticationController : FarmForgeController
     {
         private IActorRef AuthActor { get; set; }
 
@@ -33,14 +33,7 @@ namespace StrykerDG.FarmForge.LocalApi.Controllers
 
             var result = await AuthActor.Ask(new AskToLogin(login.Username, login.Password));
 
-            var resultType = result.GetType();
-            if(resultType == typeof(Exception) || resultType == typeof(UnauthorizedAccessException))
-            {
-                var ex = (Exception)result;
-                return Ok(FarmForgeApiResponse.Failure(ex.Message));
-            }
-            else
-                return Ok(FarmForgeApiResponse.Success(result));
+            return ValidateActorResult(result);
         }
     }
 }

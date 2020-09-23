@@ -12,7 +12,7 @@ namespace StrykerDG.FarmForge.LocalApi.Controllers
 {
     [ApiController]
     [Route("Statuses")]
-    public class StatusController : ControllerBase
+    public class StatusController : FarmForgeController
     {
         private IActorRef StatusActor { get; set; }
 

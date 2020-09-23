@@ -12,7 +12,7 @@ namespace StrykerDG.FarmForge.LocalApi.Controllers
 {
     [ApiController]
     [Route("CropTypes")]
-    public class CropTypeController : ControllerBase
+    public class CropTypeController : FarmForgeController
     {
         private IActorRef CropTypeActor { get; set; }
 
