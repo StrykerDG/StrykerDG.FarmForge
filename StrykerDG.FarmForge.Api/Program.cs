@@ -24,8 +24,7 @@ namespace StrykerDG.FarmForge.Api
             var settings = new ApiSettings();
             config.GetSection("ApiSettings").Bind(settings);
 
-            var serviceProvider = CreateServices(
-                settings.ConnectionStrings["Database"]);
+            var serviceProvider = CreateServices(settings);
 
             using (var scope = serviceProvider.CreateScope())
             {
@@ -42,16 +41,24 @@ namespace StrykerDG.FarmForge.Api
                     webBuilder.UseStartup<Startup>();
                 });
 
-        public static IServiceProvider CreateServices(string connectionString)
+        public static IServiceProvider CreateServices(ApiSettings settings)
         {
             return new ServiceCollection()
                 .AddFluentMigratorCore()
                 .ConfigureRunner(rb =>
-                    rb.AddSQLite()
-                    .WithGlobalConnectionString(connectionString)
-                    .ScanIn(typeof(Release_0001).Assembly).For
-                    .Migrations()
-                )
+                {
+                    if (settings.DatabaseType == DatabaseType.SQLITE)
+                        rb.AddSQLite()
+                        .WithGlobalConnectionString(settings.ConnectionStrings["Database"])
+                        .ScanIn(typeof(Release_0001).Assembly).For
+                        .Migrations();
+
+                    else if (settings.DatabaseType == DatabaseType.SQLSERVER)
+                        rb.AddSqlServer()
+                        .WithGlobalConnectionString(settings.ConnectionStrings["Database"])
+                        .ScanIn(typeof(Release_0001).Assembly).For
+                        .Migrations();
+                })
                 .AddLogging(lb => lb.AddFluentMigratorConsole())
                 .BuildServiceProvider(false);
         }

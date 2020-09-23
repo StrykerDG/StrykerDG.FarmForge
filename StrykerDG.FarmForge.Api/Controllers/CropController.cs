@@ -14,7 +14,7 @@ namespace StrykerDG.FarmForge.LocalApi.Controllers
 {
     [ApiController]
     [Route("Crops")]
-    public class CropController : ControllerBase
+    public class CropController : FarmForgeController
     {
         private IActorRef CropActor { get; set; }
 
@@ -57,14 +57,7 @@ namespace StrykerDG.FarmForge.LocalApi.Controllers
                 newCrop.Date
             ));
 
-            var resultType = result.GetType();
-            if(resultType == typeof(Exception))
-            {
-                var ex = (Exception)result;
-                return Ok(FarmForgeApiResponse.Failure(ex.Message));
-            }
-            else
-                return Ok(FarmForgeApiResponse.Success(result));
+            return ValidateActorResult(result);
         }
 
         [HttpPost("{cropId}/Logs")]
@@ -78,14 +71,7 @@ namespace StrykerDG.FarmForge.LocalApi.Controllers
                 logDto.Notes
             ));
 
-            var resultType = result.GetType();
-            if (resultType == typeof(Exception))
-            {
-                var ex = (Exception)result;
-                return Ok(FarmForgeApiResponse.Failure(ex.Message));
-            }
-            else
-                return Ok(FarmForgeApiResponse.Success(result));
+            return ValidateActorResult(result);
         }
     }
 }

@@ -114,7 +114,6 @@ namespace StrykerDG.FarmForge.Actors.Devices
 
                         context.Logs.Add(new Log
                         {
-                            TimeStamp = DateTime.Now,
                             Message = logMessage,
                             Data = logDataString
                         });
@@ -152,7 +151,6 @@ namespace StrykerDG.FarmForge.Actors.Devices
 
                 context.Logs.Add(new Log
                 {
-                    TimeStamp = DateTime.Now,
                     Message = logMessage,
                     Data = logDataString
                 });

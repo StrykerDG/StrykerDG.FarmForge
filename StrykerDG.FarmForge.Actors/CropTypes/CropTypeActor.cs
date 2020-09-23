@@ -26,6 +26,7 @@ namespace StrykerDG.FarmForge.Actors.CropTypes
                 var results = context.CropTypes
                     .AsNoTracking()
                     .WithIncludes(message.Includes)
+                    .Where(ct => ct.IsDeleted == false)
                     .ToList();
 
                 Sender.Tell(results);

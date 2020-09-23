@@ -12,7 +12,7 @@ namespace StrykerDG.FarmForge.LocalApi.Controllers
 {
     [ApiController]
     [Route("LogTypes")]
-    public class LogTypeController : ControllerBase
+    public class LogTypeController : FarmForgeController
     {
         private IActorRef LogTypeActor { get; set; }
 

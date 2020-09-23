@@ -69,10 +69,7 @@ namespace StrykerDG.FarmForge.Actors.Locations
                         {
                             ParentLocationId = message.ParentId,
                             Name = message.Name,
-                            Label = message.Label,
-                            Created = now,
-                            Modified = now,
-                            IsDeleted = false
+                            Label = message.Label
                         };
 
                         context.Add(newLocation);
@@ -109,7 +106,6 @@ namespace StrykerDG.FarmForge.Actors.Locations
 
                     var updatedFields = message.Fields.Split(",");
 
-                    // TODO: Figure out how to do this without reflection
                     foreach(var field in updatedFields)
                     {
                         var providedValue = message
@@ -123,8 +119,6 @@ namespace StrykerDG.FarmForge.Actors.Locations
                             .GetProperty(field)
                             .SetValue(dbLocation, providedValue);
                     }
-
-                    dbLocation.Modified = now;
 
                     context.SaveChanges();
                     Sender.Tell(dbLocation);
@@ -155,17 +149,13 @@ namespace StrykerDG.FarmForge.Actors.Locations
                         throw new Exception("Location not found");
 
                     existingLocation.IsDeleted = true;
-                    existingLocation.Modified = now;
 
                     var childLocations = context.Locations
                         .Where(l => l.ParentLocationId == message.LocationId)
                         .ToList();
 
                     foreach(var location in childLocations)
-                    {
                         location.ParentLocationId = null;
-                        location.Modified = now;
-                    }
 
                     context.SaveChanges();
                     Sender.Tell(true);

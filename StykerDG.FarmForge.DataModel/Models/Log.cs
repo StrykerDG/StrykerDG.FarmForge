@@ -5,11 +5,10 @@ using System.ComponentModel.DataAnnotations.Schema;
 namespace StrykerDG.FarmForge.DataModel.Models
 {
     [Table("Log")]
-    public class Log
+    public class Log : BaseModel 
     {
         [Key]
         public int LogId { get; set; }
-        public DateTime TimeStamp { get; set; }
         public string Message { get; set; }
         public string Data { get; set; }
         public int LogTypeId { get; set; }
