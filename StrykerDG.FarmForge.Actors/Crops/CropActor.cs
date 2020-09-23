@@ -127,19 +127,13 @@ namespace StrykerDG.FarmForge.Actors.Crops
                     {
                         CropId = dbCrop.CropId,
                         LogTypeId = message.LogTypeId,
-                        Notes = message.Notes,
-                        Created = now,
-                        Modified = now,
-                        IsDeleted = false
+                        Notes = message.Notes
                     };
 
                     context.Add(newLog);
 
                     if(dbCrop.StatusId != message.CropStatusId)
-                    {
                         dbCrop.StatusId = message.CropStatusId;
-                        dbCrop.Modified = now;
-                    }
 
                     context.SaveChanges();
 

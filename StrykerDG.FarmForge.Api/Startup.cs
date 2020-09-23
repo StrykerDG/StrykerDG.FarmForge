@@ -195,6 +195,8 @@ namespace StrykerDG.FarmForge.Api
                 });
 
             services.AddControllers();
+
+            FarmForgeDataContext.SetTriggers();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

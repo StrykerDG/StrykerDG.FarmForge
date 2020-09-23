@@ -22,10 +22,10 @@ namespace StrykerDG.FarmForge.Migrations.Release_0001
 
             Create.Table("Log")
                 .WithId("LogId")
-                .WithColumn("TimeStamp").AsDateTime().NotNullable()
                 .WithColumn("Message").AsString(int.MaxValue).Nullable()
                 .WithColumn("Data").AsString(int.MaxValue).Nullable()
-                .WithColumn("LogTypeId").AsInt32().NotNullable();
+                .WithColumn("LogTypeId").AsInt32().NotNullable()
+                .WithBaseModel();
 
             Create.Table("LogType")
                 .WithId("LogTypeId")
@@ -445,7 +445,7 @@ namespace StrykerDG.FarmForge.Migrations.Release_0001
                 .Row(new { CropTypeId = blueberryId, CropClassificationId = fruitId, Name = "blueberry", Label = "Blueberry", Created = now, Modified = now, IsDeleted = false })
                 .Row(new { CropTypeId = cherryId, CropClassificationId = fruitId, Name = "cherry", Label = "Cherry", Created = now, Modified = now, IsDeleted = false })
                 .Row(new { CropTypeId = grapeId, CropClassificationId = fruitId, Name = "grape", Label = "Grape", Created = now, Modified = now, IsDeleted = false })
-                .Row(new { CropTypeId = peachId, CropClassificationId = fruitId, Name = "peach", Label = "PeachId", Created = now, Modified = now, IsDeleted = false })
+                .Row(new { CropTypeId = peachId, CropClassificationId = fruitId, Name = "peach", Label = "Peach", Created = now, Modified = now, IsDeleted = false })
                 .Row(new { CropTypeId = raspberryId, CropClassificationId = fruitId, Name = "raspberry", Label = "Raspberry", Created = now, Modified = now, IsDeleted = false })
                 .Row(new { CropTypeId = strawberryId, CropClassificationId = fruitId, Name = "strawberry", Label = "Strawberry", Created = now, Modified = now, IsDeleted = false })
                 .Row(new { CropTypeId = watermelonId, CropClassificationId = fruitId, Name = "watermelon", Label = "Watermelon", Created = now, Modified = now, IsDeleted = false })
