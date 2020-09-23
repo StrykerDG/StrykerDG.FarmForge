@@ -20,6 +20,7 @@ namespace StrykerDG.FarmForge.Actors.Crops
 
             Receive<AskForCrops>(HandleAskForCrops);
             Receive<AskToCreateCrop>(HandleCropCreation);
+            Receive<AskToCreateLog>(HandleLogCreation);
         }
 
         // Message Methods
@@ -96,6 +97,58 @@ namespace StrykerDG.FarmForge.Actors.Crops
                     newCrop.Logs = new List<CropLog>();
 
                     Sender.Tell(newCrop);
+                }
+                catch (Exception ex)
+                {
+                    Sender.Tell(ex);
+                }
+            });
+        }
+
+        public void HandleLogCreation(AskToCreateLog message)
+        {
+            Using<FarmForgeDataContext>((context) =>
+            {
+                try
+                {
+                    var now = DateTime.Now;
+                    
+                    if (message.CropId == 0 | message.LogTypeId == 0 | message.CropStatusId == 0)
+                        throw new Exception("Invalid CropId, CropTypeId, or StatusId");
+
+                    var dbCrop = context.Crops
+                        .Where(c => c.CropId == message.CropId)
+                        .FirstOrDefault();
+
+                    if (dbCrop == null)
+                        throw new Exception("Invalid CropId");
+
+                    var newLog = new CropLog
+                    {
+                        CropId = dbCrop.CropId,
+                        LogTypeId = message.LogTypeId,
+                        Notes = message.Notes,
+                        Created = now,
+                        Modified = now,
+                        IsDeleted = false
+                    };
+
+                    context.Add(newLog);
+
+                    if(dbCrop.StatusId != message.CropStatusId)
+                    {
+                        dbCrop.StatusId = message.CropStatusId;
+                        dbCrop.Modified = now;
+                    }
+
+                    context.SaveChanges();
+
+                    var logType = context.LogTypes
+                        .Where(lt => lt.LogTypeId == newLog.LogTypeId)
+                        .FirstOrDefault();
+                    newLog.LogType = logType;
+
+                    Sender.Tell(newLog);
                 }
                 catch (Exception ex)
                 {

@@ -1,15 +1,21 @@
+import 'package:farmforge_client/models/general/crop_log.dart';
 import 'package:flutter/material.dart';
 
 import 'package:farmforge_client/models/crops/crop.dart';
 import 'package:farmforge_client/models/crops/crop_type.dart';
 import 'package:farmforge_client/models/general/location.dart';
+import 'package:farmforge_client/models/general/log_type.dart';
+import 'package:farmforge_client/models/general/status.dart';
 
 class DataProvider extends ChangeNotifier {
   DateTime defaultDate = DateTime.now().subtract(Duration(days: 60));
   List<Crop> crops = [];
   List<CropType> cropTypes = [];
   List<Location> locations = [];
+  List<Status> statuses = [];
+  List<LogType> logTypes = [];
 
+  // Crops
   void setCrops(List<dynamic> newCrops) {
     crops.clear();
     newCrops.forEach((cropData) { 
@@ -31,6 +37,37 @@ class DataProvider extends ChangeNotifier {
     notifyListeners();
   }
 
+  void addLogToCrop(Map<String, dynamic> log) {
+    CropLog newLog = CropLog.fromMap(log);
+    crops.firstWhere(
+      (c) => c.cropId == newLog.cropId,
+      orElse: () => null
+    )?.logs?.add(newLog);
+    notifyListeners();
+  }
+
+  void updateCropStatus(int cropId, int newStatusId) {
+    Status newStatus = statuses
+      .firstWhere(
+        (s) => s.statusId == newStatusId,
+        orElse: () => null
+      );
+
+    if(newStatus != null) {
+      crops.firstWhere(
+        (c) => c.cropId == cropId,
+        orElse: () => null
+      )?.statusId = newStatusId;
+
+      crops.firstWhere(
+        (c) => c.cropId == cropId,
+        orElse: () => null
+      )?.status = newStatus;
+      notifyListeners();
+    }    
+  }
+
+  // Locations
   void setLocations(List<dynamic> newLocations) {
     locations.clear();
     newLocations.forEach((locationData) { 
@@ -59,6 +96,24 @@ class DataProvider extends ChangeNotifier {
 
   void deleteLocation(int id) {
     locations.removeWhere((l) => l.locationId == id);
+    notifyListeners();
+  }
+
+  // Log Types
+  void setLogTypes(List<dynamic> newLogTypes) {
+    logTypes.clear();
+    newLogTypes.forEach((logTypeData) { 
+      logTypes.add(LogType.fromMap(logTypeData));
+    });
+    notifyListeners();
+  }
+
+  // Statuses
+  void setStatuses(List<dynamic> newStatuses) {
+    statuses.clear();
+    newStatuses.forEach((statusData) {
+      statuses.add(Status.fromMap(statusData));
+    });
     notifyListeners();
   }
 }
