@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using StrykerDG.FarmForge.Actors.Crops.Messages;
+using StrykerDG.FarmForge.DataModel.Models;
 using StrykerDG.FarmForge.LocalApi.Controllers.DTO.Requests;
 using StrykerDG.FarmForge.LocalApi.Controllers.DTO.Responses;
 using System;
@@ -58,6 +59,27 @@ namespace StrykerDG.FarmForge.LocalApi.Controllers
 
             var resultType = result.GetType();
             if(resultType == typeof(Exception))
+            {
+                var ex = (Exception)result;
+                return Ok(FarmForgeApiResponse.Failure(ex.Message));
+            }
+            else
+                return Ok(FarmForgeApiResponse.Success(result));
+        }
+
+        [HttpPost("{cropId}/Logs")]
+        [Authorize(Policy = "AuthenticatedWebClient")]
+        public async Task<IActionResult> CreateLogForCrop([FromBody]NewCropLogDTO logDto, int cropId)
+        {
+            var result = await CropActor.Ask(new AskToCreateLog(
+                cropId,
+                logDto.LogTypeId,
+                logDto.CropStatusId,
+                logDto.Notes
+            ));
+
+            var resultType = result.GetType();
+            if (resultType == typeof(Exception))
             {
                 var ex = (Exception)result;
                 return Ok(FarmForgeApiResponse.Failure(ex.Message));

@@ -1,3 +1,5 @@
+import 'package:farmforge_client/models/dto/new_crop_log_dto.dart';
+import 'package:farmforge_client/models/general/crop_log.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert' as convert;
 
@@ -111,6 +113,15 @@ class FarmForgeApiService {
     );
   }
 
+  Future<FarmForgeResponse> createCropLog(NewCropLogDTO log) async {
+    String jsonBody = convert.jsonEncode(log.toMap());
+    return await request(
+      'Crops/${log.cropId}/Logs',
+      jsonBody,
+      'POST'
+    );
+  }
+
   // Locations
   Future<FarmForgeResponse> getLocations() async {
     return await request(
@@ -147,5 +158,15 @@ class FarmForgeApiService {
 
   Future<FarmForgeResponse> deleteLocation(int id) async {
     return await request('Locations/$id', null, 'DELETE');
+  }
+
+  // Logs
+  Future<FarmForgeResponse> getLogsByType(String type) async {
+    return await request('LogTypes/$type', null, 'GET');
+  }
+
+  // Statuses
+  Future<FarmForgeResponse> getStatusesByType(String type) async {
+    return await request('Statuses/$type', null, 'GET');
   }
 }

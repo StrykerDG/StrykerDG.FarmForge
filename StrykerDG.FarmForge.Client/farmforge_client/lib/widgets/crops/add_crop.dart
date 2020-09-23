@@ -35,12 +35,12 @@ class _AddCropState extends State<AddCrop> {
         .farmForgeService.getLocations();
       
       Future.wait([cropTypeFuture, locationFuture])
-      .then((responses) {
-        Provider.of<DataProvider>(context, listen: false)
-          .setCropTypes(responses[0].data);
-        Provider.of<DataProvider>(context, listen: false)
-          .setLocations(responses[1].data);
-      });
+        .then((responses) {
+          Provider.of<DataProvider>(context, listen: false)
+            .setCropTypes(responses[0].data);
+          Provider.of<DataProvider>(context, listen: false)
+            .setLocations(responses[1].data);
+        });
     }
     catch(e) {
       UiUtility.handleError(

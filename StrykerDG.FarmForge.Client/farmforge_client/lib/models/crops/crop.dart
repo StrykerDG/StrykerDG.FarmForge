@@ -1,5 +1,6 @@
 import 'package:farmforge_client/models/crops/crop_type.dart';
 import 'package:farmforge_client/models/crops/crop_variety.dart';
+import 'package:farmforge_client/models/general/crop_log.dart';
 import 'package:farmforge_client/models/general/location.dart';
 import 'package:farmforge_client/models/general/status.dart';
 
@@ -21,6 +22,7 @@ class Crop {
   int quantity;
   int quantityHarvested;
   double yieldPercent;
+  List<CropLog> logs = [];
 
   Crop({
     this.cropId,
@@ -39,7 +41,8 @@ class Crop {
     this.timeToHarvest,
     this.quantity,
     this.quantityHarvested,
-    this.yieldPercent
+    this.yieldPercent,
+    this.logs
   });
 
   factory Crop.fromMap(Map<String, dynamic> data) {
@@ -71,6 +74,13 @@ class Crop {
       ? DateTime.parse(data['harvestedAt'])
       : null;
 
+    List<CropLog> logs = new List<CropLog>();
+    if(data['logs'] != null && data['logs'].length > 0)
+      data['logs'].forEach((logData) {
+        CropLog log = CropLog.fromMap(logData);
+        logs.add(log);
+      });
+
     return Crop(
       cropId: data['cropId'],
       cropTypeId: data['cropTypeId'],
@@ -88,7 +98,8 @@ class Crop {
       timeToHarvest: data['timeToHarvest'],
       quantity: data['quantity'],
       quantityHarvested: data['quantityHarvested'],
-      yieldPercent: data['yieldPercent']
+      yieldPercent: data['yieldPercent'],
+      logs: logs
     );
   }
 }

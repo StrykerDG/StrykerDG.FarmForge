@@ -17,6 +17,8 @@ using StrykerDG.FarmForge.Actors.Crops;
 using StrykerDG.FarmForge.Actors.CropTypes;
 using StrykerDG.FarmForge.Actors.Devices;
 using StrykerDG.FarmForge.Actors.Locations;
+using StrykerDG.FarmForge.Actors.LogTypes;
+using StrykerDG.FarmForge.Actors.Statuses;
 using StrykerDG.FarmForge.Actors.WebSockets;
 using StrykerDG.FarmForge.Actors.WebSockets.Messages;
 using StrykerDG.FarmForge.DataModel.Contexts;
@@ -146,6 +148,16 @@ namespace StrykerDG.FarmForge.Api
                     actorSystem.ActorOf(Props.Create(() =>
                         new LocationActor(serviceScopeFactory)),
                         "LocationActor"
+                ));
+                Actors.Add(
+                    actorSystem.ActorOf(Props.Create(() =>
+                        new LogTypeActor(serviceScopeFactory)),
+                        "LogTypeActor"
+                ));
+                Actors.Add(
+                    actorSystem.ActorOf(Props.Create(() =>
+                        new StatusActor(serviceScopeFactory)),
+                        "StatusActor"
                 ));
 
                 return actorSystem;
