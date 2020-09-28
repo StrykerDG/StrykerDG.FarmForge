@@ -120,6 +120,8 @@ namespace StrykerDG.FarmForge.Actors.Locations
                             .SetValue(dbLocation, providedValue);
                     }
 
+                    dbLocation.Modified = now;
+
                     context.SaveChanges();
                     Sender.Tell(dbLocation);
                 }

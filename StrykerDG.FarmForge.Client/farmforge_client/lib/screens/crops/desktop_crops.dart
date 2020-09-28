@@ -2,6 +2,7 @@ import 'package:farmforge_client/main.dart';
 import 'package:farmforge_client/models/crops/crop.dart';
 import 'package:farmforge_client/provider/data_provider.dart';
 import 'package:farmforge_client/widgets/crops/add_crop_log.dart';
+import 'package:farmforge_client/widgets/crops/view_crop.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 
@@ -65,13 +66,13 @@ class _DesktopCropsState extends State<DesktopCrops> {
   }
 
   void handleRowClick(Crop crop) {
-    // showDialog(
-    //   context: context,
-    //   builder: (context) => FarmForgeDialog(
-    //     title: 'Add ${crop.cropType.label} Log',
-    //     content: AddCropLog(crop: crop),
-    //   ),
-    // );
+    showDialog(
+      context: context,
+      builder: (context) => FarmForgeDialog(
+        title: '${crop.cropType.label} - ${crop.cropVariety.label}',
+        content: ViewCrop(crop: crop),
+      ),
+    );
   }
 
   List<DataColumn> getCropColumns() {

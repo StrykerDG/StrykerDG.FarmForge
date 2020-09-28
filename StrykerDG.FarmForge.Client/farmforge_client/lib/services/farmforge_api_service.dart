@@ -1,11 +1,11 @@
-import 'package:farmforge_client/models/dto/new_crop_log_dto.dart';
-import 'package:farmforge_client/models/general/crop_log.dart';
+import 'package:farmforge_client/models/crops/crop.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert' as convert;
 
 import 'package:farmforge_client/models/farmforge_response.dart';
-import 'package:farmforge_client/models/dto/new_crop_dto.dart';
 import 'package:farmforge_client/models/general/location.dart';
+import 'package:farmforge_client/models/dto/new_crop_dto.dart';
+import 'package:farmforge_client/models/dto/new_crop_log_dto.dart';
 
 class FarmForgeApiService {
   static String token;
@@ -99,6 +99,19 @@ class FarmForgeApiService {
       jsonBody,
       'POST'
     );
+  }
+
+  Future<FarmForgeResponse> updateCrop({
+    String fields,
+    Crop crop}) async {
+    
+    Map<String, dynamic> requestBody = {
+      'Fields': fields,
+      'Crop': crop?.toMap()
+    };
+
+    String jsonBody = convert.jsonEncode(requestBody);
+    return await request('Crops', jsonBody, 'PATCH');
   }
 
   Future<FarmForgeResponse> getCropTypes({String includes}) async {

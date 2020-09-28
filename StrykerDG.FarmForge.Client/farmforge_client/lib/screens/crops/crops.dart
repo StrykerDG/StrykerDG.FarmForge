@@ -31,7 +31,7 @@ class _CropsState extends State<Crops> {
         .farmForgeService.getCrops(
           begin: Provider.of<DataProvider>(context, listen: false).defaultDate,
           end: DateTime.now(),
-          includes: 'CropType,CropVariety,Location,Status'
+          includes: 'CropType,CropVariety,Location,Status,Logs.LogType'
         );
 
       if(cropResponse.data != null) {
