@@ -46,6 +46,23 @@ class DataProvider extends ChangeNotifier {
     notifyListeners();
   }
 
+  void updateCrop(Map<String, dynamic> newCrop) {
+    Crop updatedCrop = Crop.fromMap(newCrop);
+    int index = -1;
+    
+    for(int i = 0; i < crops.length; i++) {
+      if(crops[i].cropId == updatedCrop.cropId) {
+        index = i;
+        break;
+      }
+    }
+
+    if(index >= 0) {
+      crops[index] = updatedCrop;
+      notifyListeners();
+    }
+  }
+
   void updateCropStatus(int cropId, int newStatusId) {
     Status newStatus = statuses
       .firstWhere(
@@ -65,6 +82,27 @@ class DataProvider extends ChangeNotifier {
       )?.status = newStatus;
       notifyListeners();
     }    
+  }
+
+  void updateCropLocation(int cropId, int newLocationId) {
+    Location newLocation = locations
+      .firstWhere(
+        (l) => l.locationId == newLocationId,
+        orElse: () => null
+      );
+
+      if(newLocation != null) {
+        crops.firstWhere(
+          (c) => c.cropId == cropId,
+          orElse: () => null
+        )?.locationId = newLocationId;
+
+        crops.firstWhere(
+          (c) => c.cropId == cropId,
+          orElse: () => null
+        )?.location = newLocation;
+        notifyListeners();
+      }
   }
 
   // Locations

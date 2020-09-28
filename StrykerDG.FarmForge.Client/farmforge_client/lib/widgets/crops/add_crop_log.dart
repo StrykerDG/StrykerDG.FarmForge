@@ -1,7 +1,3 @@
-import 'dart:developer';
-
-import 'package:farmforge_client/models/dto/new_crop_log_dto.dart';
-import 'package:farmforge_client/models/general/crop_log.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
@@ -11,6 +7,7 @@ import 'package:farmforge_client/models/crops/crop.dart';
 import 'package:farmforge_client/models/general/log_type.dart';
 import 'package:farmforge_client/models/general/status.dart';
 import 'package:farmforge_client/models/farmforge_response.dart';
+import 'package:farmforge_client/models/dto/new_crop_log_dto.dart';
 
 import 'package:farmforge_client/utilities/constants.dart';
 import 'package:farmforge_client/utilities/ui_utility.dart';

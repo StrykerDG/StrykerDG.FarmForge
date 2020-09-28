@@ -183,7 +183,7 @@ class _DesktopSettingsState extends State<DesktopSettings> {
     catch(e) {
       UiUtility.handleError(
         context: context, 
-        title: 'Delete Error', 
+        title: 'Update Error', 
         error: e.toString()
       );
     }

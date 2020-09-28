@@ -60,6 +60,20 @@ namespace StrykerDG.FarmForge.LocalApi.Controllers
             return ValidateActorResult(result);
         }
 
+        [HttpPatch]
+        [Authorize(Policy = "AuthenticatedWebClient")]
+        public async Task<IActionResult> UpdateCrop([FromBody]UpdateCropDTO updatedCrop)
+        {
+            var result = await CropActor.Ask(
+                new AskToUpdateCrop(
+                    updatedCrop.Fields,
+                    updatedCrop.Crop
+                )
+            );
+
+            return ValidateActorResult(result);
+        }
+
         [HttpPost("{cropId}/Logs")]
         [Authorize(Policy = "AuthenticatedWebClient")]
         public async Task<IActionResult> CreateLogForCrop([FromBody]NewCropLogDTO logDto, int cropId)

@@ -105,7 +105,15 @@ namespace StrykerDG.FarmForge.Api
             });
 
             // Add the DbContext
-            services.AddDbContext<FarmForgeDataContext>(options => options.UseSqlite(settings.ConnectionStrings["Database"]));
+            services.AddDbContext<FarmForgeDataContext>(options =>
+            {
+                if (settings.DatabaseType == DatabaseType.SQLITE)
+                    options.UseSqlite(settings.ConnectionStrings["Database"]);
+
+                else if (settings.DatabaseType == DatabaseType.SQLSERVER)
+                    options.UseSqlServer(settings.ConnectionStrings["Database"]);
+
+            });
 
             // Add Akka.net
             services.AddSingleton((serviceProvider) =>

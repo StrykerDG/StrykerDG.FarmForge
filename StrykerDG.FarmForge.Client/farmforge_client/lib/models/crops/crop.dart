@@ -3,6 +3,7 @@ import 'package:farmforge_client/models/crops/crop_variety.dart';
 import 'package:farmforge_client/models/general/crop_log.dart';
 import 'package:farmforge_client/models/general/location.dart';
 import 'package:farmforge_client/models/general/status.dart';
+import 'package:farmforge_client/utilities/date_time_utility.dart';
 
 class Crop {
   int cropId;
@@ -101,5 +102,51 @@ class Crop {
       yieldPercent: data['yieldPercent'],
       logs: logs
     );
+  }
+
+  factory Crop.clone(Crop ref) {
+    return Crop(
+      cropId: ref.cropId, 
+      cropTypeId: ref.cropTypeId,
+      cropType: ref.cropType, 
+      cropVarietyId: ref.cropVarietyId, 
+      cropVariety: ref.cropVariety, 
+      locationId: ref.locationId, 
+      location: ref.location,
+      statusId: ref.statusId, 
+      status: ref.status,
+      plantedAt: ref.plantedAt,
+      germinatedAt: ref.germinatedAt,
+      harvestedAt: ref.harvestedAt,
+      timeToGerminate: ref.timeToGerminate,
+      timeToHarvest: ref.timeToHarvest,
+      quantity: ref.quantity,
+      quantityHarvested: ref.quantityHarvested,
+      yieldPercent: ref.yieldPercent,
+      logs: ref.logs
+    );
+  }
+
+  Map<String, dynamic> toMap() {
+    return {
+      'CropId': this.cropId,
+      'CropTypeId': this.cropTypeId,
+      'CropType': null,
+      'CropVarietyId': this.cropVarietyId,
+      'CropVariety': null,
+      'LocationId': this.locationId,
+      'Location': null,
+      'StatusId': this.statusId,
+      'Status': null,
+      'PlantedAt': DateTimeUtility.formatDateTime(this.plantedAt),
+      'GerminatedAt': this.germinatedAt?.toString(),
+      'HarvestedAt': this.harvestedAt?.toString(),
+      'TimeToGerminate': this.timeToGerminate,
+      'TimeToHarvest': this.timeToHarvest,
+      'Quantity': this.quantity,
+      'QuantityHarvested': this.quantityHarvested,
+      'Yield': this.yieldPercent,
+      'Logs': null
+    };
   }
 }
