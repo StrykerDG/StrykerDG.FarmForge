@@ -17,6 +17,8 @@ using StrykerDG.FarmForge.Actors.Crops;
 using StrykerDG.FarmForge.Actors.CropTypes;
 using StrykerDG.FarmForge.Actors.Devices;
 using StrykerDG.FarmForge.Actors.Locations;
+using StrykerDG.FarmForge.Actors.LogTypes;
+using StrykerDG.FarmForge.Actors.Statuses;
 using StrykerDG.FarmForge.Actors.WebSockets;
 using StrykerDG.FarmForge.Actors.WebSockets.Messages;
 using StrykerDG.FarmForge.DataModel.Contexts;
@@ -103,7 +105,15 @@ namespace StrykerDG.FarmForge.Api
             });
 
             // Add the DbContext
-            services.AddDbContext<FarmForgeDataContext>(options => options.UseSqlite(settings.ConnectionStrings["Database"]));
+            services.AddDbContext<FarmForgeDataContext>(options =>
+            {
+                if (settings.DatabaseType == DatabaseType.SQLITE)
+                    options.UseSqlite(settings.ConnectionStrings["Database"]);
+
+                else if (settings.DatabaseType == DatabaseType.SQLSERVER)
+                    options.UseSqlServer(settings.ConnectionStrings["Database"]);
+
+            });
 
             // Add Akka.net
             services.AddSingleton((serviceProvider) =>
@@ -147,6 +157,16 @@ namespace StrykerDG.FarmForge.Api
                         new LocationActor(serviceScopeFactory)),
                         "LocationActor"
                 ));
+                Actors.Add(
+                    actorSystem.ActorOf(Props.Create(() =>
+                        new LogTypeActor(serviceScopeFactory)),
+                        "LogTypeActor"
+                ));
+                Actors.Add(
+                    actorSystem.ActorOf(Props.Create(() =>
+                        new StatusActor(serviceScopeFactory)),
+                        "StatusActor"
+                ));
 
                 return actorSystem;
             });
@@ -183,6 +203,8 @@ namespace StrykerDG.FarmForge.Api
                 });
 
             services.AddControllers();
+
+            FarmForgeDataContext.SetTriggers();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

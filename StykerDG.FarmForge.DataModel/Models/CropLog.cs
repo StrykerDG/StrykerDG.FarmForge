@@ -13,6 +13,8 @@ namespace StrykerDG.FarmForge.DataModel.Models
         public int CropLogId { get; set; }
         public int CropId { get; set; }
         public int LogTypeId { get; set; }
+        [ForeignKey("LogTypeId")]
+        public LogType LogType { get; set; }
         public string Notes { get; set; }
     }
 }

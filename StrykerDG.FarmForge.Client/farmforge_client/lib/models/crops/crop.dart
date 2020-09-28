@@ -1,7 +1,9 @@
 import 'package:farmforge_client/models/crops/crop_type.dart';
 import 'package:farmforge_client/models/crops/crop_variety.dart';
+import 'package:farmforge_client/models/general/crop_log.dart';
 import 'package:farmforge_client/models/general/location.dart';
 import 'package:farmforge_client/models/general/status.dart';
+import 'package:farmforge_client/utilities/date_time_utility.dart';
 
 class Crop {
   int cropId;
@@ -21,6 +23,7 @@ class Crop {
   int quantity;
   int quantityHarvested;
   double yieldPercent;
+  List<CropLog> logs = [];
 
   Crop({
     this.cropId,
@@ -39,7 +42,8 @@ class Crop {
     this.timeToHarvest,
     this.quantity,
     this.quantityHarvested,
-    this.yieldPercent
+    this.yieldPercent,
+    this.logs
   });
 
   factory Crop.fromMap(Map<String, dynamic> data) {
@@ -71,6 +75,13 @@ class Crop {
       ? DateTime.parse(data['harvestedAt'])
       : null;
 
+    List<CropLog> logs = new List<CropLog>();
+    if(data['logs'] != null && data['logs'].length > 0)
+      data['logs'].forEach((logData) {
+        CropLog log = CropLog.fromMap(logData);
+        logs.add(log);
+      });
+
     return Crop(
       cropId: data['cropId'],
       cropTypeId: data['cropTypeId'],
@@ -88,7 +99,54 @@ class Crop {
       timeToHarvest: data['timeToHarvest'],
       quantity: data['quantity'],
       quantityHarvested: data['quantityHarvested'],
-      yieldPercent: data['yieldPercent']
+      yieldPercent: data['yieldPercent'],
+      logs: logs
     );
+  }
+
+  factory Crop.clone(Crop ref) {
+    return Crop(
+      cropId: ref.cropId, 
+      cropTypeId: ref.cropTypeId,
+      cropType: ref.cropType, 
+      cropVarietyId: ref.cropVarietyId, 
+      cropVariety: ref.cropVariety, 
+      locationId: ref.locationId, 
+      location: ref.location,
+      statusId: ref.statusId, 
+      status: ref.status,
+      plantedAt: ref.plantedAt,
+      germinatedAt: ref.germinatedAt,
+      harvestedAt: ref.harvestedAt,
+      timeToGerminate: ref.timeToGerminate,
+      timeToHarvest: ref.timeToHarvest,
+      quantity: ref.quantity,
+      quantityHarvested: ref.quantityHarvested,
+      yieldPercent: ref.yieldPercent,
+      logs: ref.logs
+    );
+  }
+
+  Map<String, dynamic> toMap() {
+    return {
+      'CropId': this.cropId,
+      'CropTypeId': this.cropTypeId,
+      'CropType': null,
+      'CropVarietyId': this.cropVarietyId,
+      'CropVariety': null,
+      'LocationId': this.locationId,
+      'Location': null,
+      'StatusId': this.statusId,
+      'Status': null,
+      'PlantedAt': DateTimeUtility.formatDateTime(this.plantedAt),
+      'GerminatedAt': this.germinatedAt?.toString(),
+      'HarvestedAt': this.harvestedAt?.toString(),
+      'TimeToGerminate': this.timeToGerminate,
+      'TimeToHarvest': this.timeToHarvest,
+      'Quantity': this.quantity,
+      'QuantityHarvested': this.quantityHarvested,
+      'Yield': this.yieldPercent,
+      'Logs': null
+    };
   }
 }

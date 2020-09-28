@@ -11,6 +11,7 @@ namespace StrykerDG.FarmForge.DataModel.Models
     {
         [Key]
         public int LogTypeId { get; set; }
+        public string EntityType { get; set; }
         public string Name { get; set; }
         public string Label { get; set; }
         public string Description { get; set; }

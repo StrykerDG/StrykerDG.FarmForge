@@ -1,9 +1,11 @@
+import 'package:farmforge_client/models/crops/crop.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert' as convert;
 
 import 'package:farmforge_client/models/farmforge_response.dart';
-import 'package:farmforge_client/models/dto/new_crop_dto.dart';
 import 'package:farmforge_client/models/general/location.dart';
+import 'package:farmforge_client/models/dto/new_crop_dto.dart';
+import 'package:farmforge_client/models/dto/new_crop_log_dto.dart';
 
 class FarmForgeApiService {
   static String token;
@@ -99,6 +101,19 @@ class FarmForgeApiService {
     );
   }
 
+  Future<FarmForgeResponse> updateCrop({
+    String fields,
+    Crop crop}) async {
+    
+    Map<String, dynamic> requestBody = {
+      'Fields': fields,
+      'Crop': crop?.toMap()
+    };
+
+    String jsonBody = convert.jsonEncode(requestBody);
+    return await request('Crops', jsonBody, 'PATCH');
+  }
+
   Future<FarmForgeResponse> getCropTypes({String includes}) async {
     String uri = includes == null
       ? 'CropTypes'
@@ -108,6 +123,15 @@ class FarmForgeApiService {
       uri,
       null,
       'GET'
+    );
+  }
+
+  Future<FarmForgeResponse> createCropLog(NewCropLogDTO log) async {
+    String jsonBody = convert.jsonEncode(log.toMap());
+    return await request(
+      'Crops/${log.cropId}/Logs',
+      jsonBody,
+      'POST'
     );
   }
 
@@ -147,5 +171,15 @@ class FarmForgeApiService {
 
   Future<FarmForgeResponse> deleteLocation(int id) async {
     return await request('Locations/$id', null, 'DELETE');
+  }
+
+  // Logs
+  Future<FarmForgeResponse> getLogsByType(String type) async {
+    return await request('LogTypes/$type', null, 'GET');
+  }
+
+  // Statuses
+  Future<FarmForgeResponse> getStatusesByType(String type) async {
+    return await request('Statuses/$type', null, 'GET');
   }
 }
