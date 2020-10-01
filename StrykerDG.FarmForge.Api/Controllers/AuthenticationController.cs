@@ -42,7 +42,7 @@ namespace StrykerDG.FarmForge.LocalApi.Controllers
         public async Task<IActionResult> GetUsers()
         {
             var result = await AuthActor.Ask(new AskForUsers());
-            return Ok(result);
+            return Ok(FarmForgeApiResponse.Success(result));
         }
 
         [HttpPost("Users")]

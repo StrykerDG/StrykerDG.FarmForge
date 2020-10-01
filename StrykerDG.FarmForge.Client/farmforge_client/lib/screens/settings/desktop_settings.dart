@@ -1,4 +1,3 @@
-import 'package:farmforge_client/models/farmforge_response.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
@@ -7,12 +6,17 @@ import 'package:farmforge_client/provider/data_provider.dart';
 
 import 'package:farmforge_client/models/crops/crop_type.dart';
 import 'package:farmforge_client/models/general/location.dart';
+import 'package:farmforge_client/models/farmforge_response.dart';
+import 'package:farmforge_client/models/general/user.dart';
 
 import 'package:farmforge_client/screens/base/desktop/base_desktop.dart';
 
+import 'package:farmforge_client/widgets/farmforge_dialog.dart';
 import 'package:farmforge_client/widgets/settings/settings_expansion_tile.dart';
 import 'package:farmforge_client/widgets/settings/add_location.dart';
-import 'package:farmforge_client/widgets/farmforge_dialog.dart';
+import 'package:farmforge_client/widgets/settings/add_crop_type.dart';
+import 'package:farmforge_client/widgets/settings/add_crop_variety.dart';
+import 'package:farmforge_client/widgets/settings/add_user.dart';
 
 import 'package:farmforge_client/utilities/constants.dart';
 import 'package:farmforge_client/utilities/ui_utility.dart';
@@ -24,13 +28,119 @@ class DesktopSettings extends StatefulWidget {
 }
 
 class _DesktopSettingsState extends State<DesktopSettings> {
+  List<CropType> _cropTypes = [];
   List<Location> _locations = [];
+  List<User> _users = [];
   int _selectedLocation;
   int _selectedParentLocation;
+  int _selectedUser;
   int _selectedCropType;
 
   List<Widget> getCropContent() {
-    return List<Widget>();
+    List<DropdownMenuItem<int>> cropTypeOptions = _cropTypes.map((type) => 
+      DropdownMenuItem<int>(
+        value: type.cropTypeId,
+        child: Text(type.label),
+      )
+    ).toList();
+
+    Function deleteAction;
+    Function varietyAction;
+    
+    if(_selectedCropType != null) {
+      deleteAction = handleDeleteCropType;
+      varietyAction = handleAddVariety;
+    }
+
+    return [
+      Padding(
+        padding: EdgeInsets.all(kSmallPadding),
+        child: Row(
+          children: [
+            Container(
+              width: 200,
+              child: DropdownButtonFormField<int>(
+                value: _selectedCropType,
+                items: cropTypeOptions,
+                onChanged: handleCropTypeSelection,
+                decoration: InputDecoration(
+                  labelText: 'CropType'
+                ),
+              ),
+            ),
+            IconButton(
+              icon: Icon(Icons.delete),
+              onPressed: deleteAction,
+            ),
+            IconButton(
+              icon: Icon(Icons.add),
+              onPressed: handleAddCropType,
+            ),
+            IconButton(
+              icon: Icon(Icons.view_module),
+              onPressed: varietyAction,
+            )
+          ],
+        ),
+      ),
+      Padding(
+        padding: EdgeInsets.all(kSmallPadding),
+
+      )
+    ];
+  }
+
+  void handleCropTypeSelection(int newValue) {
+    setState(() {
+      _selectedCropType = newValue;
+    });
+  }
+
+  void handleDeleteCropType() async {
+    try {
+      FarmForgeResponse deleteResponse = await Provider
+        .of<CoreProvider>(context, listen: false)
+        .farmForgeService
+        .deleteCropType(_selectedCropType);
+
+      if(deleteResponse.data != null) {
+        Provider.of<DataProvider>(context, listen: false)
+          .deleteCropType(_selectedCropType);
+
+        setState(() {
+          _selectedCropType = null;
+        });
+      }
+      else
+        throw deleteResponse.error;
+    }
+    catch(e) {
+      UiUtility.handleError(
+        context: context, 
+        title: 'Delete Error', 
+        error: e.toString()
+      );
+    }
+  }
+
+  void handleAddVariety() {
+    showDialog(
+      context: context,
+      builder: (context) => FarmForgeDialog(
+        title: 'Add New Variety',
+        content: AddCropVarieity(),
+      )
+    );
+  }
+
+  void handleAddCropType() {
+    showDialog(
+      context: context,
+      builder: (context) => FarmForgeDialog(
+        title: 'Add New Type',
+        content: AddCropType(),
+      )
+    );
   }
 
   List<Widget> getLocationContent() {
@@ -190,7 +300,88 @@ class _DesktopSettingsState extends State<DesktopSettings> {
   }
 
   List<Widget> getUserContent() {
-    return List<Widget>();
+    List<DropdownMenuItem<int>> userOptions = _users.map((user) => 
+      DropdownMenuItem<int>(
+        value: user.userId, 
+        child: Text(user.username),
+      )
+    ).toList();
+
+    Function deleteAction = _selectedUser == null
+      ? null
+      : handleDeleteUser;
+
+    return [
+      Padding(
+        padding: EdgeInsets.all(kSmallPadding),
+        child: Row(
+          children: [
+            Container(
+              width: 200,
+              child: DropdownButtonFormField<int>(
+                value: _selectedUser,
+                items: userOptions,
+                onChanged: handleUserSelection,
+                decoration: InputDecoration(
+                  labelText: 'User'
+                ),
+              ),
+            ),
+            IconButton(
+              icon: Icon(Icons.delete),
+              onPressed: deleteAction,
+            ),
+            IconButton(
+              icon: Icon(Icons.add),
+              onPressed: handleAddUser,
+            ),
+          ],
+        ),
+      )
+    ];
+  }
+
+  void handleUserSelection(int newValue) {
+    setState(() {
+      _selectedUser = newValue;
+    });
+  }
+
+  void handleDeleteUser() async {
+    try {
+      FarmForgeResponse deleteResponse = await Provider
+        .of<CoreProvider>(context, listen: false)
+        .farmForgeService
+        .deleteUser(_selectedUser);
+
+      if(deleteResponse.data != null) {
+        Provider.of<DataProvider>(context, listen: false)
+          .deleteUser(_selectedUser);
+
+        setState(() {
+          _selectedUser = null;
+        });
+      }
+      else
+        throw deleteResponse.error;
+    }
+    catch(e) {
+      UiUtility.handleError(
+        context: context, 
+        title: 'Delete Error', 
+        error: e.toString()
+      );
+    }
+  }
+
+  void handleAddUser() {
+    showDialog(
+      context: context,
+      builder: (context) => FarmForgeDialog(
+        title: 'Add New User',
+        content: AddUser(),
+      )
+    );
   }
 
   @override
@@ -199,6 +390,8 @@ class _DesktopSettingsState extends State<DesktopSettings> {
 
     setState(() {
       _locations = Provider.of<DataProvider>(context).locations;
+      _users = Provider.of<DataProvider>(context).users;
+      _cropTypes = Provider.of<DataProvider>(context).cropTypes;
     });
   }
 
@@ -215,7 +408,7 @@ class _DesktopSettingsState extends State<DesktopSettings> {
         child: Column(
           children: [
             SettingsExpansionTile(
-              title: 'Crop Types',
+              title: 'Crops',
               content: cropContent,
             ),
             SettingsExpansionTile(

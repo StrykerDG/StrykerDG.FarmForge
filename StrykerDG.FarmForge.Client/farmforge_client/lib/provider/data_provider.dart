@@ -1,19 +1,23 @@
-import 'package:farmforge_client/models/general/crop_log.dart';
 import 'package:flutter/material.dart';
 
 import 'package:farmforge_client/models/crops/crop.dart';
 import 'package:farmforge_client/models/crops/crop_type.dart';
+import 'package:farmforge_client/models/crops/crop_classification.dart';
 import 'package:farmforge_client/models/general/location.dart';
 import 'package:farmforge_client/models/general/log_type.dart';
 import 'package:farmforge_client/models/general/status.dart';
+import 'package:farmforge_client/models/general/crop_log.dart';
+import 'package:farmforge_client/models/general/user.dart';
 
 class DataProvider extends ChangeNotifier {
   DateTime defaultDate = DateTime.now().subtract(Duration(days: 60));
   List<Crop> crops = [];
   List<CropType> cropTypes = [];
+  List<CropClassification> cropClassifications = [];
   List<Location> locations = [];
-  List<Status> statuses = [];
   List<LogType> logTypes = [];
+  List<Status> statuses = [];
+  List<User> users = [];
 
   // Crops
   void setCrops(List<dynamic> newCrops) {
@@ -33,6 +37,24 @@ class DataProvider extends ChangeNotifier {
     cropTypes.clear();
     newCropTypes.forEach((cropTypeData) { 
       cropTypes.add(CropType.fromMap(cropTypeData));
+    });
+    notifyListeners();
+  }
+
+  void addCropType(Map<String, dynamic> newType) {
+    cropTypes.add(CropType.fromMap(newType));
+    notifyListeners();
+  }
+
+  void deleteCropType(int id) {
+    cropTypes.removeWhere((c) => c.cropTypeId == id);
+    notifyListeners();
+  }
+
+  void setCropClassifications(List<dynamic> newClassifications) {
+    cropClassifications.clear();
+    newClassifications.forEach((classificationData) {
+      cropClassifications.add(CropClassification.fromMap(classificationData));
     });
     notifyListeners();
   }
@@ -152,6 +174,25 @@ class DataProvider extends ChangeNotifier {
     newStatuses.forEach((statusData) {
       statuses.add(Status.fromMap(statusData));
     });
+    notifyListeners();
+  }
+
+  // Users
+  void setUsers(List<dynamic> newUsers) {
+    users.clear();
+    newUsers.forEach((userData) { 
+      users.add(User.fromMap(userData));
+    });
+    notifyListeners();
+  }
+
+  void addUser(dynamic newUser) {
+    users.add(User.fromMap(newUser));
+    notifyListeners();
+  }
+
+  void deleteUser(int id) {
+    users.removeWhere((u) => u.userId == id);
     notifyListeners();
   }
 }

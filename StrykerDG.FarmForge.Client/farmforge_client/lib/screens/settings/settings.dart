@@ -29,13 +29,17 @@ class _SettingsState extends State<Settings> {
         .farmForgeService.getCropTypes(includes: 'Varieties,Classification');
       Future<FarmForgeResponse> locationFuture = Provider.of<CoreProvider>(context, listen: false)
         .farmForgeService.getLocations();
+      Future<FarmForgeResponse> userFuture = Provider.of<CoreProvider>(context, listen: false)
+        .farmForgeService.getUsers();
 
-      Future.wait([cropTypeFuture, locationFuture])
+      Future.wait([cropTypeFuture, locationFuture, userFuture])
         .then((responses) {
           Provider.of<DataProvider>(context, listen: false)
             .setCropTypes(responses[0].data);
           Provider.of<DataProvider>(context, listen: false)
             .setLocations(responses[1].data);
+          Provider.of<DataProvider>(context, listen: false)
+            .setUsers(responses[2].data);
         });
     }
     catch(e) {

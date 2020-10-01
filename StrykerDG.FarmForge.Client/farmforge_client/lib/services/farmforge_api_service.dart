@@ -70,6 +70,25 @@ class FarmForgeApiService {
     return response;
   }
 
+  // User
+  Future<FarmForgeResponse> getUsers() async {
+    return await request('Auth/Users', null, 'GET');
+  }
+
+  Future<FarmForgeResponse> createUser(String username, String password) async {
+    Map<String, String> userObject = {
+      'Username': username,
+      'Password': password
+    };
+
+    String jsonBody = convert.jsonEncode(userObject);
+    return await request('Auth/Users', jsonBody, 'POST');
+  }
+
+  Future<FarmForgeResponse> deleteUser(int userId) async {
+    return await request('Auth/Users/$userId', null, 'DELETE');
+  }
+
   // Crops
   Future<FarmForgeResponse> getCrops({
     DateTime begin, 
@@ -124,6 +143,24 @@ class FarmForgeApiService {
       null,
       'GET'
     );
+  }
+
+  Future<FarmForgeResponse> createCropType(String name, int id) async {
+    Map<String, dynamic> requestBody = {
+      'Name': name,
+      'ClassificationId': id
+    };
+
+    String jsonBody = convert.jsonEncode(requestBody);
+    return await request('CropTypes', jsonBody, 'POST');
+  }
+
+  Future<FarmForgeResponse> deleteCropType(int id) async {
+    return await request('CropTypes/$id', null, 'DELETE');
+  }
+
+  Future<FarmForgeResponse> getCropClassifications() async {
+    return await request('CropClassifications', null, 'GET');
   }
 
   Future<FarmForgeResponse> createCropLog(NewCropLogDTO log) async {

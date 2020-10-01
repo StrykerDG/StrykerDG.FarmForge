@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using StrykerDG.FarmForge.Actors.CropTypes.Messages;
+using StrykerDG.FarmForge.LocalApi.Controllers.DTO.Requests;
 using StrykerDG.FarmForge.LocalApi.Controllers.DTO.Responses;
 using System;
 using System.Collections.Generic;
@@ -29,6 +30,34 @@ namespace StrykerDG.FarmForge.LocalApi.Controllers
         {
             var result = await CropTypeActor.Ask(new AskForCropTypes(includes));
             return Ok(FarmForgeApiResponse.Success(result));
+        }
+
+        [HttpPost]
+        [Authorize(Policy = "AuthenticatedWebClient")]
+        public async Task<IActionResult> AddCropType([FromBody] NewCropTypeDTO newType) 
+        {
+            var result = await CropTypeActor.Ask(
+                new AskToCreateCropType(
+                    newType.Name, 
+                    newType.ClassificationId
+                ));
+
+            return ValidateActorResult(result);
+        }
+
+        [HttpDelete("{id}")]
+        [Authorize(Policy = "AuthenticatedWebClient")]
+        public async Task<IActionResult> DeleteCropType(int id)
+        {
+            var result = await CropTypeActor.Ask(new AskToDeleteCropType(id));
+            return ValidateActorResult(result);
+        }
+
+        [HttpPost("{typeName}/variety/{varietyName}")]
+        [Authorize(Policy = "AuthenticatedWebClient")]
+        public async Task<IActionResult> AddVarietyToCropType(string typeName, string varietyName)
+        {
+            return Ok();
         }
     }
 }
