@@ -4,7 +4,15 @@ using System.Text;
 
 namespace StrykerDG.FarmForge.Actors.CropTypes.Messages
 {
-    class AskToCreateCropTypeVariety
+    public class AskToCreateCropTypeVariety
     {
+        public int CropTypeId { get; private set; }
+        public string VarietyName { get; private set; }
+
+        public AskToCreateCropTypeVariety(int id, string name)
+        {
+            CropTypeId = id;
+            VarietyName = name;
+        }
     }
 }

@@ -53,11 +53,30 @@ namespace StrykerDG.FarmForge.LocalApi.Controllers
             return ValidateActorResult(result);
         }
 
-        [HttpPost("{typeName}/variety/{varietyName}")]
+        [HttpPost("{cropTypeId}/Variety/{varietyName}")]
         [Authorize(Policy = "AuthenticatedWebClient")]
-        public async Task<IActionResult> AddVarietyToCropType(string typeName, string varietyName)
+        public async Task<IActionResult> AddVarietyToCropType(int cropTypeId, string varietyName)
         {
-            return Ok();
+            var result = await CropTypeActor.Ask(
+                new AskToCreateCropTypeVariety(
+                    cropTypeId,
+                    varietyName
+                ));
+
+            return ValidateActorResult(result);
+        }
+
+        [HttpDelete("{cropTypeId}/Variety/{varietyId}")]
+        [Authorize(Policy = "AuthenticatedWebClient")]
+        public async Task<IActionResult> DeleteVarietyFromCropType(int cropTypeId, int varietyId)
+        {
+            var result = await CropTypeActor.Ask(
+                new AskToDeleteCropTypeVariety(
+                    cropTypeId,
+                    varietyId
+                ));
+
+            return ValidateActorResult(result);
         }
     }
 }

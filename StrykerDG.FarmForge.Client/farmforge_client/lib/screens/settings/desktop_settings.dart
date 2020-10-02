@@ -5,6 +5,7 @@ import 'package:farmforge_client/provider/core_provider.dart';
 import 'package:farmforge_client/provider/data_provider.dart';
 
 import 'package:farmforge_client/models/crops/crop_type.dart';
+import 'package:farmforge_client/models/crops/crop_variety.dart';
 import 'package:farmforge_client/models/general/location.dart';
 import 'package:farmforge_client/models/farmforge_response.dart';
 import 'package:farmforge_client/models/general/user.dart';
@@ -31,10 +32,20 @@ class _DesktopSettingsState extends State<DesktopSettings> {
   List<CropType> _cropTypes = [];
   List<Location> _locations = [];
   List<User> _users = [];
+  int _selectedRow;
   int _selectedLocation;
   int _selectedParentLocation;
   int _selectedUser;
   int _selectedCropType;
+
+  void setSelectedRow(int index) {
+    setState(() {
+      if(_selectedRow != index)
+        _selectedRow = index;
+      else
+        _selectedRow = null;
+    });
+  }
 
   List<Widget> getCropContent() {
     List<DropdownMenuItem<int>> cropTypeOptions = _cropTypes.map((type) => 
@@ -44,12 +55,92 @@ class _DesktopSettingsState extends State<DesktopSettings> {
       )
     ).toList();
 
-    Function deleteAction;
-    Function varietyAction;
+    Function deleteTypeAction;
+    Function deleteVarietyAction;
+    Widget varietyList = Container();
     
     if(_selectedCropType != null) {
-      deleteAction = handleDeleteCropType;
-      varietyAction = handleAddVariety;
+      deleteTypeAction = handleDeleteCropType;
+
+      if(_selectedRow != null)
+        deleteVarietyAction = handleDeleteCropTypeVariety;
+
+      List<CropVariety> varieties = _cropTypes
+        .firstWhere(
+          (t) => t.cropTypeId == _selectedCropType,
+          orElse: () => null)
+        ?.varieties;
+
+      List<DataRow> varietyData = varieties != null
+        ? List<DataRow>.generate(
+          varieties.length, 
+          (index) {
+            CropVariety v = varieties.elementAt(index);
+            return DataRow(
+              cells: [DataCell(Text(v?.label))],
+              onSelectChanged: (bool value) {
+                setSelectedRow(index);
+              },
+              selected: _selectedRow == index
+                ? true
+                : false,
+              color: MaterialStateProperty.resolveWith<Color>(
+                (Set<MaterialState> states) {
+                  if(states.contains(MaterialState.selected))
+                    return Theme.of(context).colorScheme.primary.withOpacity(0.08);
+                  else
+                    return null;
+                }
+              )
+            );
+          }
+        )
+        : [];
+
+      double listHeight = 60 + (varieties.length * 50.0);
+      if(listHeight > 400)
+        listHeight = 400;
+
+      varietyList = Container(
+        // width: kSmallDesktopModalWidth,
+        padding: EdgeInsets.all(kSmallPadding),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Padding(
+              padding: EdgeInsets.only(left: 100),
+              child: Text('Varieties'),
+            ),
+            SizedBox(height: kSmallPadding),
+            Row(
+              children: [
+                Container(
+                  width: 200.0,
+                  height: listHeight,
+                  child: SingleChildScrollView(
+                    child: DataTable(
+                      columns: [DataColumn(label: Text('Name'))],
+                      rows: varietyData,
+                      showCheckboxColumn: false,
+                    ),
+                  ),
+                ),
+                IconButton(
+                  icon: Icon(Icons.add),
+                  onPressed: () {
+                    handleAddVariety(_selectedCropType);
+                  }
+                ),
+                IconButton(
+                  icon: Icon(Icons.delete),
+                  onPressed: deleteVarietyAction,
+                )
+              ],
+            )
+          ],
+        ),
+      );
     }
 
     return [
@@ -70,22 +161,18 @@ class _DesktopSettingsState extends State<DesktopSettings> {
             ),
             IconButton(
               icon: Icon(Icons.delete),
-              onPressed: deleteAction,
+              onPressed: deleteTypeAction,
             ),
             IconButton(
               icon: Icon(Icons.add),
               onPressed: handleAddCropType,
             ),
-            IconButton(
-              icon: Icon(Icons.view_module),
-              onPressed: varietyAction,
-            )
           ],
         ),
       ),
-      Padding(
-        padding: EdgeInsets.all(kSmallPadding),
-
+      Positioned(
+        left: 0,
+        child: varietyList,
       )
     ];
   }
@@ -123,14 +210,50 @@ class _DesktopSettingsState extends State<DesktopSettings> {
     }
   }
 
-  void handleAddVariety() {
+  void handleAddVariety(int cropTypeId) {
     showDialog(
       context: context,
       builder: (context) => FarmForgeDialog(
         title: 'Add New Variety',
-        content: AddCropVarieity(),
+        content: AddCropVarieity(cropTypeId: cropTypeId),
       )
     );
+  }
+
+  void handleDeleteCropTypeVariety() async {
+    try {
+      int variety = _cropTypes
+        .firstWhere(
+          (t) => t.cropTypeId == _selectedCropType,
+          orElse: () => null
+        )
+        ?.varieties
+        ?.elementAt(_selectedRow)
+        ?.cropVarietyId;
+
+      FarmForgeResponse deleteResponse = await Provider
+        .of<CoreProvider>(context, listen: false)
+        .farmForgeService
+        .deleteCropVariety(_selectedCropType, variety);
+
+      if(deleteResponse.data != null) {
+        Provider.of<DataProvider>(context, listen: false)
+          .deleteCropTypVariety(_selectedCropType, variety);
+
+        setState(() {
+          _selectedRow = null;
+        });
+      }
+      else
+        throw deleteResponse.error;
+    }
+    catch(e) {
+      UiUtility.handleError(
+        context: context, 
+        title: 'Delete Error', 
+        error: e.toString()
+      );
+    }
   }
 
   void handleAddCropType() {

@@ -159,6 +159,14 @@ class FarmForgeApiService {
     return await request('CropTypes/$id', null, 'DELETE');
   }
 
+  Future<FarmForgeResponse> createCropVariety(String name, int cropTypeId) async {
+    return await request('CropTypes/$cropTypeId/Variety/$name', null, 'POST');
+  }
+
+  Future<FarmForgeResponse> deleteCropVariety(int cropTypeId, int varietyId) async {
+    return await request('CropTypes/$cropTypeId/Variety/$varietyId', null, 'DELETE');
+  }
+
   Future<FarmForgeResponse> getCropClassifications() async {
     return await request('CropClassifications', null, 'GET');
   }

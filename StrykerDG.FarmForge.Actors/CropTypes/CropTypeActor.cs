@@ -20,6 +20,8 @@ namespace StrykerDG.FarmForge.Actors.CropTypes
             Receive<AskForCropTypes>(HandleAskForCropTypes);
             Receive<AskToCreateCropType>(HandleAskToCreateCropType);
             Receive<AskToDeleteCropType>(HandleDeleteCropType);
+            Receive<AskToCreateCropTypeVariety>(HandleAddCropTypeVariety);
+            Receive<AskToDeleteCropTypeVariety>(HandleDeleteCropTypeVariety);
         }
 
         // Message Methods
@@ -32,6 +34,13 @@ namespace StrykerDG.FarmForge.Actors.CropTypes
                     .WithIncludes(message.Includes)
                     .Where(ct => ct.IsDeleted == false)
                     .ToList();
+
+                // Remove any deleted varieties
+                foreach(var type in results)
+                    if(type.Varieties != null)
+                        type.Varieties = type.Varieties
+                            .Where(v => v.IsDeleted == false)
+                            .ToList();
 
                 Sender.Tell(results);
             });
@@ -120,6 +129,93 @@ namespace StrykerDG.FarmForge.Actors.CropTypes
                         variety.IsDeleted = true;
 
                     context.SaveChanges();
+                    Sender.Tell(true);
+                }
+                catch(Exception ex)
+                {
+                    Sender.Tell(ex);
+                }
+            });
+        }
+
+        public void HandleAddCropTypeVariety(AskToCreateCropTypeVariety message)
+        {
+            Using<FarmForgeDataContext>((context) =>
+            {
+                try
+                {
+                    var existingCropType = context.CropTypes
+                        .AsNoTracking()
+                        .Include("Varieties")
+                        .Where(t =>
+                            t.CropTypeId == message.CropTypeId &&
+                            t.IsDeleted == false
+                        )
+                        .FirstOrDefault();
+
+                    if (existingCropType == null)
+                        throw new Exception("CropType doesn't exist");
+
+                    var existingVariety = existingCropType.Varieties
+                        .Where(v =>
+                            v.Label == message.VarietyName &&
+                            v.IsDeleted == false
+                        )
+                        .FirstOrDefault();
+
+                    if (existingVariety != null)
+                        throw new Exception("Variety already exists");
+
+                    var varietyName = message.VarietyName.ToLower().Replace(" ", "_");
+                    var newVariety = new CropVariety
+                    {
+                        CropTypeId = message.CropTypeId,
+                        Name = varietyName,
+                        Label = message.VarietyName
+                    };
+
+                    context.Add(newVariety);
+                    context.SaveChanges();
+
+                    Sender.Tell(newVariety);
+                }
+                catch (Exception ex)
+                {
+                    Sender.Tell(ex);
+                }
+            });
+        }
+
+        public void HandleDeleteCropTypeVariety(AskToDeleteCropTypeVariety message)
+        {
+            Using<FarmForgeDataContext>((context) =>
+            {
+                try
+                {
+                    var existingCropType = context.CropTypes
+                        .Include("Varieties")
+                        .Where(t =>
+                            t.CropTypeId == message.CropTypeId &&
+                            t.IsDeleted == false
+                        )
+                        .FirstOrDefault();
+
+                    if (existingCropType == null)
+                        throw new Exception("CropType does not exist");
+
+                    var variety = existingCropType.Varieties
+                        .Where(v =>
+                            v.CropVarietyId == message.VarietyId &&
+                            v.IsDeleted == false
+                        )
+                        .FirstOrDefault();
+
+                    if (variety == null)
+                        throw new Exception("Variety does not exist for this crop");
+
+                    variety.IsDeleted = true;
+                    context.SaveChanges();
+
                     Sender.Tell(true);
                 }
                 catch(Exception ex)

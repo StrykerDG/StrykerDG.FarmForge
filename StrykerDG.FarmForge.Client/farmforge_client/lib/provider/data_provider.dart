@@ -1,3 +1,4 @@
+import 'package:farmforge_client/models/crops/crop_variety.dart';
 import 'package:flutter/material.dart';
 
 import 'package:farmforge_client/models/crops/crop.dart';
@@ -43,6 +44,27 @@ class DataProvider extends ChangeNotifier {
 
   void addCropType(Map<String, dynamic> newType) {
     cropTypes.add(CropType.fromMap(newType));
+    notifyListeners();
+  }
+
+  void addCropTypeVariety(int cropTypeId, Map<String, dynamic> varietyData) {
+    CropVariety newVariety = CropVariety.fromMap(varietyData);
+    cropTypes.firstWhere(
+      (t) => t.cropTypeId == cropTypeId,
+      orElse: () => null
+    )?.varieties?.add(newVariety);
+    notifyListeners();
+  }
+
+  void deleteCropTypVariety(int cropTypeId, int varietyId) {
+    cropTypes.firstWhere(
+      (t) => t.cropTypeId == cropTypeId,
+      orElse: () => null
+    )
+    ?.varieties
+    ?.removeWhere(
+      (v) => v.cropVarietyId == varietyId
+    );
     notifyListeners();
   }
 

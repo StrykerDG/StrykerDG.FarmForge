@@ -1,4 +1,3 @@
-import 'package:farmforge_client/main.dart';
 import 'package:farmforge_client/models/crops/crop.dart';
 import 'package:farmforge_client/provider/data_provider.dart';
 import 'package:farmforge_client/widgets/crops/add_crop_log.dart';
