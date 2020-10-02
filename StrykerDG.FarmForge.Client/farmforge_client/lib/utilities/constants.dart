@@ -23,6 +23,7 @@ const double kMediumRadius = 20.0;
 
 // Dialog / Modal 
 const double kSmallDesktopModalWidth = 500.0;
+const double kMediumDesktopModalWidth = 750.0;
 
 // Login Sizes
 const double kLoginContainerWidth = 300.0;
