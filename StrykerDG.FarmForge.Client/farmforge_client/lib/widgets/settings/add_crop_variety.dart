@@ -1,13 +1,13 @@
-import 'package:farmforge_client/main.dart';
-import 'package:farmforge_client/models/farmforge_response.dart';
-import 'package:farmforge_client/provider/core_provider.dart';
-import 'package:farmforge_client/provider/data_provider.dart';
-import 'package:farmforge_client/utilities/ui_utility.dart';
-import 'package:farmforge_client/utilities/validation.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+
+import 'package:farmforge_client/provider/data_provider.dart';
+import 'package:farmforge_client/provider/core_provider.dart';
+import 'package:farmforge_client/models/farmforge_response.dart';
 
 import 'package:farmforge_client/utilities/constants.dart';
-import 'package:provider/provider.dart';
+import 'package:farmforge_client/utilities/ui_utility.dart';
+import 'package:farmforge_client/utilities/validation.dart';
 
 class AddCropVarieity extends StatefulWidget {
   final int cropTypeId;
@@ -58,39 +58,33 @@ class _AddCropVarieityState extends State<AddCropVarieity> {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      width: kSmallDesktopModalWidth,
-      child: Column(
-        children: [
-          Form(
-            key: _formKey,
-            child: Container(
-              width: 200,
-              child: TextFormField(
-                controller: _nameController,
-                decoration: InputDecoration(
-                  labelText: 'Name'
-                ),
-                validator: Validation.isNotEmpty,
+    return Column(
+      children: [
+        Form(
+          key: _formKey,
+          child: Container(
+            width: kStandardInput,
+            child: TextFormField(
+              controller: _nameController,
+              decoration: InputDecoration(
+                labelText: 'Name'
               ),
+              validator: Validation.isNotEmpty,
             ),
           ),
-          Padding(
-            padding: EdgeInsets.all(kSmallPadding),
-            child: Row(
-              children: [
-                Expanded(
-                  child: Container(),
-                ),
-                RaisedButton(
-                  child: Text('Save'),
-                  onPressed: handleSave,
-                )
-              ],
+        ),
+        Row(
+          children: [
+            Expanded(
+              child: Container(),
             ),
-          )
-        ],
-      )
+            RaisedButton(
+              child: Text('Save'),
+              onPressed: handleSave,
+            )
+          ],
+        )
+      ],
     );
   }
 }

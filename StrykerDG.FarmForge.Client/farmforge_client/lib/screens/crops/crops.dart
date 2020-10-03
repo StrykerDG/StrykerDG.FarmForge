@@ -5,7 +5,6 @@ import 'package:provider/provider.dart';
 import 'package:farmforge_client/provider/core_provider.dart';
 import 'package:farmforge_client/provider/data_provider.dart';
 
-import 'package:farmforge_client/models/crops/crop.dart';
 import 'package:farmforge_client/models/farmforge_response.dart';
 
 import 'mobile_crops.dart';

@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 
 import 'package:farmforge_client/widgets/farmforge_dialog.dart';
 
+import 'package:farmforge_client/utilities/constants.dart';
+
 class UiUtility {
   static handleError({
     @required BuildContext context,
@@ -11,8 +13,14 @@ class UiUtility {
     showDialog(
       context: context,
       builder: (context) => FarmForgeDialog(
+        width: kSmallDesktopModalWidth,
         title: title,
-        content: Text(error),
+        content: Center(
+          child: Padding(
+            padding: EdgeInsets.all(kSmallPadding),
+            child: Text(error),
+          ),
+        ),
       )
     );
   }

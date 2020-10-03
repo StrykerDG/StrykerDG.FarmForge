@@ -11,6 +11,7 @@ import 'package:farmforge_client/models/dto/new_crop_dto.dart';
 import 'package:farmforge_client/utilities/validation.dart';
 import 'package:farmforge_client/utilities/constants.dart';
 import 'package:farmforge_client/utilities/ui_utility.dart';
+import 'package:farmforge_client/utilities/date_time_utility.dart';
 
 class AddCrop extends StatefulWidget {
   @override
@@ -63,20 +64,13 @@ class _AddCropState extends State<AddCrop> {
     final DateTime chosenDate = await showDatePicker(
       context: context, 
       initialDate: DateTime.now(), 
-      firstDate: DateTime(2015, 1), 
-      lastDate: DateTime(2100, 12)
+      firstDate: DateTime(kFirstDateYear, kFirstDateMonth), 
+      lastDate: DateTime(kLastDateYear, kLastDateMonth)
     );
 
     try {
-      final String formattedMonth = chosenDate.month > 9
-        ? chosenDate.month.toString()
-        : '0${chosenDate.month}';
+      final String formattedDate = DateTimeUtility.formatDateTime(chosenDate);
 
-      final String formattedDay = chosenDate.day > 9
-        ? chosenDate.day.toString()
-        : '0${chosenDate.day}';
-
-      final String formattedDate = '${chosenDate.year}-$formattedMonth-$formattedDay';
       setState(() {
         _dateController.text = formattedDate;
       });
@@ -116,11 +110,6 @@ class _AddCropState extends State<AddCrop> {
           error: e.toString()
         );
       }
-
-
-      // TODO: Add to state
-
-      print('Would be saving');
     }
   }
 
@@ -245,14 +234,13 @@ class _AddCropState extends State<AddCrop> {
     DropdownButtonFormField<int> cropVarietyDropdown = getVarietyDropdown();
     DropdownButtonFormField<int> locationDropdown = getLocationDropdown();
 
-    return Container(
-      width: kSmallDesktopModalWidth,
-      child: SingleChildScrollView(
-        padding: EdgeInsets.symmetric(horizontal: kLargePadding),
-        child: Column(
-          children: [
-            Form(
-              key: _formKey,
+    return SingleChildScrollView(
+      child: Column(
+        children: [
+          Form(
+            key: _formKey,
+            child: Container(
+              width: kStandardInput,
               child: Column(
                 children: [
                   cropTypeDropdown,
@@ -285,14 +273,14 @@ class _AddCropState extends State<AddCrop> {
                 ],
               ),
             ),
+          ),
 
-            // Save Button
-            RaisedButton(
-              onPressed: handleSave,
-              child: Text("Save"),
-            )
-          ],
-        ),
+          // Save Button
+          RaisedButton(
+            onPressed: handleSave,
+            child: Text("Save"),
+          )
+        ],
       ),
     );
   }

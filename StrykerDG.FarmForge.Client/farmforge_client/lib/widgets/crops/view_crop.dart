@@ -1,4 +1,3 @@
-import 'package:farmforge_client/models/general/crop_log.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
@@ -8,6 +7,7 @@ import 'package:farmforge_client/models/crops/crop.dart';
 import 'package:farmforge_client/models/farmforge_response.dart';
 import 'package:farmforge_client/models/general/location.dart';
 import 'package:farmforge_client/models/general/status.dart';
+import 'package:farmforge_client/models/general/crop_log.dart';
 
 import 'package:farmforge_client/utilities/constants.dart';
 import 'package:farmforge_client/utilities/validation.dart';
@@ -190,137 +190,134 @@ class _ViewCropState extends State<ViewCrop> {
     DropdownButtonFormField<int> statusDropdown = getStatusDropdown();
     DropdownButtonFormField<int> locationDropdown = getLocationDropdown();
 
-    double listViewHeight = widget.crop.logs.length * 90.0;
-    if(listViewHeight > 400)
-      listViewHeight = 400;
+    double listViewHeight = widget.crop.logs.length * kRowHeight;
+    if(listViewHeight > kSmallListHeight)
+      listViewHeight = kSmallListHeight;
 
     Function saveAction = isSaveEnabled()
       ? handleSave
       : null;
 
-    return Container(
-      width: kSmallDesktopModalWidth,
-      child: Form(
-        key: _formKey,
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.stretch,
-          children: [
-            // Status and Variety
-            Row(
-              mainAxisSize: MainAxisSize.max,
-              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-              children: [
-                Container(
-                  width: 200,
-                  child: statusDropdown
-                ),
-                Container(
-                  width: 200,
-                  child: locationDropdown
-                )
-              ]
-            ),
-
-            // Dates
-            Padding(
-              padding: EdgeInsets.all(kSmallPadding),
-              child: Row(
-                mainAxisSize: MainAxisSize.max,
-                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                children: [
-                  Container(
-                    width: 100,
-                    child: TextFormField(
-                      enabled: false,
-                      initialValue: _plantedAt,
-                      decoration: InputDecoration(
-                        labelText: "Planted At",
-                      ),
-                    ),
-                  ),
-                  Container(
-                    width: 100,
-                    child: TextFormField(
-                      enabled: false,
-                      initialValue: _germinatedAt,
-                      decoration: InputDecoration(
-                        labelText: "Germinated At",
-                      ),
-                    ),
-                  ),
-                  Container(
-                    width: 100,
-                    child: TextFormField(
-                      enabled: false,
-                      initialValue: _harvestedAt,
-                      decoration: InputDecoration(
-                        labelText: "Harvested At",
-                      ),
-                    ),
-                  ),
-                ],
+    return Form(
+      key: _formKey,
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: [
+          // Status and Variety
+          Row(
+            mainAxisSize: MainAxisSize.max,
+            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+            children: [
+              Container(
+                width: kStandardInput,
+                child: statusDropdown
               ),
-            ),
+              Container(
+                width: kStandardInput,
+                child: locationDropdown
+              )
+            ]
+          ),
 
-            // Quantity and Yield
-            Row(
+          // Dates
+          Padding(
+            padding: EdgeInsets.all(kSmallPadding),
+            child: Row(
               mainAxisSize: MainAxisSize.max,
               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
               children: [
                 Container(
-                  width: 100,
+                  width: kNarrowInput,
                   child: TextFormField(
                     enabled: false,
-                    initialValue: widget.crop.quantity.toString(),
+                    initialValue: _plantedAt,
                     decoration: InputDecoration(
-                      labelText: 'Quantity'
+                      labelText: "Planted At",
                     ),
-                  )
+                  ),
                 ),
                 Container(
-                  width: 100,
+                  width: kNarrowInput,
                   child: TextFormField(
                     enabled: false,
-                    initialValue: _yield,
+                    initialValue: _germinatedAt,
                     decoration: InputDecoration(
-                      labelText: 'Yield'
+                      labelText: "Germinated At",
                     ),
-                  )
+                  ),
+                ),
+                Container(
+                  width: kNarrowInput,
+                  child: TextFormField(
+                    enabled: false,
+                    initialValue: _harvestedAt,
+                    decoration: InputDecoration(
+                      labelText: "Harvested At",
+                    ),
+                  ),
                 ),
               ],
             ),
+          ),
 
-            // Logs
-            Container(
-              padding: EdgeInsets.all(16),
-              height: listViewHeight,
-              child: Center(
-                child: ListView.builder(
-                  itemCount: widget.crop.logs.length,
-                  itemBuilder: (context, index) {
-                    CropLog currentLog = widget.crop.logs.elementAt(index);
-
-                    return ListTile(
-                      leading: Text(
-                        DateTimeUtility.formatShortDateTime(currentLog.created)
-                      ),
-                      title: Text(currentLog.logType.label),
-                      subtitle: Text(currentLog.notes),
-                    );
-                  }
+          // Quantity and Yield
+          Row(
+            mainAxisSize: MainAxisSize.max,
+            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+            children: [
+              Container(
+                width: kNarrowInput,
+                child: TextFormField(
+                  enabled: false,
+                  initialValue: widget.crop.quantity.toString(),
+                  decoration: InputDecoration(
+                    labelText: 'Quantity'
+                  ),
                 )
               ),
-            ),
-
-            // Save
-            Center(
-              child: RaisedButton(
-                child: Text('Save'),
-                onPressed: saveAction,
+              Container(
+                width: kNarrowInput,
+                child: TextFormField(
+                  enabled: false,
+                  initialValue: _yield,
+                  decoration: InputDecoration(
+                    labelText: 'Yield'
+                  ),
+                )
               ),
-            )
-          ],
-        ),
+            ],
+          ),
+
+          // Logs
+          Container(
+            padding: EdgeInsets.all(kMediumPadding),
+            height: listViewHeight,
+            child: Center(
+              child: ListView.builder(
+                itemCount: widget.crop.logs.length,
+                itemBuilder: (context, index) {
+                  CropLog currentLog = widget.crop.logs.elementAt(index);
+
+                  return ListTile(
+                    leading: Text(
+                      DateTimeUtility.formatShortDateTime(currentLog.created)
+                    ),
+                    title: Text(currentLog.logType.label),
+                    subtitle: Text(currentLog.notes),
+                  );
+                }
+              )
+            ),
+          ),
+
+          // Save
+          Center(
+            child: RaisedButton(
+              child: Text('Save'),
+              onPressed: saveAction,
+            ),
+          )
+        ],
       ),
     );
   }
