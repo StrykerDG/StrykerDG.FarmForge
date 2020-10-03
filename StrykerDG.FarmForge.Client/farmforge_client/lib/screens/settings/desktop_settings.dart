@@ -216,6 +216,7 @@ class _DesktopSettingsState extends State<DesktopSettings> {
       builder: (context) => FarmForgeDialog(
         title: 'Add New Variety',
         content: AddCropVarieity(cropTypeId: cropTypeId),
+        width: kSmallDesktopModalWidth,
       )
     );
   }
@@ -262,6 +263,7 @@ class _DesktopSettingsState extends State<DesktopSettings> {
       builder: (context) => FarmForgeDialog(
         title: 'Add New Type',
         content: AddCropType(),
+        width: kSmallDesktopModalWidth,
       )
     );
   }
@@ -366,6 +368,7 @@ class _DesktopSettingsState extends State<DesktopSettings> {
       builder: (context) => FarmForgeDialog(
         title: 'Add New Location',
         content: AddLocation(),
+        width: kSmallDesktopModalWidth,
       )
     );
   }
@@ -503,6 +506,7 @@ class _DesktopSettingsState extends State<DesktopSettings> {
       builder: (context) => FarmForgeDialog(
         title: 'Add New User',
         content: AddUser(),
+        width: kSmallDesktopModalWidth,
       )
     );
   }

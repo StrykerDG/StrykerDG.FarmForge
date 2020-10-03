@@ -5,12 +5,12 @@ import 'provider/core_provider.dart';
 import 'provider/user_provider.dart';
 import 'provider/data_provider.dart';
 
-import 'utilities/settings.dart' as utility;
-
 import 'screens/login/login.dart';
 import 'screens/dashboard/dashboard.dart';
 import 'screens/crops/crops.dart';
 import 'screens/settings/settings.dart';
+
+import 'utilities/settings.dart' as utility;
 
 void main() {
   runApp(

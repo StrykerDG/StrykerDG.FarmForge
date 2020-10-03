@@ -87,21 +87,21 @@ class _BaseDesktopState extends State<BaseDesktop> {
                       title: Text('Crops'),
                       onTap: () { handleNavigation(context, Crops.id); },
                     ),
-                    ListTile(
-                      title: Text('Devices'),
-                      onTap: () { handleNavigation(context, ""); },
-                    ),
-                    ListTile(
-                      title: Text('Inventory'),
-                      onTap: () { handleNavigation(context, ""); },
-                    ),
+                    // ListTile(
+                    //   title: Text('Devices'),
+                    //   onTap: () { handleNavigation(context, ""); },
+                    // ),
+                    // ListTile(
+                    //   title: Text('Inventory'),
+                    //   onTap: () { handleNavigation(context, ""); },
+                    // ),
                     Expanded(
                       child: Container(),
                     ),
-                    ListTile(
-                      title: Text('Account'),
-                      onTap: () { handleNavigation(context, ""); },
-                    ),
+                    // ListTile(
+                    //   title: Text('Account'),
+                    //   onTap: () { handleNavigation(context, ""); },
+                    // ),
                     ListTile(
                       title: Text('Settings'),
                       onTap: () { handleNavigation(context, Settings.id); },

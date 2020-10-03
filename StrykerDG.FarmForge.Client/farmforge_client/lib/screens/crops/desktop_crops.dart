@@ -1,17 +1,19 @@
-import 'package:farmforge_client/models/crops/crop.dart';
-import 'package:farmforge_client/provider/data_provider.dart';
-import 'package:farmforge_client/widgets/crops/add_crop_log.dart';
-import 'package:farmforge_client/widgets/crops/view_crop.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import 'package:intl/intl.dart';
+
+import 'package:farmforge_client/provider/data_provider.dart';
+import 'package:farmforge_client/models/crops/crop.dart';
 
 import 'package:farmforge_client/screens/base/desktop/base_desktop.dart';
 
 import 'package:farmforge_client/widgets/crops/add_crop.dart';
 import 'package:farmforge_client/widgets/farmforge_dialog.dart';
+import 'package:farmforge_client/widgets/crops/add_crop_log.dart';
+import 'package:farmforge_client/widgets/crops/view_crop.dart';
+import 'package:farmforge_client/widgets/date_range_picker.dart';
 
 import 'package:farmforge_client/utilities/constants.dart';
-import 'package:provider/provider.dart';
 
 class DesktopCrops extends StatefulWidget {
   final DateTime searchBegin;
@@ -24,6 +26,7 @@ class DesktopCrops extends StatefulWidget {
 }
 
 class _DesktopCropsState extends State<DesktopCrops> {
+  DateTimeRange _dateSearchRange;
   List<Crop> _crops = [];
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
   TextEditingController _searchController = TextEditingController();
@@ -34,7 +37,37 @@ class _DesktopCropsState extends State<DesktopCrops> {
       builder: (context) => FarmForgeDialog(
         title: 'Add New Crop',
         content: AddCrop(),
+        width: kSmallDesktopModalWidth,
       )
+    );
+  }
+
+  void handleDateRangeTap() async {
+    DateTimeRange newRange = await showDialog(
+      context: context,
+      builder: (context) => FarmForgeDialog(
+        title: 'Search By Date',
+        content: DateRangePicker(
+          initialDateRange: _dateSearchRange
+        ),
+        width: kSmallDesktopModalWidth,
+      )
+    );
+
+    if(newRange != null) {
+      setState(() {
+        _dateSearchRange = newRange;
+      });
+    }
+  }
+
+  @override
+  void initState() {
+    super.initState();
+
+    _dateSearchRange = DateTimeRange(
+      start: widget.searchBegin,
+      end: widget.searchEnd
     );
   }
 
@@ -60,6 +93,7 @@ class _DesktopCropsState extends State<DesktopCrops> {
       builder: (context) => FarmForgeDialog(
         title: 'Add ${crop.cropType.label} Log',
         content: AddCropLog(crop: crop),
+        width: kSmallDesktopModalWidth,
       ),
     );
   }
@@ -70,6 +104,7 @@ class _DesktopCropsState extends State<DesktopCrops> {
       builder: (context) => FarmForgeDialog(
         title: '${crop.cropType.label} - ${crop.cropVariety.label}',
         content: ViewCrop(crop: crop),
+        width: kSmallDesktopModalWidth,
       ),
     );
   }
@@ -110,8 +145,8 @@ class _DesktopCropsState extends State<DesktopCrops> {
 
   @override
   Widget build(BuildContext context) {
-    String _searchStartString = DateFormat.yMd().format(widget.searchBegin);
-    String _searchEndString = DateFormat.yMd().format(widget.searchEnd);
+    String _searchStartString = DateFormat.yMd().format(_dateSearchRange.start);
+    String _searchEndString = DateFormat.yMd().format(_dateSearchRange.end);
 
     List<DataColumn> cropColumns = getCropColumns();
     List<DataRow> data = configureTableData();
@@ -131,7 +166,7 @@ class _DesktopCropsState extends State<DesktopCrops> {
                 Padding(
                   padding: EdgeInsets.symmetric(horizontal: kMediumPadding),
                   child: Container(
-                    width: 300,
+                    width: kWideInput,
                     child: Form(
                       key: _formKey,
                       child: TextFormField(
@@ -153,7 +188,7 @@ class _DesktopCropsState extends State<DesktopCrops> {
                 ),
                 GestureDetector(
                   child: Icon(Icons.calendar_today),
-                  onTap: () { print('Displaying calendar options'); },
+                  onTap: handleDateRangeTap,
                 ),
                 Padding(
                   padding: EdgeInsets.symmetric(horizontal: kMediumPadding),

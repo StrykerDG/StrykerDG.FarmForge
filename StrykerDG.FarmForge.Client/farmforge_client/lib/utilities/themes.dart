@@ -7,7 +7,13 @@ ThemeData primaryTheme = ThemeData(
   primaryColorLight: kPrimaryLightColor,
   primaryColorDark: kPrimaryDarkColor,
   accentColor: kSecondaryColor,
-  buttonColor: kSecondaryColor
+  buttonColor: kSecondaryColor,
+
+  textTheme: TextTheme(
+    headline6: TextStyle(
+      fontWeight: FontWeight.bold
+    )
+  )
 );
 
 ThemeData lightTheme = ThemeData.light().copyWith();

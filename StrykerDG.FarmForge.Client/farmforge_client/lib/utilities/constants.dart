@@ -17,6 +17,11 @@ const double kSmallPadding = 8.0;
 const double kMediumPadding = 16.0;
 const double kLargePadding = 24.0;
 
+// Width
+const double kWideInput = 300.0;
+const double kStandardInput = 200.0;
+const double kNarrowInput = 100.0;
+
 // Radius
 const double kSmallRadius = 10.0;
 const double kMediumRadius = 20.0;
@@ -31,3 +36,18 @@ const double kLoginContainerWidth = 300.0;
 // Desktop Sizes
 const double kDesktopNavigationElevation = 5.0;
 const double kDesktopNavigationWidth = 300;
+
+// Dividers
+const double kDividerHeight = 20.0;
+const double kDividerThickness = 2.0;
+const double kDividerIndent = 20.0;
+
+// ListView / Table
+const double kRowHeight = 90.0;
+const double kSmallListHeight = 400.0;
+
+// DatePicker Constants
+const int kFirstDateYear = 2015;
+const int kFirstDateMonth = 1;
+const int kLastDateYear = 2100;
+const int kLastDateMonth = 12;

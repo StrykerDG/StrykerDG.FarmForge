@@ -1,9 +1,9 @@
-import 'package:farmforge_client/models/crops/crop_variety.dart';
 import 'package:flutter/material.dart';
 
 import 'package:farmforge_client/models/crops/crop.dart';
 import 'package:farmforge_client/models/crops/crop_type.dart';
 import 'package:farmforge_client/models/crops/crop_classification.dart';
+import 'package:farmforge_client/models/crops/crop_variety.dart';
 import 'package:farmforge_client/models/general/location.dart';
 import 'package:farmforge_client/models/general/log_type.dart';
 import 'package:farmforge_client/models/general/status.dart';

@@ -63,65 +63,54 @@ class _AddUserState extends State<AddUser> {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      width: kSmallDesktopModalWidth,
-      child: Column(
-        children: [
-          Padding(
-            padding: EdgeInsets.symmetric(
-              horizontal: kSmallPadding
-            ),
-            child: Form(
-              key: _formKey,
-              child: Row(
-                mainAxisSize:  MainAxisSize.max,
-                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                children: [
-                  Container(
-                    width: 200,
-                    child: TextFormField(
-                      controller: _userController,
-                      decoration: InputDecoration(
-                        labelText: 'Username'
-                      ),
-                      validator: Validation.isNotEmpty,
-                    ),
+    return Column(
+      children: [
+        Form(
+          key: _formKey,
+          child: Row(
+            mainAxisSize:  MainAxisSize.max,
+            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+            children: [
+              Container(
+                width: kStandardInput,
+                child: TextFormField(
+                  controller: _userController,
+                  decoration: InputDecoration(
+                    labelText: 'Username'
                   ),
-                  Container(
-                    width: 200,
-                    child: TextFormField(
-                      controller: _passwordController,
-                      obscureText: _obscurePassword,
-                      decoration: InputDecoration(
-                        labelText: 'Password',
-                        suffixIcon: GestureDetector(
-                          child: Icon(Icons.visibility),
-                          onTap: toggleObscurePassword,
-                        )
-                      ),
-                      validator: Validation.isNotEmpty,
-                    ),
-                  )
-                ],
-              ),
-            ),
-          ),
-          Padding(
-            padding: EdgeInsets.all(kSmallPadding),
-            child: Row(
-              children: [
-                Expanded(
-                  child: Container(),
+                  validator: Validation.isNotEmpty,
                 ),
-                RaisedButton(
-                  child: Text('Save'),
-                  onPressed: handleSave,
-                )
-              ],
+              ),
+              Container(
+                width: kStandardInput,
+                child: TextFormField(
+                  controller: _passwordController,
+                  obscureText: _obscurePassword,
+                  decoration: InputDecoration(
+                    labelText: 'Password',
+                    suffixIcon: GestureDetector(
+                      child: Icon(Icons.visibility),
+                      onTap: toggleObscurePassword,
+                    )
+                  ),
+                  validator: Validation.isNotEmpty,
+                ),
+              )
+            ],
+          ),
+        ),
+        Row(
+          children: [
+            Expanded(
+              child: Container(),
             ),
-          )
-        ],
-      ),
+            RaisedButton(
+              child: Text('Save'),
+              onPressed: handleSave,
+            )
+          ],
+        )
+      ],
     );
   }
 }

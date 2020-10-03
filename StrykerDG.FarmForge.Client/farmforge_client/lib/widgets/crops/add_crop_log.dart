@@ -177,43 +177,40 @@ class _AddCropLogState extends State<AddCropLog> {
     DropdownButtonFormField<int> logTypeDropdown = getTypeDropdown();
     DropdownButtonFormField<int> statusDropdown = getStatusDropdown();
 
-    return Container(
-      width: kSmallDesktopModalWidth,
-      child: Form(
-        key: _formKey,
-        child: Column(
-          children: [
-            Container(
-              width: 200,
-              child: logTypeDropdown
-            ),
-            Container(
-              width: 200,
-              child: statusDropdown
-            ),
-            Container(
-              padding: EdgeInsets.only(top: kSmallPadding),
-              width: 200,
-              child: TextFormField(
-                controller: _notesController,
-                maxLines: 5,
-                decoration: InputDecoration(
-                  labelText: 'Notes',
-                  border: OutlineInputBorder(
-                    //borderSide: BorderSide,
-                    borderRadius: BorderRadius.all(
-                      Radius.circular(kMediumRadius)
-                    )
+    return Form(
+      key: _formKey,
+      child: Column(
+        children: [
+          Container(
+            width: kStandardInput,
+            child: logTypeDropdown
+          ),
+          Container(
+            width: kStandardInput,
+            child: statusDropdown
+          ),
+          Container(
+            padding: EdgeInsets.only(top: kSmallPadding),
+            width: kStandardInput,
+            child: TextFormField(
+              controller: _notesController,
+              maxLines: 5,
+              decoration: InputDecoration(
+                labelText: 'Notes',
+                border: OutlineInputBorder(
+                  //borderSide: BorderSide,
+                  borderRadius: BorderRadius.all(
+                    Radius.circular(kMediumRadius)
                   )
-                ),
+                )
               ),
             ),
-            RaisedButton(
-              child: Text('Save'),
-              onPressed: handleSave,
-            )
-          ],
-        ),
+          ),
+          RaisedButton(
+            child: Text('Save'),
+            onPressed: handleSave,
+          )
+        ],
       ),
     );
   }
