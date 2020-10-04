@@ -19,4 +19,13 @@ class Status {
       label: data['label']
     );
   }
+
+  Map<String, dynamic> toMap() {
+    return {
+      'StatusId': this.statusId,
+      'EntityType': this.entityType,
+      'Name': this.name,
+      'Label': this.label
+    };
+  }
 }

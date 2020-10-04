@@ -48,4 +48,18 @@ class CropType {
       varieties: cropVarieties
     );
   }
+
+  Map<String, dynamic> toMap() {
+    return {
+      'CropTypeId': this.cropTypeId,
+      'CropClassificationId': this.cropClassificationId,
+      'CropClassification': null,
+      'Name': this.name,
+      'Label': this.label,
+      'AverageGermination': this.averageGermination,
+      'AverageTimeToHarvest': this.averageTimeToHarvest,
+      'AverageYield': this.averageYield,
+      'Varieties': null
+    };
+  }
 }

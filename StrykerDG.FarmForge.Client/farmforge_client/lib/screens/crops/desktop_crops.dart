@@ -2,8 +2,11 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:intl/intl.dart';
 
+import 'package:farmforge_client/provider/core_provider.dart';
 import 'package:farmforge_client/provider/data_provider.dart';
 import 'package:farmforge_client/models/crops/crop.dart';
+import 'package:farmforge_client/models/farm_forge_data_table_column.dart';
+import 'package:farmforge_client/models/farmforge_response.dart';
 
 import 'package:farmforge_client/screens/base/desktop/base_desktop.dart';
 
@@ -12,8 +15,10 @@ import 'package:farmforge_client/widgets/farmforge_dialog.dart';
 import 'package:farmforge_client/widgets/crops/add_crop_log.dart';
 import 'package:farmforge_client/widgets/crops/view_crop.dart';
 import 'package:farmforge_client/widgets/date_range_picker.dart';
+import 'package:farmforge_client/widgets/farm_forge_data_table.dart';
 
 import 'package:farmforge_client/utilities/constants.dart';
+import 'package:farmforge_client/utilities/ui_utility.dart';
 
 class DesktopCrops extends StatefulWidget {
   final DateTime searchBegin;
@@ -28,7 +33,7 @@ class DesktopCrops extends StatefulWidget {
 class _DesktopCropsState extends State<DesktopCrops> {
   DateTimeRange _dateSearchRange;
   List<Crop> _crops = [];
-  final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
+  List<FarmForgeDataTableColumn> _columns;
   TextEditingController _searchController = TextEditingController();
 
   void handleAddCrop(BuildContext context) {
@@ -42,22 +47,32 @@ class _DesktopCropsState extends State<DesktopCrops> {
     );
   }
 
-  void handleDateRangeTap() async {
-    DateTimeRange newRange = await showDialog(
-      context: context,
-      builder: (context) => FarmForgeDialog(
-        title: 'Search By Date',
-        content: DateRangePicker(
-          initialDateRange: _dateSearchRange
-        ),
-        width: kSmallDesktopModalWidth,
-      )
-    );
+  void handleSearch(DateTimeRange range) async {
+    try {
+      FarmForgeResponse searchResponse = await Provider
+        .of<CoreProvider>(context, listen: false)
+        .farmForgeService
+        .getCrops(
+          begin: range.start,
+          end: range.end,
+          includes: 'CropType,CropVariety,Location,Status,Logs.LogType'
+        );
 
-    if(newRange != null) {
-      setState(() {
-        _dateSearchRange = newRange;
-      });
+      if(searchResponse.data != null) {
+        Provider.of<DataProvider>(context, listen: false)
+          .setCrops(searchResponse.data);
+
+        // Navigator.pop(context);
+      }
+      else
+        throw searchResponse.error;
+    }
+    catch(e) {
+      UiUtility.handleError(
+        context: context, 
+        title: 'Search Error', 
+        error: e.toString()
+      );
     }
   }
 
@@ -69,6 +84,7 @@ class _DesktopCropsState extends State<DesktopCrops> {
       start: widget.searchBegin,
       end: widget.searchEnd
     );
+    _columns = generateColumns();
   }
 
   @override
@@ -98,7 +114,7 @@ class _DesktopCropsState extends State<DesktopCrops> {
     );
   }
 
-  void handleRowClick(Crop crop) {
+  void handleRowClick(bool value, Crop crop) {
     showDialog(
       context: context,
       builder: (context) => FarmForgeDialog(
@@ -109,48 +125,48 @@ class _DesktopCropsState extends State<DesktopCrops> {
     );
   }
 
-  List<DataColumn> getCropColumns() {
+  List<FarmForgeDataTableColumn> generateColumns() {
     return [
-      DataColumn(label: Text('Type')),
-      DataColumn(label: Text('Variety')),
-      DataColumn(label: Text('Location')),
-      DataColumn(label: Text('Status')),
-      DataColumn(label: Text('Quantity')),
-      DataColumn(label: Text('Planted At')),
-      DataColumn(label: Text(''))
-    ];
-  }
-
-  List<DataRow> configureTableData() {
-    return _crops.map((c) => 
-      DataRow(
-        cells: [
-          DataCell(Text(c?.cropType?.label ?? "")),
-          DataCell(Text(c?.cropVariety?.label ?? "")),
-          DataCell(Text(c?.location?.label ?? "")),
-          DataCell(Text(c?.status?.label ?? "")),
-          DataCell(Text(c?.quantity?.toString() ?? "")),
-          DataCell(Text(DateFormat.yMd().format(c?.plantedAt) ?? "")),
-          DataCell(
-            IconButton(
-              icon: Icon(Icons.note),
-              onPressed: () { handleAddLog(c); },
-            )
+      FarmForgeDataTableColumn(
+        label: 'Type',
+        property: 'CropType.Label'
+      ),
+      FarmForgeDataTableColumn(
+        label: 'Variety',
+        property: 'CropVariety.Label'
+      ),
+      FarmForgeDataTableColumn(
+        label: 'Location',
+        property: 'Location.Label'
+      ),
+      FarmForgeDataTableColumn(
+        label: 'Status',
+        property: 'Status.Label'
+      ),
+      FarmForgeDataTableColumn(
+        label: 'Quantity',
+        property: 'Quantity'
+      ),
+      FarmForgeDataTableColumn(
+        label: 'PlantedAt',
+        propertyFunc: (Crop c) =>
+          Text(
+            DateFormat.yMd().format(c?.plantedAt) ?? ""
           )
-        ],
-        onSelectChanged: (bool value) { handleRowClick(c); }
-      )
-    ).toList();
+      ),
+      FarmForgeDataTableColumn(
+        label: '',
+        propertyFunc: (Crop c) => 
+          IconButton(
+            icon: Icon(Icons.note),
+              onPressed: () { handleAddLog(c); },
+          )
+      ),
+    ];
   }
 
   @override
   Widget build(BuildContext context) {
-    String _searchStartString = DateFormat.yMd().format(_dateSearchRange.start);
-    String _searchEndString = DateFormat.yMd().format(_dateSearchRange.end);
-
-    List<DataColumn> cropColumns = getCropColumns();
-    List<DataRow> data = configureTableData();
-
     return BaseDesktop(
       title: 'Crops',
       action: handleAddCrop,
@@ -160,48 +176,17 @@ class _DesktopCropsState extends State<DesktopCrops> {
           // Search bar
           Padding(
             padding: EdgeInsets.symmetric(vertical: kSmallPadding),
-            child: Row(
-              children: [
-                // Search box
-                Padding(
-                  padding: EdgeInsets.symmetric(horizontal: kMediumPadding),
-                  child: Container(
-                    width: kWideInput,
-                    child: Form(
-                      key: _formKey,
-                      child: TextFormField(
-                        controller: _searchController,
-                        decoration: InputDecoration(
-                          prefixIcon: Icon(Icons.search)
-                        ),
-                      ),
-                    )
-                  ),
-                ),
-                // Filter button
-                GestureDetector(
-                  child: Icon(Icons.filter_list),
-                  onTap: () { print('Displaying filter options'); },
-                ),
-                Expanded(
-                  child: Container(),
-                ),
-                GestureDetector(
-                  child: Icon(Icons.calendar_today),
-                  onTap: handleDateRangeTap,
-                ),
-                Padding(
-                  padding: EdgeInsets.symmetric(horizontal: kMediumPadding),
-                  child: Text('$_searchStartString - $_searchEndString'),
-                )
-              ],
+            child: DateRangePicker(
+              initialDateRange: _dateSearchRange,
+              onSearch: handleSearch,
             ),
           ),
 
-          DataTable(
-            columns: cropColumns,
-            rows: data,
-            showCheckboxColumn: false,
+          FarmForgeDataTable<Crop>(
+            columns: _columns,
+            data: _crops,
+            onRowClick: handleRowClick,
+            showCheckBoxes: false,
           )
         ],
       )

@@ -128,19 +128,32 @@ class Crop {
   }
 
   Map<String, dynamic> toMap() {
+    Map<String, dynamic> cropType = this.cropType?.toMap();
+    Map<String, dynamic> cropVariety = this.cropVariety?.toMap();
+    Map<String, dynamic> location = this.location?.toMap();
+    Map<String, dynamic> status = this.status?.toMap();
+
+    String germinatedAt = this.germinatedAt != null
+      ? DateTimeUtility.formatDateTime(this.germinatedAt)
+      : null;
+
+    String harvestedAt = this.harvestedAt != null
+      ? DateTimeUtility.formatDateTime(this.harvestedAt)
+      : null;
+
     return {
       'CropId': this.cropId,
       'CropTypeId': this.cropTypeId,
-      'CropType': null,
+      'CropType': cropType,
       'CropVarietyId': this.cropVarietyId,
-      'CropVariety': null,
+      'CropVariety': cropVariety,
       'LocationId': this.locationId,
-      'Location': null,
+      'Location': location,
       'StatusId': this.statusId,
-      'Status': null,
+      'Status': status,
       'PlantedAt': DateTimeUtility.formatDateTime(this.plantedAt),
-      'GerminatedAt': this.germinatedAt?.toString(),
-      'HarvestedAt': this.harvestedAt?.toString(),
+      'GerminatedAt': germinatedAt,
+      'HarvestedAt': harvestedAt,
       'TimeToGerminate': this.timeToGerminate,
       'TimeToHarvest': this.timeToHarvest,
       'Quantity': this.quantity,

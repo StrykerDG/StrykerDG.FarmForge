@@ -19,4 +19,13 @@ class CropVariety {
       label: data['label']
     );
   }
+
+  Map<String, dynamic> toMap() {
+    return {
+      'CropVarietyId': this.cropVarietyId,
+      'CropTypeId': this.cropTypeId,
+      'Name': this.name,
+      'Label': this.label
+    };
+  }
 }
