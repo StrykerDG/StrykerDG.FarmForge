@@ -4,7 +4,6 @@ import 'package:farmforge_client/models/farm_forge_data_table_column.dart';
 import 'package:farmforge_client/models/farm_forge_model.dart';
 
 import 'package:farmforge_client/utilities/constants.dart';
-import 'package:provider/provider.dart';
 
 enum SortType {
   None,
@@ -31,12 +30,15 @@ class FarmForgeDataTable<T extends FarmForgeModel> extends StatefulWidget {
 }
 
 class _FarmForgeDataTableState<T extends FarmForgeModel> extends State<FarmForgeDataTable<T>> {
-  List<T> _data;
-  int _dataCount;
-  int _sortedColumn;
-  SortType _sortType = SortType.None;
+  TextEditingController _filterController = TextEditingController();
+  FocusNode _filterNode = FocusNode();
   int _filteringColumn;
   List<String> _filters;
+
+  int _sortedColumn;
+  SortType _sortType = SortType.None;
+
+  List<T> _data;
 
   void sortColumn(int columnIndex) {
     SortType sortType;
@@ -95,8 +97,65 @@ class _FarmForgeDataTableState<T extends FarmForgeModel> extends State<FarmForge
     });
   }
 
+  void filterColumns(int columnIndex) {
+    FarmForgeDataTableColumn columnDef = widget.columns[columnIndex];
+    List<String> propertyPath = columnDef.property.split('.');
+    
+    String filter = _filters.elementAt(columnIndex);
+
+    if(filter.isEmpty)
+      setState(() {
+        _data = widget.data;
+      });
+
+    else {
+      // Generate a List of maps so we can filter based on the column's property
+      List<Map<String, dynamic>> dataMaps = List<Map<String, dynamic>>();
+      _data.forEach((element) {
+        dataMaps.add(element.toMap());
+      });
+
+      // Iterate through the maps and actually filter
+      List<T> newData = List<T>();
+
+      dataMaps.forEach((dataMap) { 
+        dynamic property = dataMap;
+        propertyPath.forEach((element) { 
+          if(property != null && property[element] != null)
+            property = property[element];
+        });
+
+        if(property.toString().toLowerCase().contains(filter.toLowerCase()))
+          newData.add(FarmForgeModel.create(T, dataMap));
+      });
+
+      setState(() {
+        _data = newData;
+      });
+    }
+  }
+
   void enableFilter(int columnIndex) {
-    print('Filtering!');
+    setState(() {
+      _filteringColumn = columnIndex;
+      _filterController.text = _filters.elementAt(columnIndex);
+    });
+
+    _filterNode.requestFocus();
+  }
+
+  void onFocusChange() {
+    if(!_filterNode.hasFocus) {
+      int tempIndex = _filteringColumn;
+
+      setState(() {
+        _filters[_filteringColumn] = _filterController.text;
+        _filteringColumn = null;
+        _filterController.text = "";
+      });
+
+      filterColumns(tempIndex);
+    }
   }
 
   List<DataColumn> buildColumns() {
@@ -105,33 +164,45 @@ class _FarmForgeDataTableState<T extends FarmForgeModel> extends State<FarmForge
       (index) {
         FarmForgeDataTableColumn columnDef = widget.columns[index];
         Widget sortIcon = Container();
+        Widget filterIcon = Container();
 
         if(_sortedColumn == index && _sortType == SortType.Asc)
           sortIcon = Icon(Icons.arrow_upward);
         if(_sortedColumn == index && _sortType == SortType.Desc)
           sortIcon = Icon(Icons.arrow_downward);
 
+        if(_filters.elementAt(index).isNotEmpty)
+          filterIcon = Icon(Icons.filter_list);
+
         // Display a textfield if filtering, or the tappable column label
         // if not
-        Widget columnHeader = _filteringColumn == index
-          ? Container(
+        Widget columnHeader = GestureDetector(
+          child: Row(
+            children: [
+              Text(columnDef.label),
+              sortIcon,
+              filterIcon
+            ]
+          ),
+          onTap: () {
+            sortColumn(index);
+          },
+          onDoubleTap: () {
+            enableFilter(index);
+          }
+        );
+
+        // If filtering, display a TextField instead of the columnHeader
+        if(_filteringColumn == index) {
+          columnHeader = Container(
             width: kNarrowInput,
-            child: TextField(),
-          )
-          : GestureDetector(
-            child: Row(
-              children: [
-                Text(columnDef.label),
-                sortIcon
-              ]
+            child: TextField(
+              controller: _filterController,
+              focusNode: _filterNode,
+              autofocus: true,
             ),
-            onTap: () {
-              sortColumn(index);
-            },
-            onDoubleTap: () {
-              enableFilter(index);
-            }
           );
+        }
 
         return DataColumn(
           label: columnHeader
@@ -196,18 +267,23 @@ class _FarmForgeDataTableState<T extends FarmForgeModel> extends State<FarmForge
     super.initState();
 
     _data = widget.data;
+
     // Populate the list of empty filters
     _filters = new List<String>();
     widget.columns.forEach((columnDef) { 
       _filters.add("");
     });
+
+    _filterNode.addListener(onFocusChange);
   }
 
   @override
   void didChangeDependencies() {
-    // TODO: implement didChangeDependencies
     super.didChangeDependencies();
-    _data = widget.data;
+
+    setState(() {
+      _data = widget.data;
+    });
   }
 
   @override

@@ -33,7 +33,8 @@ namespace StrykerDG.FarmForge.Actors.Crops
                     .WithIncludes(message.Includes)
                     .Where(c =>
                         c.PlantedAt >= message.Begin &&
-                        c.PlantedAt <= message.End
+                        c.PlantedAt <= message.End &&
+                        c.IsDeleted == false
                     )
                     .ToList();
 

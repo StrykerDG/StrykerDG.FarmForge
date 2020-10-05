@@ -62,8 +62,6 @@ class _DesktopCropsState extends State<DesktopCrops> {
       if(searchResponse.data != null) {
         Provider.of<DataProvider>(context, listen: false)
           .setCrops(searchResponse.data);
-
-        // Navigator.pop(context);
       }
       else
         throw searchResponse.error;
