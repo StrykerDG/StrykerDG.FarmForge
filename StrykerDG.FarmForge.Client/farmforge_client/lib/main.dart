@@ -5,10 +5,8 @@ import 'provider/core_provider.dart';
 import 'provider/user_provider.dart';
 import 'provider/data_provider.dart';
 
+import 'screens/farm_forge/farm_forge.dart';
 import 'screens/login/login.dart';
-import 'screens/dashboard/dashboard.dart';
-import 'screens/crops/crops.dart';
-import 'screens/settings/settings.dart';
 
 import 'utilities/settings.dart' as utility;
 
@@ -20,14 +18,14 @@ void main() {
         create: (BuildContext context) => UserProvider(),
         child: ChangeNotifierProvider<DataProvider>(
           create: (BuildContext context) => DataProvider(),
-          child: FarmForge(),
+          child: FarmForgeApp(),
         )
       )
     )
   );
 }
 
-class FarmForge extends StatelessWidget {
+class FarmForgeApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
@@ -39,9 +37,7 @@ class FarmForge extends StatelessWidget {
         null: (context) => Login(),
         '/': (context) => Login(),
         Login.id: (context) => Login(),
-        Dashboard.id: (context) => Dashboard(),
-        Crops.id: (context) => Crops(),
-        Settings.id: (context) => Settings(),
+        FarmForge.id: (context) => FarmForge()
       },
     );
   }

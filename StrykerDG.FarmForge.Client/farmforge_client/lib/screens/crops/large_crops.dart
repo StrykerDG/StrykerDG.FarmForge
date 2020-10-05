@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/rendering.dart';
 import 'package:provider/provider.dart';
 import 'package:intl/intl.dart';
 
@@ -9,9 +8,6 @@ import 'package:farmforge_client/models/crops/crop.dart';
 import 'package:farmforge_client/models/farm_forge_data_table_column.dart';
 import 'package:farmforge_client/models/farmforge_response.dart';
 
-import 'package:farmforge_client/screens/base/desktop/base_desktop.dart';
-
-import 'package:farmforge_client/widgets/crops/add_crop.dart';
 import 'package:farmforge_client/widgets/farmforge_dialog.dart';
 import 'package:farmforge_client/widgets/crops/add_crop_log.dart';
 import 'package:farmforge_client/widgets/crops/view_crop.dart';
@@ -21,32 +17,21 @@ import 'package:farmforge_client/widgets/farm_forge_data_table.dart';
 import 'package:farmforge_client/utilities/constants.dart';
 import 'package:farmforge_client/utilities/ui_utility.dart';
 
-class DesktopCrops extends StatefulWidget {
+class LargeCrops extends StatefulWidget {
   final DateTime searchBegin;
   final DateTime searchEnd;
 
-  DesktopCrops({@required this.searchBegin, this.searchEnd});
+  LargeCrops({@required this.searchBegin, this.searchEnd});
 
   @override
-  _DesktopCropsState createState() => _DesktopCropsState();
+  _LargeCropsState createState() => _LargeCropsState();
 }
 
-class _DesktopCropsState extends State<DesktopCrops> {
+class _LargeCropsState extends State<LargeCrops> {
   DateTimeRange _dateSearchRange;
   List<Crop> _crops = [];
   List<FarmForgeDataTableColumn> _columns;
   TextEditingController _searchController = TextEditingController();
-
-  void handleAddCrop(BuildContext context) {
-    showDialog(
-      context: context,
-      builder: (context) => FarmForgeDialog(
-        title: 'Add New Crop',
-        content: AddCrop(),
-        width: kSmallDesktopModalWidth,
-      )
-    );
-  }
 
   void handleSearch(DateTimeRange range) async {
     try {
@@ -170,35 +155,31 @@ class _DesktopCropsState extends State<DesktopCrops> {
     double dataTableHeight = 
       MediaQuery.of(context).size.height - kAppBarHeight - kSerachBarHeight;
 
-    return BaseDesktop(
-      title: 'Crops',
-      action: handleAddCrop,
-      content: Column(
-        crossAxisAlignment: CrossAxisAlignment.stretch,
-        children: [
-          // Search bar
-          Padding(
-            padding: EdgeInsets.symmetric(vertical: kSmallPadding),
-            child: DateRangePicker(
-              initialDateRange: _dateSearchRange,
-              onSearch: handleSearch,
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      children: [
+        // Search bar
+        Padding(
+          padding: EdgeInsets.symmetric(vertical: kSmallPadding),
+          child: DateRangePicker(
+            initialDateRange: _dateSearchRange,
+            onSearch: handleSearch,
+          ),
+        ),
+
+        Container(
+          height: dataTableHeight,
+          child: SingleChildScrollView(
+            scrollDirection: Axis.vertical,
+            child: FarmForgeDataTable<Crop>(
+              columns: _columns,
+              data: _crops,
+              onRowClick: handleRowClick,
+              showCheckBoxes: false,
             ),
           ),
-
-          Container(
-            height: dataTableHeight,
-            child: SingleChildScrollView(
-              scrollDirection: Axis.vertical,
-              child: FarmForgeDataTable<Crop>(
-                columns: _columns,
-                data: _crops,
-                onRowClick: handleRowClick,
-                showCheckBoxes: false,
-              ),
-            ),
-          )
-        ],
-      )
+        )
+      ],
     );
   }
 }

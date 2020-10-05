@@ -6,7 +6,7 @@ import 'package:farmforge_client/provider/user_provider.dart';
 
 import 'package:farmforge_client/models/farmforge_response.dart';
 
-import 'package:farmforge_client/screens/dashboard/dashboard.dart';
+import 'package:farmforge_client/screens/farm_forge/farm_forge.dart';
 
 import 'package:farmforge_client/utilities/ui_utility.dart';
 import 'package:farmforge_client/utilities/utility.dart';
@@ -53,7 +53,7 @@ class _LoginState extends State<Login> {
           Provider.of<UserProvider>(context, listen: false)
             .setUsername(tokenInfo['User']);
 
-          Navigator.pushNamed(context, Dashboard.id);
+          Navigator.pushNamed(context, FarmForge.id);
         }
         else
           throw tokenResponse.error;

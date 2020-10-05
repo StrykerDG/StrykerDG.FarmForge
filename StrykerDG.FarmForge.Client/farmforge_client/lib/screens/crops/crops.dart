@@ -1,4 +1,3 @@
-import 'package:farmforge_client/utilities/ui_utility.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
@@ -7,14 +6,30 @@ import 'package:farmforge_client/provider/data_provider.dart';
 
 import 'package:farmforge_client/models/farmforge_response.dart';
 
-import 'mobile_crops.dart';
-import 'tablet_crops.dart';
-import 'desktop_crops.dart';
+import 'large_crops.dart';
+import 'medium_crops.dart';
+import 'small_crops.dart';
+import 'package:farmforge_client/widgets/crops/add_crop.dart';
+import 'package:farmforge_client/widgets/farmforge_dialog.dart';
 
 import 'package:farmforge_client/utilities/constants.dart';
+import 'package:farmforge_client/utilities/ui_utility.dart';
 
 class Crops extends StatefulWidget {
-  static String id = 'crops';
+  static const String title = 'Crops';
+  static const IconData fabIcon = Icons.add;
+  static const Function fabAction = handleAddCrop;
+
+  static void handleAddCrop(BuildContext context) {
+    showDialog(
+      context: context,
+      builder: (context) => FarmForgeDialog(
+        title: 'Add New Crop',
+        content: AddCrop(),
+        width: kSmallDesktopModalWidth,
+      )
+    );
+  }
   
   @override
   _CropsState createState() => _CropsState();
@@ -64,11 +79,11 @@ class _CropsState extends State<Crops> {
   Widget build(BuildContext context) {
     return LayoutBuilder(
       builder: (BuildContext context, BoxConstraints constraints) {
-        return constraints.maxWidth <= kMobileWidth
-          ? MobileCrops()
-          : constraints.maxWidth <= kTabletWidth
-            ? TabletCrops()
-            : DesktopCrops(
+        return constraints.maxWidth <= kSmallWidthMax
+          ? SmallCrops()
+          : constraints.maxWidth <= kMediumWidthMax
+            ? MediumCrops()
+            : LargeCrops(
               searchBegin: searchBegin,
               searchEnd: searchEnd,
             );

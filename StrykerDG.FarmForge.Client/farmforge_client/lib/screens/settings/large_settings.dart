@@ -10,8 +10,6 @@ import 'package:farmforge_client/models/general/location.dart';
 import 'package:farmforge_client/models/farmforge_response.dart';
 import 'package:farmforge_client/models/general/user.dart';
 
-import 'package:farmforge_client/screens/base/desktop/base_desktop.dart';
-
 import 'package:farmforge_client/widgets/farmforge_dialog.dart';
 import 'package:farmforge_client/widgets/settings/settings_expansion_tile.dart';
 import 'package:farmforge_client/widgets/settings/add_location.dart';
@@ -22,13 +20,13 @@ import 'package:farmforge_client/widgets/settings/add_user.dart';
 import 'package:farmforge_client/utilities/constants.dart';
 import 'package:farmforge_client/utilities/ui_utility.dart';
 
-class DesktopSettings extends StatefulWidget {
+class LargeSettings extends StatefulWidget {
 
   @override
-  _DesktopSettingsState createState() => _DesktopSettingsState();
+  _LargeSettingsState createState() => _LargeSettingsState();
 }
 
-class _DesktopSettingsState extends State<DesktopSettings> {
+class _LargeSettingsState extends State<LargeSettings> {
   List<CropType> _cropTypes = [];
   List<Location> _locations = [];
   List<User> _users = [];
@@ -529,25 +527,22 @@ class _DesktopSettingsState extends State<DesktopSettings> {
     List<Widget> locationContent = getLocationContent();
     List<Widget> userContent = getUserContent();
 
-    return BaseDesktop(
-      title: 'Settings',
-      content: SingleChildScrollView(
-        child: Column(
-          children: [
-            SettingsExpansionTile(
-              title: 'Crops',
-              content: cropContent,
-            ),
-            SettingsExpansionTile(
-              title: 'Locations',
-              content: locationContent
-            ),
-            SettingsExpansionTile(
-              title: 'Users',
-              content: userContent
-            )
-          ],
-        ),
+    return SingleChildScrollView(
+      child: Column(
+        children: [
+          SettingsExpansionTile(
+            title: 'Crops',
+            content: cropContent,
+          ),
+          SettingsExpansionTile(
+            title: 'Locations',
+            content: locationContent
+          ),
+          SettingsExpansionTile(
+            title: 'Users',
+            content: userContent
+          )
+        ],
       ),
     );
   }

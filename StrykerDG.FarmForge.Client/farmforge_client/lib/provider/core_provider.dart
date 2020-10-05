@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 
+import 'package:farmforge_client/screens/dashboard/dashboard.dart';
+
 import 'package:farmforge_client/services/farmforge_api_service.dart';
 
 import '../utilities/themes.dart';
@@ -13,6 +15,10 @@ enum ThemeType {
 class CoreProvider extends ChangeNotifier {
   FarmForgeApiService farmForgeService = FarmForgeApiService();
   ThemeData currentTheme = primaryTheme;
+  Widget appContent = Dashboard();
+  String appTitle = 'FarmForge';
+  IconData fabIcon;
+  Function fabAction;
 
   void toggleTheme(ThemeType type) {
     if(type == ThemeType.Primary)
@@ -21,5 +27,18 @@ class CoreProvider extends ChangeNotifier {
       currentTheme = lightTheme;
     if(type == ThemeType.Dark)
       currentTheme = darkTheme;
+  }
+
+  void setAppContent(
+    Widget content, 
+    String title, 
+    IconData icon, 
+    Function action
+  ) {
+    appContent = content;
+    appTitle = title;
+    fabIcon = icon;
+    fabAction = action;
+    notifyListeners();
   }
 }

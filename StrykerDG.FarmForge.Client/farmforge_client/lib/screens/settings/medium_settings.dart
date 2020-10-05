@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-class MobileCrops extends StatelessWidget {
+class MediumSettings extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(

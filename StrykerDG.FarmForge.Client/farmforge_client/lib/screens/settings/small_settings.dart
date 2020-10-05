@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 
-class MobileDashboard extends StatelessWidget {
+class SmallSettings extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    return Center(
-      child: Text("mobile"),
+    return Container(
+      
     );
   }
 }
