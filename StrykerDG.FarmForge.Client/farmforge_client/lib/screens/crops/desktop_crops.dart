@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/rendering.dart';
 import 'package:provider/provider.dart';
 import 'package:intl/intl.dart';
 
@@ -167,6 +168,10 @@ class _DesktopCropsState extends State<DesktopCrops> {
 
   @override
   Widget build(BuildContext context) {
+
+    double dataTableHeight = 
+      MediaQuery.of(context).size.height - kAppBarHeight - kSerachBarHeight;
+
     return BaseDesktop(
       title: 'Crops',
       action: handleAddCrop,
@@ -182,11 +187,17 @@ class _DesktopCropsState extends State<DesktopCrops> {
             ),
           ),
 
-          FarmForgeDataTable<Crop>(
-            columns: _columns,
-            data: _crops,
-            onRowClick: handleRowClick,
-            showCheckBoxes: false,
+          Container(
+            height: dataTableHeight,
+            child: SingleChildScrollView(
+              scrollDirection: Axis.vertical,
+              child: FarmForgeDataTable<Crop>(
+                columns: _columns,
+                data: _crops,
+                onRowClick: handleRowClick,
+                showCheckBoxes: false,
+              ),
+            ),
           )
         ],
       )

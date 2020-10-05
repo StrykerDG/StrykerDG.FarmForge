@@ -210,6 +210,17 @@ namespace StrykerDG.FarmForge.Api
 
             services.AddControllers();
 
+            // use PascalCase instead of camelCase in serialization
+            services.AddMvc(setupAction =>
+            {
+                setupAction.EnableEndpointRouting = false;
+            })
+            .AddJsonOptions(jsonOptions =>
+            {
+                jsonOptions.JsonSerializerOptions.PropertyNamingPolicy = null;
+            })
+            .SetCompatibilityVersion(CompatibilityVersion.Version_3_0);
+
             FarmForgeDataContext.SetTriggers();
         }
 

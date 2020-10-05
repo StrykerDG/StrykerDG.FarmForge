@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
 
 import 'package:farmforge_client/models/farm_forge_data_table_column.dart';
+import 'package:farmforge_client/models/farm_forge_model.dart';
 
 import 'package:farmforge_client/utilities/constants.dart';
+import 'package:provider/provider.dart';
 
 enum SortType {
   None,
@@ -10,7 +12,7 @@ enum SortType {
   Desc
 }
 
-class FarmForgeDataTable extends StatefulWidget {
+class FarmForgeDataTable<T extends FarmForgeModel> extends StatefulWidget {
 
   final List<dynamic> data;
   final List<FarmForgeDataTableColumn> columns;
@@ -25,11 +27,12 @@ class FarmForgeDataTable extends StatefulWidget {
   });
 
   @override
-  _FarmForgeDataTableState createState() => _FarmForgeDataTableState();
+  _FarmForgeDataTableState<T> createState() => _FarmForgeDataTableState<T>();
 }
 
-class _FarmForgeDataTableState extends State<FarmForgeDataTable> {
-  List<dynamic> _data;
+class _FarmForgeDataTableState<T extends FarmForgeModel> extends State<FarmForgeDataTable<T>> {
+  List<T> _data;
+  int _dataCount;
   int _sortedColumn;
   SortType _sortType = SortType.None;
   int _filteringColumn;
@@ -50,7 +53,6 @@ class _FarmForgeDataTableState extends State<FarmForgeDataTable> {
       sortedColumn = null;
     }
 
-/*
     FarmForgeDataTableColumn columnDef = widget.columns[columnIndex];
     List<String> propertyPath = columnDef.property.split('.');
 
@@ -72,19 +74,24 @@ class _FarmForgeDataTableState extends State<FarmForgeDataTable> {
             bProperty = bProperty[element];
         });
 
-        print('comparing ${aProperty.toString()} to ${bProperty.toString()}');
+        // print('comparing ${aProperty.toString()} to ${bProperty.toString()}');
         return aProperty.toString().compareTo(bProperty.toString());
       }
     );
 
     // Now rebuild the objects
-    T item = creator();
+    List<T> newData = List<T>.generate(
+      dataMaps.length, 
+      (index) => FarmForgeModel.create(T, dataMaps.elementAt(index))
+    );
 
-    print('Sorted?, ${dataMaps.toString()}');
-*/
+    if(sortType == SortType.Desc)
+      newData = newData.reversed.toList();
+
     setState(() {
       _sortedColumn = sortedColumn;
       _sortType = sortType;
+      _data = newData;
     });
   }
 
@@ -194,6 +201,13 @@ class _FarmForgeDataTableState extends State<FarmForgeDataTable> {
     widget.columns.forEach((columnDef) { 
       _filters.add("");
     });
+  }
+
+  @override
+  void didChangeDependencies() {
+    // TODO: implement didChangeDependencies
+    super.didChangeDependencies();
+    _data = widget.data;
   }
 
   @override

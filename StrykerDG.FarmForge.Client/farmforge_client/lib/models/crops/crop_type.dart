@@ -26,25 +26,25 @@ class CropType {
 
   factory CropType.fromMap(Map<String, dynamic> data) {
     List<CropVariety> cropVarieties = new List<CropVariety>();
-    if(data['varieties'] != null && data['varieties'].length > 0)
-      data['varieties'].forEach((varietyData) {
+    if(data['Varieties'] != null && data['Varieties'].length > 0)
+      data['Varieties'].forEach((varietyData) {
         CropVariety variety = CropVariety.fromMap(varietyData);
         cropVarieties.add(variety);
       });
 
-    CropClassification classification = data['cropClassification'] != null
-      ? CropClassification.fromMap(data['cropClassification'])
+    CropClassification classification = data['CropClassification'] != null
+      ? CropClassification.fromMap(data['CropClassification'])
       : null;
 
     return CropType(
-      cropTypeId: data['cropTypeId'],
-      cropClassificationId: data['cropClassificationId'],
+      cropTypeId: data['CropTypeId'],
+      cropClassificationId: data['CropClassificationId'],
       cropClassification: classification,
-      name: data['name'],
-      label: data['label'],
-      averageGermination: data['averageGermination'],
-      averageTimeToHarvest: data['averageTimeToHarvest'],
-      averageYield: data['averageYield'],
+      name: data['Name'],
+      label: data['Label'],
+      averageGermination: data['AverageGermination'],
+      averageTimeToHarvest: data['AverageTimeToHarvest'],
+      averageYield: data['AverageYield'],
       varieties: cropVarieties
     );
   }

@@ -9,8 +9,8 @@ class User {
 
   factory User.fromMap(Map<String, dynamic> data) {
     return User(
-      userId: data['userId'],
-      username: data['username']
+      userId: data['UserId'],
+      username: data['Username']
     );
   }
 }

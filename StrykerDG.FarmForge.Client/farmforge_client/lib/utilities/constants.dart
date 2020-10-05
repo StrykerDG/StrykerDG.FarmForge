@@ -4,6 +4,10 @@ import 'package:flutter/material.dart';
 const double kMobileWidth = 415;
 const double kTabletWidth = 1200;
 
+// AppBar
+const double kAppBarHeight = 56;
+const double kSerachBarHeight = 90;
+
 // Colors
 const kPrimaryColor = Color(0xff4caf50);
 const kPrimaryLightColor = Color(0xff80e27e);

@@ -13,10 +13,10 @@ class Status {
 
   factory Status.fromMap(Map<String, dynamic> data) {
     return Status(
-      statusId: data['statusId'],
-      entityType: data['entityType'],
-      name: data['name'],
-      label: data['label']
+      statusId: data['StatusId'],
+      entityType: data['EntityType'],
+      name: data['Name'],
+      label: data['Label']
     );
   }
 

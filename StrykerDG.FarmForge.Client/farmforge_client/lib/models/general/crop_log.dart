@@ -1,4 +1,5 @@
 import 'package:farmforge_client/models/general/log_type.dart';
+import 'package:farmforge_client/utilities/date_time_utility.dart';
 
 class CropLog {
   int cropLogId;
@@ -18,31 +19,38 @@ class CropLog {
   });
 
   factory CropLog.fromMap(Map<String, dynamic> data) {
-    LogType type = data['logType'] != null
-      ? LogType.fromMap(data['logType'])
+    LogType type = data['LogType'] != null
+      ? LogType.fromMap(data['LogType'])
       : null;
 
-    DateTime created = data['created'] != null
-      ? DateTime.parse(data['created'])
+    DateTime created = data['Created'] != null
+      ? DateTime.parse(data['Created'])
       : null;
 
     return CropLog(
-      cropLogId: data['cropLogId'],
-      cropId: data['cropId'],
-      logTypeId: data['logTypeId'],
+      cropLogId: data['CropLogId'],
+      cropId: data['CropId'],
+      logTypeId: data['LogTypeId'],
       logType: type,
-      notes: data['notes'],
+      notes: data['Notes'],
       created: created
     );
   }
 
   Map<String, dynamic> toMap() {
+    Map<String, dynamic> logType = this.logType?.toMap();
+
+    String created = this.created != null
+      ? DateTimeUtility.formatDateTime(this.created)
+      : null;
+
     return {
       'CropLogId': this.cropLogId,
       'CropId': this.cropId,
       'LogTypeId': this.logTypeId,
+      'LogType': logType,
       'Notes': this.notes,
-      'Created': this.created
+      'Created': created
     };
   }
 }
