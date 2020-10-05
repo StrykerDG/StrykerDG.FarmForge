@@ -13,6 +13,7 @@ using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
 using Newtonsoft.Json;
 using StrykerDG.FarmForge.Actors.Authentication;
+using StrykerDG.FarmForge.Actors.CropClassifications;
 using StrykerDG.FarmForge.Actors.Crops;
 using StrykerDG.FarmForge.Actors.CropTypes;
 using StrykerDG.FarmForge.Actors.Devices;
@@ -149,8 +150,8 @@ namespace StrykerDG.FarmForge.Api
                 ));
                 Actors.Add(
                     actorSystem.ActorOf(Props.Create(() =>
-                    new CropTypeActor(serviceScopeFactory)),
-                    "CropTypeActor"
+                        new CropTypeActor(serviceScopeFactory)),
+                        "CropTypeActor"
                 ));
                 Actors.Add(
                     actorSystem.ActorOf(Props.Create(() =>
@@ -166,6 +167,11 @@ namespace StrykerDG.FarmForge.Api
                     actorSystem.ActorOf(Props.Create(() =>
                         new StatusActor(serviceScopeFactory)),
                         "StatusActor"
+                ));
+                Actors.Add(
+                    actorSystem.ActorOf(Props.Create(() =>
+                        new CropClassificationActor(serviceScopeFactory)),
+                    "CropClassificationActor"
                 ));
 
                 return actorSystem;
@@ -218,6 +224,8 @@ namespace StrykerDG.FarmForge.Api
             app.UseCors("CorsPolicy");
 
             app.UseHttpsRedirection();
+
+            app.UseStaticFiles();
 
             app.UseRouting();
 

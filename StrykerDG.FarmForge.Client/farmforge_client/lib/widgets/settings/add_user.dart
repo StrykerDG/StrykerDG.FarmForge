@@ -3,45 +3,40 @@ import 'package:provider/provider.dart';
 
 import 'package:farmforge_client/provider/core_provider.dart';
 import 'package:farmforge_client/provider/data_provider.dart';
-import 'package:farmforge_client/models/general/location.dart';
 import 'package:farmforge_client/models/farmforge_response.dart';
 
 import 'package:farmforge_client/utilities/constants.dart';
 import 'package:farmforge_client/utilities/ui_utility.dart';
 import 'package:farmforge_client/utilities/validation.dart';
 
-class AddLocation extends StatefulWidget {
+class AddUser extends StatefulWidget {
   @override
-  _AddLocationState createState() => _AddLocationState();
+  _AddUserState createState() => _AddUserState();
 }
 
-class _AddLocationState extends State<AddLocation> {
-  bool isLoading = false;
+class _AddUserState extends State<AddUser> {
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
-  TextEditingController _nameController = new TextEditingController();
-  int _parentId;
+  TextEditingController _userController = TextEditingController();
+  TextEditingController _passwordController = TextEditingController();
+  bool _obscurePassword = true;
 
-  void handleParentChange(int newValue) {
+  void toggleObscurePassword() {
     setState(() {
-      _parentId = newValue;
+      _obscurePassword = !_obscurePassword;
     });
   }
 
   void handleSave() async {
     if(_formKey.currentState.validate()) {
-      setState(() {
-        isLoading = true;
-      });
-
       try {
         FarmForgeResponse addResponse = await Provider
           .of<CoreProvider>(context, listen: false)
           .farmForgeService
-          .addLocation(_nameController.text, _parentId);
+          .createUser(_userController.text, _passwordController.text);
 
         if(addResponse.data != null) {
           Provider.of<DataProvider>(context, listen: false)
-            .addLocation(addResponse.data);
+            .addUser(addResponse.data);
 
           Navigator.pop(context);
         }
@@ -60,51 +55,45 @@ class _AddLocationState extends State<AddLocation> {
 
   @override
   void dispose() {
-    _nameController.dispose();
+    _userController.dispose();
+    _passwordController.dispose();
     
     super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
-
-    List<Location> existingLocations = Provider.of<DataProvider>(context)
-      .locations;
-
-    List<DropdownMenuItem<int>> parentOptions = existingLocations.map((location) => 
-      DropdownMenuItem<int>(
-        value: location.locationId,
-        child: Text(location.label),
-      )
-    ).toList();
-
     return Column(
       children: [
         Form(
           key: _formKey,
           child: Row(
-            mainAxisSize: MainAxisSize.max,
+            mainAxisSize:  MainAxisSize.max,
             mainAxisAlignment: MainAxisAlignment.spaceEvenly,
             children: [
               Container(
                 width: kStandardInput,
                 child: TextFormField(
-                  controller: _nameController,
+                  controller: _userController,
                   decoration: InputDecoration(
-                    labelText: 'Location Name'
+                    labelText: 'Username'
                   ),
                   validator: Validation.isNotEmpty,
                 ),
               ),
               Container(
                 width: kStandardInput,
-                child: DropdownButtonFormField<int>(
-                  value: _parentId,
-                  onChanged: handleParentChange,
-                  items: parentOptions,
+                child: TextFormField(
+                  controller: _passwordController,
+                  obscureText: _obscurePassword,
                   decoration: InputDecoration(
-                    labelText: 'Parent Location'
+                    labelText: 'Password',
+                    suffixIcon: GestureDetector(
+                      child: Icon(Icons.visibility),
+                      onTap: toggleObscurePassword,
+                    )
                   ),
+                  validator: Validation.isNotEmpty,
                 ),
               )
             ],

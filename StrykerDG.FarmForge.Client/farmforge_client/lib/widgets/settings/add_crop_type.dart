@@ -3,50 +3,62 @@ import 'package:provider/provider.dart';
 
 import 'package:farmforge_client/provider/core_provider.dart';
 import 'package:farmforge_client/provider/data_provider.dart';
-import 'package:farmforge_client/models/general/location.dart';
+
+import 'package:farmforge_client/models/crops/crop_classification.dart';
 import 'package:farmforge_client/models/farmforge_response.dart';
 
 import 'package:farmforge_client/utilities/constants.dart';
 import 'package:farmforge_client/utilities/ui_utility.dart';
 import 'package:farmforge_client/utilities/validation.dart';
 
-class AddLocation extends StatefulWidget {
+class AddCropType extends StatefulWidget {
   @override
-  _AddLocationState createState() => _AddLocationState();
+  _AddCropTypeState createState() => _AddCropTypeState();
 }
 
-class _AddLocationState extends State<AddLocation> {
-  bool isLoading = false;
+class _AddCropTypeState extends State<AddCropType> {
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
-  TextEditingController _nameController = new TextEditingController();
-  int _parentId;
+  TextEditingController _nameController = TextEditingController();
+  List<CropClassification> _classifications;
+  int _classificationId;
 
-  void handleParentChange(int newValue) {
-    setState(() {
-      _parentId = newValue;
-    });
+  void loadData() async {
+    try {
+      FarmForgeResponse cropClassifications = await Provider.of<CoreProvider>(context, listen: false)
+        .farmForgeService.getCropClassifications();
+
+      if(cropClassifications.data != null)
+        Provider.of<DataProvider>(context, listen: false)
+          .setCropClassifications(cropClassifications.data);
+      else
+        throw cropClassifications.error;
+    }
+    catch(e) {
+      UiUtility.handleError(
+        context: context, 
+        title: 'Load Error', 
+        error: e.toString()
+      );
+    }
   }
 
   void handleSave() async {
     if(_formKey.currentState.validate()) {
-      setState(() {
-        isLoading = true;
-      });
-
       try {
-        FarmForgeResponse addResponse = await Provider
+
+        FarmForgeResponse addResult = await Provider
           .of<CoreProvider>(context, listen: false)
           .farmForgeService
-          .addLocation(_nameController.text, _parentId);
+          .createCropType(_nameController.text, _classificationId);
 
-        if(addResponse.data != null) {
+        if(addResult.data != null) {
           Provider.of<DataProvider>(context, listen: false)
-            .addLocation(addResponse.data);
+            .addCropType(addResult.data);
 
           Navigator.pop(context);
         }
-        else 
-          throw(addResponse.error);
+        else
+          throw(addResult.error);
       }
       catch(e) {
         UiUtility.handleError(
@@ -58,23 +70,33 @@ class _AddLocationState extends State<AddLocation> {
     }
   }
 
+  void handleClassificationChange(int newValue) {
+    setState(() {
+      _classificationId = newValue;
+    });
+  }
+
   @override
-  void dispose() {
-    _nameController.dispose();
-    
-    super.dispose();
+  void initState() {
+    super.initState();
+
+    loadData();
+  }
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+
+    _classifications = Provider.of<DataProvider>(context).cropClassifications;
   }
 
   @override
   Widget build(BuildContext context) {
 
-    List<Location> existingLocations = Provider.of<DataProvider>(context)
-      .locations;
-
-    List<DropdownMenuItem<int>> parentOptions = existingLocations.map((location) => 
+    List<DropdownMenuItem<int>> classificationOptions = _classifications.map((c) => 
       DropdownMenuItem<int>(
-        value: location.locationId,
-        child: Text(location.label),
+        value: c.cropClassificationId,
+        child: Text(c.label),
       )
     ).toList();
 
@@ -91,7 +113,7 @@ class _AddLocationState extends State<AddLocation> {
                 child: TextFormField(
                   controller: _nameController,
                   decoration: InputDecoration(
-                    labelText: 'Location Name'
+                    labelText: 'Name'
                   ),
                   validator: Validation.isNotEmpty,
                 ),
@@ -99,12 +121,13 @@ class _AddLocationState extends State<AddLocation> {
               Container(
                 width: kStandardInput,
                 child: DropdownButtonFormField<int>(
-                  value: _parentId,
-                  onChanged: handleParentChange,
-                  items: parentOptions,
+                  value: _classificationId,
+                  onChanged: handleClassificationChange,
+                  items: classificationOptions,
                   decoration: InputDecoration(
-                    labelText: 'Parent Location'
+                    labelText: 'Classification'
                   ),
+                  validator: Validation.isNotEmpty,
                 ),
               )
             ],
