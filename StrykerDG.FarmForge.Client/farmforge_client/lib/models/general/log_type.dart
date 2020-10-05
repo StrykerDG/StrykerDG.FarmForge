@@ -15,11 +15,11 @@ class LogType {
 
   factory LogType.fromMap(Map<String, dynamic> data) {
     return LogType(
-      logTypeId: data['logTypeId'],
-      entityType: data['entityType'],
-      name: data['name'],
-      label: data['label'],
-      description: data['description']
+      logTypeId: data['LogTypeId'],
+      entityType: data['EntityType'],
+      name: data['Name'],
+      label: data['Label'],
+      description: data['Description']
     );
   }
 

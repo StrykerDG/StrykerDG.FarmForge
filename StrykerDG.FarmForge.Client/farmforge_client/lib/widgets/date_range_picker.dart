@@ -1,18 +1,17 @@
-import 'package:farmforge_client/models/farmforge_response.dart';
-import 'package:farmforge_client/provider/core_provider.dart';
-import 'package:farmforge_client/provider/data_provider.dart';
-import 'package:farmforge_client/utilities/ui_utility.dart';
-import 'package:farmforge_client/utilities/validation.dart';
 import 'package:flutter/material.dart';
 
 import 'package:farmforge_client/utilities/constants.dart';
 import 'package:farmforge_client/utilities/date_time_utility.dart';
-import 'package:provider/provider.dart';
+import 'package:farmforge_client/utilities/validation.dart';
 
 class DateRangePicker extends StatefulWidget {
   final DateTimeRange initialDateRange;
+  final Function onSearch;
 
-  DateRangePicker({@required this.initialDateRange});
+  DateRangePicker({
+    @required this.initialDateRange,
+    this.onSearch
+  });
 
   @override
   _DateRangePickerState createState() => _DateRangePickerState();
@@ -43,34 +42,8 @@ class _DateRangePickerState extends State<DateRangePicker> {
   }
 
   void handleSearch() async {
-    if(_formKey.currentState.validate()) {
-      try {
-        FarmForgeResponse searchResponse = await Provider
-          .of<CoreProvider>(context, listen: false)
-          .farmForgeService
-          .getCrops(
-            begin: _searchRange.start,
-            end: _searchRange.end,
-            includes: 'CropType,CropVariety,Location,Status,Logs.LogType'
-          );
-
-        if(searchResponse.data != null) {
-          Provider.of<DataProvider>(context, listen: false)
-            .setCrops(searchResponse.data);
-
-          Navigator.pop(context, _searchRange);
-        }
-        else
-          throw searchResponse.error;
-      }
-      catch(e) {
-        UiUtility.handleError(
-          context: context, 
-          title: 'Search Error', 
-          error: e.toString()
-        );
-      }
-    }
+    if(_formKey.currentState.validate() && widget.onSearch != null)
+      widget.onSearch(_searchRange);
   }
 
   @override
@@ -92,33 +65,33 @@ class _DateRangePickerState extends State<DateRangePicker> {
 
   @override
   Widget build(BuildContext context) {
-    return Column(
-      children: [
-        Form(
-          key: _formKey,
-          child: Center(
-            child: Container(
-              width: kStandardInput,
-              child: TextFormField(
-                controller: _rangeController,
-                onTap: handleDateRangePicker,
-                validator: Validation.isValidDateRange,
+    return Padding(
+      padding: EdgeInsets.all(kSmallPadding),
+      child: Row(
+        children: [
+          Form(
+            key: _formKey,
+            child: Center(
+              child: Container(
+                width: kWideInput,
+                child: TextFormField(
+                  decoration: InputDecoration(
+                    prefixIcon: Icon(Icons.date_range)
+                  ),
+                  controller: _rangeController,
+                  onTap: handleDateRangePicker,
+                  validator: Validation.isValidDateRange,
+                ),
               ),
             ),
           ),
-        ),
-        Row(
-          children: [
-            Expanded(
-              child: Container(),
-            ),
-            RaisedButton(
-              child: Text('Search'),
-              onPressed: handleSearch,
-            ),
-          ],
-        )
-      ],
+          SizedBox(width: kSmallPadding),
+          RaisedButton(
+            child: Text('Search'),
+            onPressed: handleSearch,
+          )
+        ],
+      ),
     );
   }
 }
