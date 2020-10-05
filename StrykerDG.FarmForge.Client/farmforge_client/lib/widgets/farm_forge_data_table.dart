@@ -38,8 +38,6 @@ class _FarmForgeDataTableState<T extends FarmForgeModel> extends State<FarmForge
   int _sortedColumn;
   SortType _sortType = SortType.None;
 
-  List<T> _data;
-
   void sortColumn(int columnIndex) {
     SortType sortType;
     int sortedColumn = columnIndex;
@@ -55,84 +53,74 @@ class _FarmForgeDataTableState<T extends FarmForgeModel> extends State<FarmForge
       sortedColumn = null;
     }
 
-    FarmForgeDataTableColumn columnDef = widget.columns[columnIndex];
-    List<String> propertyPath = columnDef.property.split('.');
+    setState(() {
+      _sortedColumn = sortedColumn;
+      _sortType = sortType;
+    });
+  }
 
-    // Generate a List of maps so we can sort based on the column's property
+  List<T> filterAndSortData() {
+    // Generate a list of maps so we can filter and sort based on column properties
     List<Map<String, dynamic>> dataMaps = List<Map<String, dynamic>>();
-    _data.forEach((element) {
+    widget.data.forEach((element) {
       dataMaps.add(element.toMap());
     });
 
-    // Iterate through the maps and actually sort
-    dataMaps.sort(
-      (a, b) {
-        dynamic aProperty = a;
-        dynamic bProperty = b;
-        propertyPath.forEach((element) { 
-          if(aProperty != null && aProperty[element] != null)
-            aProperty = aProperty[element];
-          if(bProperty != null && bProperty[element] != null)
-            bProperty = bProperty[element];
-        });
+    // Iterate through all columns and apply filters / sorting
+    widget.columns.asMap().forEach((index, columnDef) {
+      // We only filter and sort if a property is defined
+      if(columnDef.property != null && columnDef.propertyFunc == null) {
+        String filter = _filters.elementAt(index);
+        List<String> propertyPath = columnDef.property.split('.');
 
-        // print('comparing ${aProperty.toString()} to ${bProperty.toString()}');
-        return aProperty.toString().compareTo(bProperty.toString());
+        List<Map<String, dynamic>> filteredDataMaps = List<Map<String, dynamic>>();
+        // Filter the data based on this column's filter
+        if(filter.isNotEmpty) {
+          print('not empty! $filter!');
+          dataMaps.forEach((dataMap) { 
+            dynamic property = dataMap;
+            propertyPath.forEach((element) { 
+              if(property != null && property[element] != null)
+                property = property[element];
+            });
+
+            if(property.toString().toLowerCase().contains(filter.toLowerCase()))
+              filteredDataMaps.add(dataMap);
+          });
+
+          dataMaps = filteredDataMaps;
+        }
+
+        // See if we need to sort, since we can only sort one column at a time
+        if(_sortedColumn == index) {
+          dataMaps.sort(
+            (a, b) {
+              dynamic aProperty = a;
+              dynamic bProperty = b;
+              propertyPath.forEach((element) { 
+                if(aProperty != null && aProperty[element] != null)
+                  aProperty = aProperty[element];
+                if(bProperty != null && bProperty[element] != null)
+                  bProperty = bProperty[element];
+              });
+
+              return aProperty.toString().compareTo(bProperty.toString());
+            }
+          );
+
+          if(_sortType == SortType.Desc)
+            dataMaps = dataMaps.reversed.toList();
+        }
       }
-    );
+    });
 
-    // Now rebuild the objects
-    List<T> newData = List<T>.generate(
+    // Now that we've filtered and sorted, re-create the actual list of objects
+    List<T> filteredAndSortedData = List<T>.generate(
       dataMaps.length, 
       (index) => FarmForgeModel.create(T, dataMaps.elementAt(index))
     );
 
-    if(sortType == SortType.Desc)
-      newData = newData.reversed.toList();
-
-    setState(() {
-      _sortedColumn = sortedColumn;
-      _sortType = sortType;
-      _data = newData;
-    });
-  }
-
-  void filterColumns(int columnIndex) {
-    FarmForgeDataTableColumn columnDef = widget.columns[columnIndex];
-    List<String> propertyPath = columnDef.property.split('.');
-    
-    String filter = _filters.elementAt(columnIndex);
-
-    if(filter.isEmpty)
-      setState(() {
-        _data = widget.data;
-      });
-
-    else {
-      // Generate a List of maps so we can filter based on the column's property
-      List<Map<String, dynamic>> dataMaps = List<Map<String, dynamic>>();
-      _data.forEach((element) {
-        dataMaps.add(element.toMap());
-      });
-
-      // Iterate through the maps and actually filter
-      List<T> newData = List<T>();
-
-      dataMaps.forEach((dataMap) { 
-        dynamic property = dataMap;
-        propertyPath.forEach((element) { 
-          if(property != null && property[element] != null)
-            property = property[element];
-        });
-
-        if(property.toString().toLowerCase().contains(filter.toLowerCase()))
-          newData.add(FarmForgeModel.create(T, dataMap));
-      });
-
-      setState(() {
-        _data = newData;
-      });
-    }
+    return filteredAndSortedData;
   }
 
   void enableFilter(int columnIndex) {
@@ -146,15 +134,11 @@ class _FarmForgeDataTableState<T extends FarmForgeModel> extends State<FarmForge
 
   void onFocusChange() {
     if(!_filterNode.hasFocus) {
-      int tempIndex = _filteringColumn;
-
       setState(() {
         _filters[_filteringColumn] = _filterController.text;
         _filteringColumn = null;
         _filterController.text = "";
       });
-
-      filterColumns(tempIndex);
     }
   }
 
@@ -213,10 +197,10 @@ class _FarmForgeDataTableState<T extends FarmForgeModel> extends State<FarmForge
     return columns;
   }
 
-  List<DataRow> buildRows() {
+  List<DataRow> buildRows(List<T> filteredAndSortedData) {
     List<DataRow> rows = List<DataRow>();
 
-    _data.forEach((dataObject) { 
+    filteredAndSortedData.forEach((dataObject) { 
       // Build the data for the row
       List<DataCell> rowCells = List.generate(
         widget.columns.length, 
@@ -266,8 +250,6 @@ class _FarmForgeDataTableState<T extends FarmForgeModel> extends State<FarmForge
   void initState() {
     super.initState();
 
-    _data = widget.data;
-
     // Populate the list of empty filters
     _filters = new List<String>();
     widget.columns.forEach((columnDef) { 
@@ -278,20 +260,13 @@ class _FarmForgeDataTableState<T extends FarmForgeModel> extends State<FarmForge
   }
 
   @override
-  void didChangeDependencies() {
-    super.didChangeDependencies();
-
-    setState(() {
-      _data = widget.data;
-    });
-  }
-
-  @override
   Widget build(BuildContext context) {
+
+    List<T> filteredAndSortedData = filterAndSortData();
 
     return DataTable(
       columns: buildColumns(),
-      rows: buildRows(),
+      rows: buildRows(filteredAndSortedData),
       showCheckboxColumn: widget.showCheckBoxes,
       sortAscending: _sortType == SortType.Asc
         ? true
