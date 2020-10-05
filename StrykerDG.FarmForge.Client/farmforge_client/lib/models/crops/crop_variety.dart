@@ -13,10 +13,19 @@ class CropVariety {
 
   factory CropVariety.fromMap(Map<String, dynamic> data) {
     return CropVariety(
-      cropVarietyId: data['cropVarietyId'],
-      cropTypeId: data['cropTypeId'],
-      name: data['name'],
-      label: data['label']
+      cropVarietyId: data['CropVarietyId'],
+      cropTypeId: data['CropTypeId'],
+      name: data['Name'],
+      label: data['Label']
     );
+  }
+
+  Map<String, dynamic> toMap() {
+    return {
+      'CropVarietyId': this.cropVarietyId,
+      'CropTypeId': this.cropTypeId,
+      'Name': this.name,
+      'Label': this.label
+    };
   }
 }

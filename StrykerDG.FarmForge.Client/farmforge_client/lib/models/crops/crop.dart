@@ -1,11 +1,12 @@
 import 'package:farmforge_client/models/crops/crop_type.dart';
 import 'package:farmforge_client/models/crops/crop_variety.dart';
+import 'package:farmforge_client/models/farm_forge_model.dart';
 import 'package:farmforge_client/models/general/crop_log.dart';
 import 'package:farmforge_client/models/general/location.dart';
 import 'package:farmforge_client/models/general/status.dart';
 import 'package:farmforge_client/utilities/date_time_utility.dart';
 
-class Crop {
+class Crop extends FarmForgeModel {
   int cropId;
   int cropTypeId;
   CropType cropType;
@@ -47,59 +48,59 @@ class Crop {
   });
 
   factory Crop.fromMap(Map<String, dynamic> data) {
-    CropType cropType = data['cropType'] != null
-      ? CropType.fromMap(data['cropType'])
+    CropType cropType = data['CropType'] != null
+      ? CropType.fromMap(data['CropType'])
       : null;
 
-    CropVariety variety = data['cropVariety'] != null
-      ? CropVariety.fromMap(data['cropVariety'])
+    CropVariety variety = data['CropVariety'] != null
+      ? CropVariety.fromMap(data['CropVariety'])
       : null;
 
-    Location location = data['location'] != null
-      ? Location.fromMap(data['location'])
+    Location location = data['Location'] != null
+      ? Location.fromMap(data['Location'])
       : null;
 
-    Status status = data['status'] != null
-      ? Status.fromMap(data['status'])
+    Status status = data['Status'] != null
+      ? Status.fromMap(data['Status'])
       : null;
 
-    DateTime plantedAt = data['plantedAt'] != null
-      ? DateTime.parse(data['plantedAt'])
+    DateTime plantedAt = data['PlantedAt'] != null
+      ? DateTime.tryParse(data['PlantedAt'])
       : null;
 
-    DateTime germinatedAt = data['germinatedAt'] != null
-      ? DateTime.parse(data['germinatedAt'])
+    DateTime germinatedAt = data['GerminatedAt'] != null
+      ? DateTime.tryParse(data['GerminatedAt'])
       : null;
 
-    DateTime harvestedAt = data['harvestedAt'] != null
-      ? DateTime.parse(data['harvestedAt'])
+    DateTime harvestedAt = data['HarvestedAt'] != null
+      ? DateTime.tryParse(data['HarvestedAt'])
       : null;
 
     List<CropLog> logs = new List<CropLog>();
-    if(data['logs'] != null && data['logs'].length > 0)
-      data['logs'].forEach((logData) {
+    if(data['Logs'] != null && data['Logs'].length > 0)
+      data['Logs'].forEach((logData) {
         CropLog log = CropLog.fromMap(logData);
         logs.add(log);
       });
 
     return Crop(
-      cropId: data['cropId'],
-      cropTypeId: data['cropTypeId'],
+      cropId: data['CropId'],
+      cropTypeId: data['CropTypeId'],
       cropType: cropType,
-      cropVarietyId: data['cropVarietyId'],
+      cropVarietyId: data['CropVarietyId'],
       cropVariety: variety,
-      locationId: data['locationId'],
+      locationId: data['LocationId'],
       location: location,
-      statusId: data['statusId'],
+      statusId: data['StatusId'],
       status: status,
       plantedAt: plantedAt,
       germinatedAt: germinatedAt,
       harvestedAt: harvestedAt,
-      timeToGerminate: data['timeToGerminate'],
-      timeToHarvest: data['timeToHarvest'],
-      quantity: data['quantity'],
-      quantityHarvested: data['quantityHarvested'],
-      yieldPercent: data['yieldPercent'],
+      timeToGerminate: data['TimeToGerminate'],
+      timeToHarvest: data['TimeToHarvest'],
+      quantity: data['Quantity'],
+      quantityHarvested: data['QuantityHarvested'],
+      yieldPercent: data['YieldPercent'],
       logs: logs
     );
   }
@@ -127,26 +128,45 @@ class Crop {
     );
   }
 
+  @override
   Map<String, dynamic> toMap() {
+    Map<String, dynamic> cropType = this.cropType?.toMap();
+    Map<String, dynamic> cropVariety = this.cropVariety?.toMap();
+    Map<String, dynamic> location = this.location?.toMap();
+    Map<String, dynamic> status = this.status?.toMap();
+
+    String germinatedAt = this.germinatedAt != null
+      ? DateTimeUtility.formatDateTime(this.germinatedAt)
+      : null;
+
+    String harvestedAt = this.harvestedAt != null
+      ? DateTimeUtility.formatDateTime(this.harvestedAt)
+      : null;
+
+    List<Map<String, dynamic>> logs = List.generate(
+      this.logs?.length, 
+      (index) => this.logs.elementAt(index).toMap()
+    );
+
     return {
       'CropId': this.cropId,
       'CropTypeId': this.cropTypeId,
-      'CropType': null,
+      'CropType': cropType,
       'CropVarietyId': this.cropVarietyId,
-      'CropVariety': null,
+      'CropVariety': cropVariety,
       'LocationId': this.locationId,
-      'Location': null,
+      'Location': location,
       'StatusId': this.statusId,
-      'Status': null,
+      'Status': status,
       'PlantedAt': DateTimeUtility.formatDateTime(this.plantedAt),
-      'GerminatedAt': this.germinatedAt?.toString(),
-      'HarvestedAt': this.harvestedAt?.toString(),
+      'GerminatedAt': germinatedAt,
+      'HarvestedAt': harvestedAt,
       'TimeToGerminate': this.timeToGerminate,
       'TimeToHarvest': this.timeToHarvest,
       'Quantity': this.quantity,
       'QuantityHarvested': this.quantityHarvested,
       'Yield': this.yieldPercent,
-      'Logs': null
+      'Logs': logs
     };
   }
 }

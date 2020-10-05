@@ -13,10 +13,10 @@ class Location {
 
   factory Location.fromMap(Map<String, dynamic> data) {
     return Location(
-      locationId: data['locationId'],
-      parentLocationId: data['parentLocationId'],
-      name: data['name'],
-      label: data['label']
+      locationId: data['LocationId'],
+      parentLocationId: data['ParentLocationId'],
+      name: data['Name'],
+      label: data['Label']
     );
   }
 

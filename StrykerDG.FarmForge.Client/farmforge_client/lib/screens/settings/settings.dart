@@ -9,12 +9,14 @@ import 'package:farmforge_client/models/farmforge_response.dart';
 import 'package:farmforge_client/utilities/constants.dart';
 import 'package:farmforge_client/utilities/ui_utility.dart';
 
-import 'desktop_settings.dart';
-import 'tablet_settings.dart';
-import 'mobile_settings.dart';
+import 'large_settings.dart';
+import 'medium_settings.dart';
+import 'small_settings.dart';
 
 class Settings extends StatefulWidget {
-  static String id = 'settings';
+  static const String title = 'Settings';
+  static const IconData fabIcon = null;
+  static const Function fabAction = null;
 
   @override
   _SettingsState createState() => _SettingsState();
@@ -69,11 +71,11 @@ class _SettingsState extends State<Settings> {
 
     return LayoutBuilder(
       builder: (BuildContext context, BoxConstraints constraints) {
-        return constraints.maxWidth <= kMobileWidth
-          ? MobileSettings()
-          : constraints.maxWidth <= kTabletWidth
-            ? TabletSettings()
-            : DesktopSettings();
+        return constraints.maxWidth <= kSmallWidthMax
+          ? SmallSettings()
+          : constraints.maxWidth <= kMediumWidthMax
+            ? MediumSettings()
+            : LargeSettings();
       },
     );
   }

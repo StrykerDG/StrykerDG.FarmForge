@@ -41,8 +41,8 @@ class FarmForgeApiService {
       if(response != null) {
         dynamic jsonResponse = convert.jsonDecode(response.body);
 
-        var data = jsonResponse['data'];
-        var error =jsonResponse['error'];
+        var data = jsonResponse['Data'];
+        var error =jsonResponse['Error'];
 
         return FarmForgeResponse(data: data, error: error);
       }

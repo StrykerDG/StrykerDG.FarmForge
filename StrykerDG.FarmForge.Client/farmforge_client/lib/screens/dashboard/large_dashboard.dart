@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 
-class TabletDashboard extends StatelessWidget {
+class LargeDashboard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Center(
-      child: Text("Tablet"),
+      child: Text("Dashboard under development")
     );
   }
 }
