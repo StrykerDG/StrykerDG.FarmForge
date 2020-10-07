@@ -19,3 +19,11 @@ StrykerDG.FarmForge.Devices/BasicMoistureSensor_v1/.vscode/extensions.json
 StrykerDG.FarmForge.Api/appsettings.Production.json
 
 StrykerDG.FarmForge.Api/appsettings.Test.json
+
+StrykerDG.FarmForge.Api/Properties/PublishProfiles/FolderProfile.pubxml.user
+
+StrykerDG.FarmForge.Api/Properties/PublishProfiles/IISProfile.pubxml
+
+StrykerDG.FarmForge.Api/Properties/PublishProfiles/IISProfile.pubxml.user
+
+StrykerDG.FarmForge.Api/wwwroot/

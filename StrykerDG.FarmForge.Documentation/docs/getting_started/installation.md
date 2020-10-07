@@ -16,8 +16,11 @@ that will work with the system.
 
 ### Install a Preconfigured FarmForge Device
 
+- Coming soon!
+
 ### Create your own FarmForge Device
 
+- Coming soon!
 
 ## Web / Mobile App
 Before using the web app, you will need to build and deploy it. You can use the 
@@ -47,7 +50,7 @@ directory. From here, perform a build with the following command
 flutter build web
 ```
 
-The build files should be located in the /build folder
+The build files should be located in the StrykerDG.FarmForge.Client\farmforge_client\build\web folder
 
 ### Host the files
 Depending on your preferences, you can host the files directly on the API, on IIS, or 
@@ -142,10 +145,42 @@ Once you creat the appsettings.json files and create the database, you need to
 decide how you want to host the API.
 
 #### Local Installation (Rasberry PI)
-Details coming soon!
+
+1. Install Ubuntu for Raspberry Pi on an SD card following the [tutorial](https://ubuntu.com/tutorials/how-to-install-ubuntu-on-your-raspberry-pi#1-overview)
+2. 
 
 #### Local Installation (IIS)
-Details coming soon!
+
+1. Install IIS on the machine that you will be hosting FarmForge on
+2. Install the [.Net Core Hosting Bundle](https://docs.microsoft.com/en-us/aspnet/core/host-and-deploy/iis/?view=aspnetcore-3.1#install-the-net-core-hosting-bundle)
+
+3. Create a new site
+
+![NewSite](/img/installation/iis_001.PNG)
+
+4. Enter the site settings
+
+![NewSite](/img/installation/iis_002.PNG)
+
+**Note** If you run into an error while creating the site, open an admin command 
+prompt and run the command *iisreset*
+
+5. Specify the correct Environemnt variable based on the settings you want to
+use (Development, Test, or Production)
+
+![NewSite](/img/installation/iis_003.PNG)
+
+6. Create a release build and publish the API project to a folder profile
+
+![NewSite](/img/installation/iis_004.PNG)
+
+7. Stop the IIS site, copy the contents of the publish folder to the IIS site 
+directory, and then start the IIS site
+
+**Note** When attempting to access the site, you may be presented with an inprocess
+startup error. This seems to be due to the fact that it can't find 
+"appsettings..json" even though it finds the correct file while running in IIS 
+Express. Investigation is ongoing
 
 #### Cloud Installation (Azure Web App)
 Details coming soon!

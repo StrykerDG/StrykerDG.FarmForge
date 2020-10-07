@@ -5,10 +5,8 @@ sidebar_label: 'Features'
 ---
 
 ## Current
-- Crop Management - Keep track of what and where you plant, what stage of growth 
-a crop is in, and when you harvested. Find your average time to harvest and yields
-- Inventory Management - Manage what product and inventory you have on hand.
-- Support for SQLite and SQL databases
+- User, Location, and Crop Management
+- Suport for SQLite and SQL
 
 ## Planned
 - IoT integration

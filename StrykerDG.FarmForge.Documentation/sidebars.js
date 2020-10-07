@@ -2,7 +2,8 @@ module.exports = {
   someSidebar: {
     FarmForge: [
       'farmforge/introduction', 
-      'farmforge/features'
+      'farmforge/features',
+      'farmforge/release'
     ],
     'Getting Started': [
       'getting_started/installation', 
