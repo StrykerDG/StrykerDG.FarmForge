@@ -55,3 +55,13 @@ const int kFirstDateYear = 2015;
 const int kFirstDateMonth = 1;
 const int kLastDateYear = 2100;
 const int kLastDateMonth = 12;
+
+// Cards
+const double kSmallCardWidth = 150.0;
+const double kSmallCardHeight = 150.0;
+
+const double kMediumCardWidth = 300.0;
+const double kMediumCardHeight = 300.0;
+
+const double kLargeCardWidth = 450.0;
+const double kLargeCardHeight = 450.0;

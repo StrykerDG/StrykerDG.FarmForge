@@ -12,7 +12,11 @@ namespace StrykerDG.FarmForge.LocalApi.Controllers
         protected IActionResult ValidateActorResult(object result)
         {
             var resultType = result.GetType();
-            if (resultType == typeof(Exception) || resultType == typeof(UnauthorizedAccessException))
+            if (
+                resultType == typeof(Exception) ||
+                resultType == typeof(UnauthorizedAccessException) ||
+                resultType == typeof(InvalidOperationException)
+            )
             {
                 var ex = (Exception)result;
                 return Ok(FarmForgeApiResponse.Failure(ex.Message));

@@ -93,12 +93,26 @@ class FarmForgeApiService {
   Future<FarmForgeResponse> getCrops({
     DateTime begin, 
     DateTime end, 
-    String includes = ""
+    String includes = "",
+    String status = "",
+    String location = ""
   }) async {
-    String uri = 'Crops?begin=${begin.toString()}&end=${end.toString()}';
+    String beginString = begin != null
+      ? begin.toString()
+      : '1900-01-01';
+
+    String endString = end != null
+      ? end.toString()
+      : DateTime.now().toString();
+
+    String uri = 'Crops?begin=$beginString&end=$endString';
 
     if(includes.isNotEmpty)
       uri += '&includes=$includes';
+    if(status.isNotEmpty)
+      uri += '&status=$status';
+    if(location.isNotEmpty)
+      uri += '&location=$location';
 
     return await request(uri, null, 'GET');
   }
@@ -171,6 +185,14 @@ class FarmForgeApiService {
     return await request('CropClassifications', null, 'GET');
   }
 
+  Future<FarmForgeResponse> getCropLogs(String type) async {
+    String uri = type.isNotEmpty
+      ? 'CropLogs?type=$type'
+      : 'CropLogs';
+
+    return await request(uri, null, 'GET');
+  }
+  
   Future<FarmForgeResponse> createCropLog(NewCropLogDTO log) async {
     String jsonBody = convert.jsonEncode(log.toMap());
     return await request(

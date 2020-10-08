@@ -29,16 +29,44 @@ namespace StrykerDG.FarmForge.Actors.Crops
         {
             Using<FarmForgeDataContext>((context) =>
             {
-                var results = context.Crops
-                    .WithIncludes(message.Includes)
-                    .Where(c =>
-                        c.PlantedAt >= message.Begin &&
-                        c.PlantedAt <= message.End &&
-                        c.IsDeleted == false
-                    )
-                    .ToList();
+                try
+                {
+                    // Get all results within the specified time frame
+                    var results = context.Crops
+                        .WithIncludes(message.Includes)
+                        .Where(c =>
+                            c.PlantedAt >= message.Begin &&
+                            c.PlantedAt <= message.End &&
+                            c.IsDeleted == false
+                        )
+                        .ToList();
 
-                Sender.Tell(results);
+                    // Apply filters if there are any
+                    if (message.Status != null)
+                    {
+                        var statusList = message.Status.Split(",").ToList();
+
+                        results = results
+                            .Where(c => statusList.Contains(c.Status?.Name))
+                            .ToList();
+                    }
+
+                    if (message.Location != null)
+                    {
+                        var locationList = message.Location.Split(",").ToList();
+
+                        results = results
+                            .Where(c => locationList.Contains(c.Location?.Name))
+                            .ToList();
+                    }
+
+                    Sender.Tell(results);
+                }
+                catch(Exception ex)
+                {
+                    Sender.Tell(ex);
+                }
+
             });
         }
 
