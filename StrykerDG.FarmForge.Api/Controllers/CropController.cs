@@ -27,22 +27,34 @@ namespace StrykerDG.FarmForge.LocalApi.Controllers
 
         [HttpGet]
         [Authorize(Policy = "AuthenticatedWebClient")]
-        public async Task<IActionResult> GetCrops(string begin, string end, string includes)
+        public async Task<IActionResult> GetCrops(
+            string begin, 
+            string end, 
+            string includes,
+            string status,
+            string location
+        )
         {
-            if (
-                DateTime.TryParse(begin, out var beginDateTime) &&
-                DateTime.TryParse(end, out var endDateTime)
-            )
-            {
-                var result = await CropActor.Ask(new AskForCrops(
+            DateTime.TryParse(begin, out var beginDateTime);
+
+            DateTime endDateTime;
+            if (end != null)
+                DateTime.TryParse(end, out endDateTime);
+            else
+                endDateTime = DateTime.Now;
+
+            var result = await CropActor.Ask(
+                new AskForCrops(
                     beginDateTime, 
                     endDateTime,
-                    includes
-                ));
-                return Ok(FarmForgeApiResponse.Success(result));
-            }
-            else
-                return Ok(FarmForgeApiResponse.Failure("Error Retrieving Crops"));
+                    includes,
+                    status,
+                    location
+                ),
+                TimeSpan.FromSeconds(10)
+            );
+
+            return ValidateActorResult(result);
         }
 
         [HttpPost]
