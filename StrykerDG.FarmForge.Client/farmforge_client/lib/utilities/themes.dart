@@ -10,9 +10,12 @@ ThemeData primaryTheme = ThemeData(
   buttonColor: kSecondaryColor,
 
   textTheme: TextTheme(
+    headline5: TextStyle(
+      fontWeight: FontWeight.bold
+    ),
     headline6: TextStyle(
       fontWeight: FontWeight.bold
-    )
+    ),
   )
 );
 

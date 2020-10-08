@@ -14,6 +14,7 @@ using Microsoft.IdentityModel.Tokens;
 using Newtonsoft.Json;
 using StrykerDG.FarmForge.Actors.Authentication;
 using StrykerDG.FarmForge.Actors.CropClassifications;
+using StrykerDG.FarmForge.Actors.CropLogs;
 using StrykerDG.FarmForge.Actors.Crops;
 using StrykerDG.FarmForge.Actors.CropTypes;
 using StrykerDG.FarmForge.Actors.Devices;
@@ -171,7 +172,12 @@ namespace StrykerDG.FarmForge.Api
                 Actors.Add(
                     actorSystem.ActorOf(Props.Create(() =>
                         new CropClassificationActor(serviceScopeFactory)),
-                    "CropClassificationActor"
+                        "CropClassificationActor"
+                ));
+                Actors.Add(
+                    actorSystem.ActorOf(Props.Create(() =>
+                        new CropLogActor(serviceScopeFactory)),
+                        "CropLogActor"
                 ));
 
                 return actorSystem;
