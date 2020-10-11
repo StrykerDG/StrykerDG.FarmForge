@@ -1,6 +1,3 @@
-import 'package:farmforge_client/models/crops/crop.dart';
-import 'package:farmforge_client/models/farm_forge_data_table_column.dart';
-import 'package:farmforge_client/widgets/crops/add_crop_log.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
@@ -9,12 +6,16 @@ import 'package:farmforge_client/provider/core_provider.dart';
 import 'package:farmforge_client/provider/data_provider.dart';
 
 import 'package:farmforge_client/models/farmforge_response.dart';
+import 'package:farmforge_client/models/crops/crop.dart';
+import 'package:farmforge_client/models/farm_forge_data_table_column.dart';
 
 import 'large_crops.dart';
 // import 'medium_crops.dart';
 import 'small_crops.dart';
 import 'package:farmforge_client/widgets/crops/add_crop.dart';
 import 'package:farmforge_client/widgets/farmforge_dialog.dart';
+import 'package:farmforge_client/widgets/crops/add_crop_log.dart';
+import 'package:farmforge_client/widgets/crops/view_crop.dart';
 
 import 'package:farmforge_client/utilities/constants.dart';
 import 'package:farmforge_client/utilities/ui_utility.dart';
@@ -67,6 +68,44 @@ class _CropsState extends State<Crops> {
         error: e.toString()
       );
     }
+  }
+
+  void handleSearch(DateTimeRange range) async {
+    try {
+      FarmForgeResponse searchResponse = await Provider
+        .of<CoreProvider>(context, listen: false)
+        .farmForgeService
+        .getCrops(
+          begin: range.start,
+          end: range.end,
+          includes: 'CropType,CropVariety,Location,Status,Logs.LogType'
+        );
+
+      if(searchResponse.data != null) {
+        Provider.of<DataProvider>(context, listen: false)
+          .setCrops(searchResponse.data);
+      }
+      else
+        throw searchResponse.error;
+    }
+    catch(e) {
+      UiUtility.handleError(
+        context: context, 
+        title: 'Search Error', 
+        error: e.toString()
+      );
+    }
+  }
+
+  void handleRowClick(bool value, Crop crop) {
+    showDialog(
+      context: context,
+      builder: (context) => FarmForgeDialog(
+        title: '${crop.cropType.label} - ${crop.cropVariety.label}',
+        content: ViewCrop(crop: crop),
+        width: kSmallDesktopModalWidth,
+      ),
+    );
   }
 
   generateColumns() {
@@ -151,17 +190,24 @@ class _CropsState extends State<Crops> {
             : _columns;
 
         return deviceWidth < kSmallWidthMax
-          ? SmallCrops()
+          ? SmallCrops(
+            onTap: handleRowClick,
+            onLongPress: handleAddLog
+          )
           : deviceWidth <= kMediumWidthMax
             ? LargeCrops(
               searchBegin: _searchBegin,
               searchEnd: _searchEnd,
-              columns: columnsToDisplay,              
+              columns: columnsToDisplay,
+              handleSearch: handleSearch,
+              onTap: handleRowClick,
             )
             : LargeCrops(
               searchBegin: _searchBegin,
               searchEnd: _searchEnd,
               columns: columnsToDisplay,
+              handleSearch: handleSearch,
+              onTap: handleRowClick,
             );
       },
     );
