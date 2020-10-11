@@ -11,6 +11,8 @@ import 'screens/login/login.dart';
 import 'utilities/settings.dart' as utility;
 
 void main() {
+  utility.Settings.setApiUrl();
+  
   runApp(
     ChangeNotifierProvider<CoreProvider>(
       create: (BuildContext context) => CoreProvider(),

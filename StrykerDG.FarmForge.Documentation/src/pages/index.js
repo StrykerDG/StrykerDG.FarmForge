@@ -8,32 +8,35 @@ import styles from './styles.module.css';
 
 const features = [
   {
-    title: 'Easy to Use',
+    title: 'Affordable',
     imageUrl: 'img/undraw_docusaurus_mountain.svg',
     description: (
       <>
-        Docusaurus was designed from the ground up to be easily installed and
-        used to get your website up and running quickly.
+        The FarmForge software is free and open source, the API and client are 
+        able to run on a Raspberry Pi, and the IoT devices can be built on an 
+        Arduino.
       </>
     ),
   },
   {
-    title: 'Focus on What Matters',
+    title: 'Community Driven',
     imageUrl: 'img/undraw_docusaurus_tree.svg',
     description: (
       <>
-        Docusaurus lets you focus on your docs, and we&apos;ll do the chores. Go
-        ahead and move your docs into the <code>docs</code> directory.
+        FarmForge is designed to help hobbyists, gardners, and farmers keep track
+        of their operations and simplify their work. We constantly implement
+        feedback and requests from the community to make the software better.
       </>
     ),
   },
   {
-    title: 'Powered by React',
+    title: 'Local First',
     imageUrl: 'img/undraw_docusaurus_react.svg',
     description: (
       <>
-        Extend or customize your website layout by reusing React. Docusaurus can
-        be extended while reusing the same header and footer.
+        Not everyone has access to reliable, high speed internet,
+        and FarmForge is developed with that in mind. As long as you have a local
+        network setup, you can use the software.
       </>
     ),
   },

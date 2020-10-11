@@ -1,6 +1,6 @@
 module.exports = {
   title: 'FarmForge',
-  tagline: 'The tagline of my site',
+  tagline: 'Helping Farms Grow',
   url: 'https://strykerdg.github.io',
   baseUrl: '/',
   onBrokenLinks: 'throw',
@@ -12,7 +12,7 @@ module.exports = {
       title: 'FarmForge',
       logo: {
         alt: 'My Site Logo',
-        src: 'img/logo.svg',
+        src: 'img/FarmForge.svg',
       },
       items: [
         {
@@ -85,15 +85,13 @@ module.exports = {
       {
         docs: {
           sidebarPath: require.resolve('./sidebars.js'),
-          // Please change this to your repo.
           editUrl:
-            'https://github.com/facebook/docusaurus/edit/master/website/',
+            'https://github.com/StrykerDG/StrykerDG.FarmForge/tree/master/StrykerDG.FarmForge.Documentation',
         },
         blog: {
           showReadingTime: true,
-          // Please change this to your repo.
           editUrl:
-            'https://github.com/facebook/docusaurus/edit/master/website/blog/',
+            'https://github.com/StrykerDG/StrykerDG.FarmForge/tree/master/StrykerDG.FarmForge.Documentation',
         },
         theme: {
           customCss: require.resolve('./src/css/custom.css'),

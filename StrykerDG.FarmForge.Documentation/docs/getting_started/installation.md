@@ -33,13 +33,22 @@ If you haven't already, you will need to clone the project from
 [github](https://github.com/StrykerDG/StrykerDG.FarmForge).
 
 ### Update the url settings.
-Navigate to the StrykerDG.FarmForge.Client/farmforge_client/lib/utilities/settings/settings.dart file, and update the development, test, and production urls to the appropriate 
-values. These urls are the root address of the FarmForge API
+Navigate to the StrykerDG.FarmForge.Client/farmforge_client/lib/utilities/settings.dart file, and update the development, test, and production urls to the appropriate values. These urls are the root address of the FarmForge API
 
 ```
   static String developmentUrl = 'https://localhost:44310';
-  static String testUrl = '';
+  static String testUrl = 'https://localhost:443';
   static String productionUrl = '';
+
+  static setApiUrl() {
+    var location = window.location.toString();
+    if(location.contains('localhost:3000'))
+      FarmForgeApiService.apiUrl = developmentUrl;
+    else if(location.contains('localhost'))
+      FarmForgeApiService.apiUrl = testUrl;
+    else 
+      FarmForgeApiService.apiUrl = productionUrl;
+  }
 ```
 
 ### Perform a Build
@@ -142,12 +151,121 @@ are present there.
 
 ### Publish the API
 Once you creat the appsettings.json files and create the database, you need to 
-decide how you want to host the API.
+decide how you want to host the API. The following methods are outlined below:
 
-#### Local Installation (Rasberry PI)
+[RaspberryPi - Ubuntu](#local-installation-rasberry-pi---ubuntu)<br />
+[RaspberryPi - Windows 10 Iot Core](#local-installation-rasberry-pi---windows-10-iot-core)<br />
+[IIS](#local-installation-iis)<br />
+[Azure Web App](#cloud-installation-azure-web-app)
 
-1. Install Ubuntu for Raspberry Pi on an SD card following the [tutorial](https://ubuntu.com/tutorials/how-to-install-ubuntu-on-your-raspberry-pi#1-overview)
-2. 
+#### Local Installation (Rasberry PI - Ubuntu)
+
+1. Install Ubuntu for Raspberry Pi on an SD card following this [tutorial](https://ubuntu.com/tutorials/how-to-install-ubuntu-on-your-raspberry-pi#1-overview)
+
+2. Install [.Net Core 3.1](https://dotnet.microsoft.com/download/dotnet-core/3.1)
+
+3. Install nginx
+```
+sudo apt update
+sudo apt install nginx
+```
+
+4. If you haven't already, publish the api on your dev maching by running the 
+following command
+```
+dotnet publish -o publish --self-contained -r linux-arm
+```
+
+5. Copy the contents of the publish folder to /var/www/html
+
+6. Update the nginx service block
+```
+sudo vim /etc/nginx/sites-available/default
+``` 
+
+It should resemble the following
+```
+server {
+    listen        80;
+    server_name   farmforge;
+    root /var/www/html;
+    location / {
+        proxy_pass         http://localhost:5000;
+        proxy_http_version 1.1;
+        proxy_set_header   Upgrade $http_upgrade;
+        proxy_set_header   Connection keep-alive;
+        proxy_set_header   Host $host;
+        proxy_cache_bypass $http_upgrade;
+        proxy_set_header   X-Forwarded-For $proxy_add_x_forwarded_for;
+        proxy_set_header   X-Forwarded-Proto $scheme;
+    }
+}
+```
+
+Then restart the service
+```
+sudo service nginx start
+- OR -
+sudo service nginx restart
+```
+
+7. Create a .Net service
+```
+sudo vim /etc/systemd/system/farmforge.service
+```
+
+It should resemble the following
+```
+[Unit]
+Description=This is a service for running the FarmForge API
+
+[Service]
+WorkingDirectory=/var/www/html
+ExecStart=<PATH_TO_DOTNET> /var/www/html/StrykerDG.FarmForge.LocalApi.dll
+Restart=always
+RestartSec=10
+KillSignal=SIGINT
+SyslogIdentifier=farmforge
+User=ubuntu
+Environment=ASPNETCORE_ENVIRONMENT=<ENV>
+Environment=DOTNET_PRINT_TELEMETRY_MESSAGE=false
+
+[Install]
+[WantedBy=multi-user.target]
+```
+
+Then enable and start the service
+```
+sudo systemctl enable farmforge.service
+sudo systemctl start farmforge.service
+```
+
+#### Local Installation (Rasberry PI - Windows 10 IoT Core)
+
+1. Install the [Windows 10 IoT Core Dashboard](https://docs.microsoft.com/en-us/windows/iot-core/connect-your-device/iotdashboard)
+
+2. Use the dashboard to install Windows 10 IoT Core on an SD, and boot the 
+Raspberry Pi with it.
+
+3. If you haven't already, publish the API to a folder. Be sure to build for ARM and uncomment the following line in StrykerDG.FarmForge.LocalApi.csproj
+```
+<RuntimeIdentifier>win8-arm</RuntimeIdentifier>
+```
+
+4. Open windows explorer and navigate to the Raspberry Pi's C:\ drive. Create a 
+FarmForge directory and copy the contents of the publish folder to it.
+
+5. From the IoT Core Dashboard, find your device and launch a powershell instance
+
+6. Open a port for the application by running the following command
+```
+netsh advfirewall firewall add rule name="ASP.NET Core Web Server port" dir=in action=allow protocol=TCP localport=<PORT_NUMBER>
+```
+
+7. Start the API by running the following command
+```
+C:\FarmForge\FarmForge.api.exe --urls http://*:<PORT_NUMBER>
+```
 
 #### Local Installation (IIS)
 
@@ -177,10 +295,9 @@ use (Development, Test, or Production)
 7. Stop the IIS site, copy the contents of the publish folder to the IIS site 
 directory, and then start the IIS site
 
-**Note** When attempting to access the site, you may be presented with an inprocess
-startup error. This seems to be due to the fact that it can't find 
-"appsettings..json" even though it finds the correct file while running in IIS 
-Express. Investigation is ongoing
+**Note** If you see an inprocess startup error when viewing the site, this 
+could be due to the not being able to read the environment variables. Changing
+the identity of the Application Pool to a custom account should resolve this.
 
 #### Cloud Installation (Azure Web App)
 Details coming soon!
