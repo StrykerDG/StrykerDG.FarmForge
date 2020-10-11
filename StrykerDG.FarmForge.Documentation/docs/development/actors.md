@@ -43,7 +43,7 @@ public DemoActor(IServiceScopeFactory factory) : base(factory)
 
 ### Message Methods
 
-The message methods are the methods called from Receive<> and contain the logic
+The message methods are the methods called from Receive and contain the logic
 for whatever action is being performed.
 
 ```
