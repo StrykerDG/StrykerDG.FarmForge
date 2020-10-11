@@ -1,19 +1,15 @@
-import 'package:farmforge_client/models/general/crop_log.dart';
-import 'package:farmforge_client/utilities/themes.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/rendering.dart';
 import 'package:provider/provider.dart';
 
 import 'package:farmforge_client/provider/core_provider.dart';
-import 'package:farmforge_client/provider/data_provider.dart';
 import 'package:farmforge_client/models/crops/crop.dart';
 import 'package:farmforge_client/models/farmforge_response.dart';
+import 'package:farmforge_client/models/general/crop_log.dart';
 
 import 'large_dashboard.dart';
-import 'medium_dashboard.dart';
-import 'small_dashboard.dart';
+// import 'medium_dashboard.dart';
+// import 'small_dashboard.dart';
 
-import 'package:farmforge_client/utilities/constants.dart';
 import 'package:farmforge_client/utilities/ui_utility.dart';
 
 class Dashboard extends StatefulWidget {
@@ -79,18 +75,9 @@ class _DashboardState extends State<Dashboard> {
 
   @override
   Widget build(BuildContext context) {
-    return LayoutBuilder(
-      builder: (BuildContext context, BoxConstraints constraints) {
-        return constraints.maxWidth <= kSmallWidthMax
-          ? SmallDashboard()
-          : LargeDashboard(
-            crops: _crops,
-            logs: _logs,
-          );
-          // : constraints.maxWidth <= kMediumWidthMax
-          //   ? MediumDashboard()
-          //   : LargeDashboard();
-      },
+    return LargeDashboard(
+      crops: _crops,
+      logs: _logs,
     );
   }
 }

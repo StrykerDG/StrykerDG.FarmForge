@@ -10,7 +10,7 @@ import 'package:farmforge_client/utilities/constants.dart';
 import 'package:farmforge_client/utilities/ui_utility.dart';
 
 import 'large_settings.dart';
-import 'medium_settings.dart';
+// import 'medium_settings.dart';
 import 'small_settings.dart';
 
 class Settings extends StatefulWidget {
@@ -71,11 +71,17 @@ class _SettingsState extends State<Settings> {
 
     return LayoutBuilder(
       builder: (BuildContext context, BoxConstraints constraints) {
-        return constraints.maxWidth <= kSmallWidthMax
+
+        // We need to use Mediaquery because the constraints is the size of
+        // our "Content" width, not the screen 
+        double deviceWidth = MediaQuery.of(context).size.width;
+
+        return deviceWidth <= kSmallWidthMax
           ? SmallSettings()
-          : constraints.maxWidth <= kMediumWidthMax
-            ? MediumSettings()
-            : LargeSettings();
+          : LargeSettings();
+          // : constraints.maxWidth <= kMediumWidthMax
+          //   ? MediumSettings()
+          //   : LargeSettings();
       },
     );
   }
