@@ -1,4 +1,7 @@
 # FarmForge
+
+<img src="Resources/FarmForge.svg" width=300>
+
 FarmForge is a farm management system that can integrate with IoT devices with 
 minimal effort.
 
@@ -18,7 +21,7 @@ a crop is in, and when you harvested. Find your average time to harvest and yiel
 - Inventory Management - Manage what product and inventory you have on hand.
 
 # Installation, Getting Started, and Documentation
-Check out the [Official documentation](https://strykerdg.github.io/StrykerDG.FarmForge/) 
+Check out the [Official documentation](https://farmforge.io/docs/farmforge/introduction) 
 for detailed installation instructions on how to intall and get started. You can
 also find documentation on the client, api, and more.
 
@@ -26,7 +29,7 @@ also find documentation on the client, api, and more.
 Coming soon!
 
 # Contact & Contributing
-The easiest way to reach out is the [Discord](https://discord.gg/rfyhhTE) server. 
+The easiest way to reach out is the [Discord](https://discord.gg/j5QMZUH) server. 
 There are channels for general discussion, feature requests, issues, and ongoing 
 development.
 

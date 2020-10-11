@@ -3,7 +3,8 @@ module.exports = {
     FarmForge: [
       'farmforge/introduction', 
       'farmforge/features',
-      'farmforge/release'
+      'farmforge/release',
+      'farmforge/roadmap'
     ],
     'Getting Started': [
       'getting_started/installation', 

@@ -19,14 +19,3 @@ FarmForge is designed with the following goals in mind:
 internet
 - Though being local-first, it must have the capability to connect to the web
 and be able to expand or integrate with other systems
-
-## Roadmap
-- January 2021: Release 1
-    - Crop Tracking
-    - Inventory Tracking
-    - Ability to add users
-    - Installation and Setup Documentation
-
-- June 2021: Release 2
-    - Ability to connect and view devices
-    - 2-3 Pre-built Devices

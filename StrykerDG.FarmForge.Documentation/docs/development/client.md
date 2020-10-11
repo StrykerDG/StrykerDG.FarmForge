@@ -121,6 +121,15 @@ List<FarmForgeDataTableColumn> generateColumns() {
 }
 ```
 
+### KpiModel
+
+KpiModel is a generic model that is used for displaying data in charts.
+
+#### Properties
+
+- measure (String): The label of the KPI
+- value (int): The value of the KPI
+
 ## Providers
 
 Providers are the state management for FarmForge.
@@ -415,6 +424,60 @@ button is pressed. onSearch will receive a DateTimeRange as a parameter
             initialDateRange: _dateSearchRange,
             onSearch: handleSearch,
         ),
+    );
+}
+```
+
+### KpiCard
+
+KpiCards are components that display key performance indicators on the dashboard
+
+#### Properties
+
+- width (double): how wide the card is
+- height (double): how high the card is
+- title (String): The title of the KPI
+- kpi (String): The value of the KPI to display
+
+#### Example
+
+```
+@override
+  Widget build(BuildContext context) {
+
+    return KpiCard(
+        width: kMediumCardWidth,
+        height: kMediumCardHeight,
+        title: 'Crops Planted',
+        kpi: crops?.length?.toString() ?? "",
+    );
+}
+```
+
+### KpiChart
+
+KpiCharts are similar to KpiCards, but show charted values instead of a text
+value.
+
+#### Properties
+
+- width (double): the width of the card
+- height (double): the height of the card
+- title (String): the title of the KPI
+- Data (List): the data that should be charted / displayed. The data should be 
+a list of TYPE that extends KpiModel
+
+#### Example
+
+```
+@override
+  Widget build(BuildContext context) {
+
+    return KpiChart(
+        width: kLargeCardHeight,
+        height: kLargeCardHeight,
+        title: 'Crops By Location',
+        data: cropsByLocation,
     );
 }
 ```
