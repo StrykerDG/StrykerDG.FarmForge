@@ -111,7 +111,7 @@ class _LargeSettingsState extends State<LargeSettings> {
               child: Text('Varieties'),
             ),
             SizedBox(height: kSmallPadding),
-            Row(
+            Wrap(
               children: [
                 Container(
                   width: 200.0,
@@ -144,7 +144,7 @@ class _LargeSettingsState extends State<LargeSettings> {
     return [
       Padding(
         padding: EdgeInsets.all(kSmallPadding),
-        child: Row(
+        child: Wrap(
           children: [
             Container(
               width: 200,
@@ -293,7 +293,7 @@ class _LargeSettingsState extends State<LargeSettings> {
     return [
       Padding(
         padding: EdgeInsets.all(kSmallPadding),
-        child: Row(
+        child: Wrap(
           children: [
             Container(
               width: 200,
@@ -438,7 +438,7 @@ class _LargeSettingsState extends State<LargeSettings> {
     return [
       Padding(
         padding: EdgeInsets.all(kSmallPadding),
-        child: Row(
+        child: Wrap(
           children: [
             Container(
               width: 200,

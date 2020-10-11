@@ -144,7 +144,10 @@ class _LoginState extends State<Login> {
 
                   // Login button
                   isLoading == true
-                    ? CircularProgressIndicator()
+                    ? Padding(
+                      padding: EdgeInsets.all(kSmallPadding),
+                      child: CircularProgressIndicator(),
+                    )
                     : RaisedButton(
                         child: Text("Sign In"),
                         onPressed: handleSignIn,

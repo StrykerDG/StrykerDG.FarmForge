@@ -71,17 +71,7 @@ class _SettingsState extends State<Settings> {
 
     return LayoutBuilder(
       builder: (BuildContext context, BoxConstraints constraints) {
-
-        // We need to use Mediaquery because the constraints is the size of
-        // our "Content" width, not the screen 
-        double deviceWidth = MediaQuery.of(context).size.width;
-
-        return deviceWidth <= kSmallWidthMax
-          ? SmallSettings()
-          : LargeSettings();
-          // : constraints.maxWidth <= kMediumWidthMax
-          //   ? MediumSettings()
-          //   : LargeSettings();
+        return LargeSettings();
       },
     );
   }

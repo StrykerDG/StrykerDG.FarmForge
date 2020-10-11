@@ -17,7 +17,7 @@ class MediumFarmForge extends StatefulWidget {
 }
 
 class _MediumFarmForgeState extends State<MediumFarmForge> {
-    void handleNavigation(
+  void handleNavigation(
     Widget content, 
     String title,
     IconData icon, 
@@ -88,21 +88,9 @@ class _MediumFarmForgeState extends State<MediumFarmForge> {
                         ); 
                       }
                     ),
-                    // ListTile(
-                    //   title: Text('Devices'),
-                    //   onTap: () { handleNavigation(context, ""); },
-                    // ),
-                    // ListTile(
-                    //   title: Text('Inventory'),
-                    //   onTap: () { handleNavigation(context, ""); },
-                    // ),
                     Expanded(
                       child: Container(),
                     ),
-                    // ListTile(
-                    //   title: Text('Account'),
-                    //   onTap: () { handleNavigation(context, ""); },
-                    // ),
                     IconButton(
                       icon: Icon(Icons.settings), 
                       onPressed: () {
