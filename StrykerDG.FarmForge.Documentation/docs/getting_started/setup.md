@@ -23,7 +23,7 @@ If you have multiple users that will be using the system, you can create account
 for them by navigating to the Settings area, and clicking the Users pannel. From 
 there, click the "+" icon.
 
-- Image coming soon
+![Demo](/gif/AddUser.gif)
 
 ## Create Locations
 
@@ -49,9 +49,9 @@ something that looks like the following:
 To create a location, navigate to the Settings area, click on locations, and click 
 the "+" icon
 
-- Image coming soon!
+![Demo](/gif/AddLocation.gif)
 
 To add a parent location, make sure the parent is created, then select the child 
 location. You can then select which location is the parent.
 
-- Image coming soon!
+![Demo](/gif/AddLocationParent.gif)
