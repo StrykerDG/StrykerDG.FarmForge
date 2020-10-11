@@ -37,9 +37,13 @@ const double kMediumDesktopModalWidth = 750.0;
 // Login Sizes
 const double kLoginContainerWidth = 300.0;
 
-// Desktop Sizes
-const double kDesktopNavigationElevation = 5.0;
-const double kDesktopNavigationWidth = 300;
+// Large Sizes
+const double kLargeNavigationElevation = 5.0;
+const double kLargeNavigationWidth = 300;
+
+// Medium Sizes
+const double kMediumNavigationElevation = 5.0;
+const double kMediumNavigationWidth = 50.0;
 
 // Dividers
 const double kDividerHeight = 20.0;

@@ -10,7 +10,7 @@ import 'package:farmforge_client/utilities/constants.dart';
 import 'package:farmforge_client/utilities/ui_utility.dart';
 
 import 'large_settings.dart';
-import 'medium_settings.dart';
+// import 'medium_settings.dart';
 import 'small_settings.dart';
 
 class Settings extends StatefulWidget {
@@ -71,11 +71,7 @@ class _SettingsState extends State<Settings> {
 
     return LayoutBuilder(
       builder: (BuildContext context, BoxConstraints constraints) {
-        return constraints.maxWidth <= kSmallWidthMax
-          ? SmallSettings()
-          : constraints.maxWidth <= kMediumWidthMax
-            ? MediumSettings()
-            : LargeSettings();
+        return LargeSettings();
       },
     );
   }

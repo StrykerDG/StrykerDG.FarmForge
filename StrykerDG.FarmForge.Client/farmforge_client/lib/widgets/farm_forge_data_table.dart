@@ -224,7 +224,10 @@ class _FarmForgeDataTableState<T extends FarmForgeModel> extends State<FarmForge
             });
             String property = currentProperty.toString();
 
-            cellContent = Text(property);
+            cellContent = Text(
+              property,
+              overflow: TextOverflow.ellipsis,
+            );
           }
 
           return DataCell(cellContent);

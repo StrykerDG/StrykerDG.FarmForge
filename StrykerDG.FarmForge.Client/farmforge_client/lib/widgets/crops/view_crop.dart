@@ -204,14 +204,14 @@ class _ViewCropState extends State<ViewCrop> {
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
           // Status and Variety
-          Row(
-            mainAxisSize: MainAxisSize.max,
-            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+          Wrap(
+            alignment: WrapAlignment.spaceEvenly,
             children: [
               Container(
                 width: kStandardInput,
                 child: statusDropdown
               ),
+              SizedBox(width: kLargePadding),
               Container(
                 width: kStandardInput,
                 child: locationDropdown
@@ -222,9 +222,8 @@ class _ViewCropState extends State<ViewCrop> {
           // Dates
           Padding(
             padding: EdgeInsets.all(kSmallPadding),
-            child: Row(
-              mainAxisSize: MainAxisSize.max,
-              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+            child: Wrap(
+              alignment: WrapAlignment.spaceEvenly,
               children: [
                 Container(
                   width: kNarrowInput,
@@ -236,6 +235,7 @@ class _ViewCropState extends State<ViewCrop> {
                     ),
                   ),
                 ),
+                SizedBox(width: kLargePadding),
                 Container(
                   width: kNarrowInput,
                   child: TextFormField(
@@ -246,6 +246,7 @@ class _ViewCropState extends State<ViewCrop> {
                     ),
                   ),
                 ),
+                SizedBox(width: kLargePadding),
                 Container(
                   width: kNarrowInput,
                   child: TextFormField(
@@ -261,9 +262,8 @@ class _ViewCropState extends State<ViewCrop> {
           ),
 
           // Quantity and Yield
-          Row(
-            mainAxisSize: MainAxisSize.max,
-            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+          Wrap(
+            alignment: WrapAlignment.spaceEvenly,
             children: [
               Container(
                 width: kNarrowInput,
@@ -275,6 +275,7 @@ class _ViewCropState extends State<ViewCrop> {
                   ),
                 )
               ),
+              SizedBox(width: kLargePadding),
               Container(
                 width: kNarrowInput,
                 child: TextFormField(
