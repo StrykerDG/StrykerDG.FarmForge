@@ -100,7 +100,6 @@ class _LargeSettingsState extends State<LargeSettings> {
         listHeight = 400;
 
       varietyList = Container(
-        // width: kSmallDesktopModalWidth,
         padding: EdgeInsets.all(kSmallPadding),
         child: Column(
           mainAxisSize: MainAxisSize.min,
@@ -168,10 +167,7 @@ class _LargeSettingsState extends State<LargeSettings> {
           ],
         ),
       ),
-      Positioned(
-        left: 0,
-        child: varietyList,
-      )
+      varietyList
     ];
   }
 

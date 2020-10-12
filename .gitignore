@@ -27,3 +27,9 @@ StrykerDG.FarmForge.Api/Properties/PublishProfiles/IISProfile.pubxml
 StrykerDG.FarmForge.Api/Properties/PublishProfiles/IISProfile.pubxml.user
 
 StrykerDG.FarmForge.Api/wwwroot/
+
+StrykerDG.FarmForge.Api/Properties/PublishProfiles/app-cus-farmforge - Web Deploy.pubxml
+
+StrykerDG.FarmForge.Api/Properties/PublishProfiles/app-cus-farmforge - Web Deploy.pubxml.user
+
+StrykerDG.FarmForge.Api/Properties/ServiceDependencies/app-cus-farmforge - Web Deploy/profile.arm.json

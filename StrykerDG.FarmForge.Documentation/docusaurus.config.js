@@ -23,6 +23,11 @@ module.exports = {
         },
         {to: 'blog', label: 'Blog', position: 'left'},
         {
+          to: 'https://app-cus-farmforge.azurewebsites.net/index.html#login',
+          label: 'Demo',
+          position: 'left'
+        },
+        {
           href: 'https://github.com/StrykerDG/StrykerDG.FarmForge',
           label: 'GitHub',
           position: 'right',

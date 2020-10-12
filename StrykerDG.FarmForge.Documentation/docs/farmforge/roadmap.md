@@ -4,7 +4,7 @@ title: 'Road Map'
 sidebar_label: 'Road Map'
 ---
 
-- November 2020: MVP
+- October 2020: MVP
     - [x] Keep track of planted crops
     - [x] Log observations, actions, and inputs for each crop you plant
     - [x] Tie crops to a specific location

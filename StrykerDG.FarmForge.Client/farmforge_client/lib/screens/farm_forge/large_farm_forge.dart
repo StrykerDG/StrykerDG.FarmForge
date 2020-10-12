@@ -66,7 +66,7 @@ class _LargeFarmForgeState extends State<LargeFarmForge> {
                 child: Column(
                   mainAxisSize: MainAxisSize.max,
                   children: [
-                    Image.network('https://k48b9e9840-flywheel.netdna-ssl.com/wp-content/uploads/2020/04/COVID-19-Relief_Small-Farms--1024x614.jpg'),
+                    Image.asset('assets/images/FarmForge.png'),
                     ListTile(
                       title: Text("Dashboard"),
                       onTap: () { 
