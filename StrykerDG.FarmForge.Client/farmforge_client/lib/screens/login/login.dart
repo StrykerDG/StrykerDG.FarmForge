@@ -104,6 +104,8 @@ class _LoginState extends State<Login> {
                 mainAxisSize: MainAxisSize.min,
                 children: [
 
+                  Image.asset('assets/images/FarmForge.png'),
+                  
                   // Username
                   TextFormField(
                     controller: _usernameController,
@@ -144,7 +146,10 @@ class _LoginState extends State<Login> {
 
                   // Login button
                   isLoading == true
-                    ? CircularProgressIndicator()
+                    ? Padding(
+                      padding: EdgeInsets.all(kSmallPadding),
+                      child: CircularProgressIndicator(),
+                    )
                     : RaisedButton(
                         child: Text("Sign In"),
                         onPressed: handleSignIn,

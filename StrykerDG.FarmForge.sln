@@ -3,13 +3,13 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 16
 VisualStudioVersion = 16.0.30310.162
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "StrykerDG.FarmForge.LocalApi", "StrykerDG.FarmForge.Api\StrykerDG.FarmForge.LocalApi.csproj", "{6A66EA07-4B21-4DFA-A21C-2044FED36A72}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "StrykerDG.FarmForge.LocalApi", "StrykerDG.FarmForge.Api\StrykerDG.FarmForge.LocalApi.csproj", "{6A66EA07-4B21-4DFA-A21C-2044FED36A72}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "StrykerDG.FarmForge.DataModel", "StykerDG.FarmForge.DataModel\StrykerDG.FarmForge.DataModel.csproj", "{41FD0695-840B-4E96-8256-7620AD2B70E2}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "StrykerDG.FarmForge.DataModel", "StykerDG.FarmForge.DataModel\StrykerDG.FarmForge.DataModel.csproj", "{41FD0695-840B-4E96-8256-7620AD2B70E2}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "StrykerDG.FarmForge.Migrations", "StrykerDG.FarmForge.Migrations\StrykerDG.FarmForge.Migrations.csproj", "{A47CD9ED-D62F-4AB7-9A65-EB328D19CB5C}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "StrykerDG.FarmForge.Migrations", "StrykerDG.FarmForge.Migrations\StrykerDG.FarmForge.Migrations.csproj", "{A47CD9ED-D62F-4AB7-9A65-EB328D19CB5C}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "StrykerDG.FarmForge.Actors", "StrykerDG.FarmForge.Actors\StrykerDG.FarmForge.Actors.csproj", "{4E105BDF-2701-46FE-B2C0-3E283C7780CF}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "StrykerDG.FarmForge.Actors", "StrykerDG.FarmForge.Actors\StrykerDG.FarmForge.Actors.csproj", "{4E105BDF-2701-46FE-B2C0-3E283C7780CF}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

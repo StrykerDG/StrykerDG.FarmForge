@@ -4,7 +4,6 @@ import 'package:provider/provider.dart';
 import 'package:farmforge_client/provider/core_provider.dart';
 import 'package:farmforge_client/provider/user_provider.dart';
 
-import 'package:farmforge_client/screens/login/login.dart';
 import 'package:farmforge_client/screens/dashboard/dashboard.dart';
 import 'package:farmforge_client/screens/crops/crops.dart';
 import 'package:farmforge_client/screens/settings/settings.dart';
@@ -26,15 +25,6 @@ class _LargeFarmForgeState extends State<LargeFarmForge> {
   ) {
     Provider.of<CoreProvider>(context, listen: false)
       .setAppContent(content, title, icon, action);
-  }
-
-  @override
-  void initState() {
-    super.initState();
-    Future.microtask(() => {
-      if(Provider.of<UserProvider>(context, listen: false).username == null)
-        Navigator.pushNamed(context, Login.id)
-    });
   }
 
   @override
@@ -69,14 +59,14 @@ class _LargeFarmForgeState extends State<LargeFarmForge> {
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
             Material(
-              elevation: kDesktopNavigationElevation,
+              elevation: kLargeNavigationElevation,
               child: Container(
                 height: MediaQuery.of(context).size.height,
-                width: kDesktopNavigationWidth,
+                width: kLargeNavigationWidth,
                 child: Column(
                   mainAxisSize: MainAxisSize.max,
                   children: [
-                    Image.network('https://k48b9e9840-flywheel.netdna-ssl.com/wp-content/uploads/2020/04/COVID-19-Relief_Small-Farms--1024x614.jpg'),
+                    Image.asset('assets/images/FarmForge.png'),
                     ListTile(
                       title: Text("Dashboard"),
                       onTap: () { 

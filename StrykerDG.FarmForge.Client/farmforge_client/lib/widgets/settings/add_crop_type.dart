@@ -104,9 +104,8 @@ class _AddCropTypeState extends State<AddCropType> {
       children: [
         Form(
           key: _formKey,
-          child: Row(
-            mainAxisSize: MainAxisSize.max,
-            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+          child: Wrap(
+            alignment: WrapAlignment.spaceEvenly,
             children: [
               Container(
                 width: kStandardInput,
@@ -118,6 +117,7 @@ class _AddCropTypeState extends State<AddCropType> {
                   validator: Validation.isNotEmpty,
                 ),
               ),
+              SizedBox(width: kLargePadding),
               Container(
                 width: kStandardInput,
                 child: DropdownButtonFormField<int>(

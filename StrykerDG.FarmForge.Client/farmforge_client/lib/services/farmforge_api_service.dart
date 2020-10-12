@@ -18,9 +18,6 @@ class FarmForgeApiService {
       'Authorization': 'Bearer $token'
     };
 
-    print('$apiUrl/$uri');
-    print('body: $body');
-
     http.Response response;
     try {
       switch(method) {

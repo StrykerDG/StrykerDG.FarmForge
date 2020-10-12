@@ -100,7 +100,6 @@ class _LargeSettingsState extends State<LargeSettings> {
         listHeight = 400;
 
       varietyList = Container(
-        // width: kSmallDesktopModalWidth,
         padding: EdgeInsets.all(kSmallPadding),
         child: Column(
           mainAxisSize: MainAxisSize.min,
@@ -111,7 +110,7 @@ class _LargeSettingsState extends State<LargeSettings> {
               child: Text('Varieties'),
             ),
             SizedBox(height: kSmallPadding),
-            Row(
+            Wrap(
               children: [
                 Container(
                   width: 200.0,
@@ -144,7 +143,7 @@ class _LargeSettingsState extends State<LargeSettings> {
     return [
       Padding(
         padding: EdgeInsets.all(kSmallPadding),
-        child: Row(
+        child: Wrap(
           children: [
             Container(
               width: 200,
@@ -168,10 +167,7 @@ class _LargeSettingsState extends State<LargeSettings> {
           ],
         ),
       ),
-      Positioned(
-        left: 0,
-        child: varietyList,
-      )
+      varietyList
     ];
   }
 
@@ -293,7 +289,7 @@ class _LargeSettingsState extends State<LargeSettings> {
     return [
       Padding(
         padding: EdgeInsets.all(kSmallPadding),
-        child: Row(
+        child: Wrap(
           children: [
             Container(
               width: 200,
@@ -438,7 +434,7 @@ class _LargeSettingsState extends State<LargeSettings> {
     return [
       Padding(
         padding: EdgeInsets.all(kSmallPadding),
-        child: Row(
+        child: Wrap(
           children: [
             Container(
               width: 200,

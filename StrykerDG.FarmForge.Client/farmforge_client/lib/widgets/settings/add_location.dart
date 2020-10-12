@@ -82,9 +82,8 @@ class _AddLocationState extends State<AddLocation> {
       children: [
         Form(
           key: _formKey,
-          child: Row(
-            mainAxisSize: MainAxisSize.max,
-            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+          child: Wrap(
+            alignment: WrapAlignment.spaceEvenly,
             children: [
               Container(
                 width: kStandardInput,
@@ -96,6 +95,7 @@ class _AddLocationState extends State<AddLocation> {
                   validator: Validation.isNotEmpty,
                 ),
               ),
+              SizedBox(width: kLargePadding),
               Container(
                 width: kStandardInput,
                 child: DropdownButtonFormField<int>(
