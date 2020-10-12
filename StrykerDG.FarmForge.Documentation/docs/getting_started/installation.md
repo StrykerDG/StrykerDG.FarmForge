@@ -255,16 +255,24 @@ Raspberry Pi with it.
 4. Open windows explorer and navigate to the Raspberry Pi's C:\ drive. Create a 
 FarmForge directory and copy the contents of the publish folder to it.
 
-5. From the IoT Core Dashboard, find your device and launch a powershell instance
+5. Copy the appsettings files, as well as the wwwroot directory to C:\Data\Users\administrator\Documents
+directory.
 
-6. Open a port for the application by running the following command
+6. From the IoT Core Dashboard, find your device and launch a powershell instance
+
+7. Set the aspnetcore environment variable
+```
+setx ASPNETCORE_ENVIRONMENT "Production"
+```
+
+8. Open a port for the application by running the following command
 ```
 netsh advfirewall firewall add rule name="ASP.NET Core Web Server port" dir=in action=allow protocol=TCP localport=<PORT_NUMBER>
 ```
 
-7. Start the API by running the following command
+9. Start the API by running the following command
 ```
-C:\FarmForge\FarmForge.api.exe --urls http://*:<PORT_NUMBER>
+C:\FarmForge\StrykerDG.FarmForge.LocalApi.exe --urls http://*:<PORT_NUMBER>
 ```
 
 #### Local Installation (IIS)
@@ -300,4 +308,18 @@ could be due to the not being able to read the environment variables. Changing
 the identity of the Application Pool to a custom account should resolve this.
 
 #### Cloud Installation (Azure Web App)
-Details coming soon!
+
+1. Log into the [AzurePortal](https://portal.azure.com/) and create an App 
+Service Plan and WebApp. The app service plan should be windows (linux should work)
+and the web app should be .Net Core 3.1
+
+2. In the WebApp configuration, set the ASPNETCORE_ENVIRONMENT to Production
+
+![AppService](/img/installation/azure_001.PNG)
+
+2. From Visual Studio, right click the api project and click publish. Create an
+azure publish profile, and select Azure App Service
+
+![AppService](/img/installation/azure_002.PNG)
+
+3. Select the app service you created in step 1, and click publish

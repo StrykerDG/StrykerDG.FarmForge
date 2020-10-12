@@ -4,8 +4,8 @@ title: 'Release Notes'
 sidebar_label: 'Release Notes'
 ---
 
-## MVP (v0.1.0)
-The MVP became available on November 1, 2020 and was our first pre-release.
+## v0.1.0 (MVP)
+The MVP became available on October 12, 2020 and was the first pre-release.
 
 ### Features
 - Ability to create and delete Users
@@ -21,4 +21,4 @@ The MVP became available on November 1, 2020 and was our first pre-release.
 - N/A
 
 ### Known Issues
-- N/A
+- Cannot sort / filter Crops by date

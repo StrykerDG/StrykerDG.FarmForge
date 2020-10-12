@@ -26,7 +26,7 @@ for detailed installation instructions on how to intall and get started. You can
 also find documentation on the client, api, and more.
 
 # Demo
-Coming soon!
+You can view a live demo hosted on in [Azure](https://app-cus-farmforge.azurewebsites.net/index.html#login)
 
 # Contact & Contributing
 The easiest way to reach out is the [Discord](https://discord.gg/j5QMZUH) server. 

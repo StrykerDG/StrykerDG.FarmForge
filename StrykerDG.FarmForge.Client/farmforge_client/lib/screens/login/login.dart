@@ -104,6 +104,8 @@ class _LoginState extends State<Login> {
                 mainAxisSize: MainAxisSize.min,
                 children: [
 
+                  Image.asset('assets/images/FarmForge.png'),
+                  
                   // Username
                   TextFormField(
                     controller: _usernameController,
