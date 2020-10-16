@@ -32,5 +32,7 @@ namespace StrykerDG.FarmForge.DataModel.Models
         public int? QuantityHarvested { get; set; }
         public double? Yield { get; set; }
         public ICollection<CropLog> Logs { get; set; }
+        public ICollection<ProductSource> Outputs { get; set; }
+        public ICollection<ProductDestination> Inputs { get; set; }
     }
 }

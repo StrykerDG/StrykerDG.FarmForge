@@ -19,6 +19,9 @@ namespace StrykerDG.FarmForge.DataModel.Models
         public long? AverageGermination { get; set; }
         public long? AverageTimeToHarvest { get; set; }
         public double? AverageYield { get; set; }
+        public int OutputTypeId { get; set; }
+        [ForeignKey("OutputTypeId")]
+        public ProductType OutputType { get; set; }
         public ICollection<CropVariety> Varieties { get; set; }
     }
 }
