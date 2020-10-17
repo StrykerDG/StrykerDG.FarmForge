@@ -163,10 +163,9 @@ namespace StrykerDG.FarmForge.Migrations.Release_0001
                 .WithId("ProductId")
                 .WithColumn("ProductTypeId").AsInt32().NotNullable()
                 .WithColumn("Price").AsDouble().Nullable()
-                .WithColumn("SourceId").AsInt32().NotNullable()
-                .WithColumn("DestinationId").AsInt32().Nullable()
                 .WithColumn("LocationId").AsInt32().NotNullable()
                 .WithColumn("StatusId").AsInt32().NotNullable()
+                .WithColumn("UnitTypeId").AsInt32().NotNullable()
                 .WithBaseModel();
 
             Create.Table("ProductCategory")
@@ -208,6 +207,21 @@ namespace StrykerDG.FarmForge.Migrations.Release_0001
                 .WithId("SupplierProductTypeMapId")
                 .WithColumn("SupplierId").AsInt32().NotNullable()
                 .WithColumn("ProductTypeId").AsInt32().NotNullable()
+                .WithBaseModel();
+
+            Create.Table("UnitType")
+                .WithId("UnitTypeId")
+                .WithColumn("Name").AsString(255).NotNullable()
+                .WithColumn("Label").AsString(255).NotNullable()
+                .WithColumn("Description").AsString(255).NotNullable()
+                .WithBaseModel();
+
+            Create.Table("UnitTypeConversion")
+                .WithId("UnitTypeConversionId")
+                .WithColumn("FromUnitId").AsInt32().NotNullable()
+                .WithColumn("ToUnitId").AsInt32().NotNullable()
+                .WithColumn("FromQuantity").AsInt32().NotNullable()
+                .WithColumn("ToQuantity").AsInt32().NotNullable()
                 .WithBaseModel();
 
             var now = DateTime.Now;
@@ -632,6 +646,9 @@ namespace StrykerDG.FarmForge.Migrations.Release_0001
                 .Row(new { CropTypeId = ryeIdId, Name = "generic", Label = "Generic", Created = now, Modified = now, IsDeleted = false })
                 .Row(new { CropTypeId = amaranthId, Name = "generic", Label = "Generic", Created = now, Modified = now, IsDeleted = false })
                 .Row(new { CropTypeId = quinoaId, Name = "generic", Label = "Generic", Created = now, Modified = now, IsDeleted = false });
+
+            Insert.IntoTable("UnitType")
+                .Row(new { Name = "piece", Label = "Piece", Description = "An invididual item", Created = now, Modified = now, IsDeleted = false });
         }
 
         public override void Down()
@@ -669,6 +686,8 @@ namespace StrykerDG.FarmForge.Migrations.Release_0001
             Delete.Table("ProductType");
             Delete.Table("Supplier");
             Delete.Table("SupplierProductTypeMap");
+            Delete.Table("UnitType");
+            Delete.Table("UnitTypeConversion");
         }
 
         private string GenerateAdminPassword()
