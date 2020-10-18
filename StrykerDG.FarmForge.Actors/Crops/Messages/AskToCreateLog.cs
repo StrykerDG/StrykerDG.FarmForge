@@ -11,18 +11,24 @@ namespace StrykerDG.FarmForge.Actors.Crops.Messages
         public int LogTypeId { get; private set; }
         public int CropStatusId { get; private set; }
         public string Notes { get; private set; }
+        public int? Quantity { get; private set; }
+        public int? UnitTypeId { get; set; }
 
         public AskToCreateLog(
             int cropId,
             int logTypeId, 
             int statusId, 
-            string notes
+            string notes,
+            int? quantity,
+            int? unitTypeId
         )
         {
             CropId = cropId;
             LogTypeId = logTypeId;
             CropStatusId = statusId;
             Notes = notes;
+            Quantity = quantity;
+            UnitTypeId = unitTypeId;
         }
     }
 }

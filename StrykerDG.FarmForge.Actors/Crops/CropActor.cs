@@ -322,17 +322,38 @@ namespace StrykerDG.FarmForge.Actors.Crops
                 try
                 {
                     var now = DateTime.Now;
-                    
+
+                    // Make sure we have required data                    
                     if (message.CropId == 0 | message.LogTypeId == 0 | message.CropStatusId == 0)
                         throw new Exception("Invalid CropId, CropTypeId, or StatusId");
 
                     var dbCrop = context.Crops
+                        .Include("CropType")
                         .Where(c => c.CropId == message.CropId)
+                        .FirstOrDefault();
+
+                    var existingUnitType = context.UnitTypes
+                        .Where(u =>
+                            u.UnitTypeId == message.UnitTypeId &&
+                            u.IsDeleted == false
+                        )
+                        .FirstOrDefault();
+
+                    var harvestLogType = context.LogTypes
+                        .AsNoTracking()
+                        .Where(lt =>
+                            lt.EntityType == "Crop.Log" &&
+                            lt.Name == "harvest"
+                        )
                         .FirstOrDefault();
 
                     if (dbCrop == null)
                         throw new Exception("Invalid CropId");
 
+                    if (existingUnitType == null && message.LogTypeId == harvestLogType.LogTypeId)
+                        throw new Exception("UnitType does not exist");
+
+                    // Create a new log
                     var newLog = new CropLog
                     {
                         CropId = dbCrop.CropId,
@@ -341,6 +362,36 @@ namespace StrykerDG.FarmForge.Actors.Crops
                     };
 
                     context.Add(newLog);
+
+                    // Create product if we're recording a harvest
+                    if(message.LogTypeId == harvestLogType.LogTypeId)
+                    {
+                        var inventoryStatus = context.Statuses
+                            .AsNoTracking()
+                            .Where(s =>
+                                s.EntityType == "Product.Status" &&
+                                s.Name == "inventory"
+                            )
+                            .Select(s => s.StatusId)
+                            .FirstOrDefault();
+
+                        for(var i = 0; i < message.Quantity; i++)
+                        {
+                            context.Add(new Product
+                            {
+                                ProductTypeId = dbCrop.CropType.OutputTypeId,
+                                LocationId = dbCrop.LocationId,
+                                StatusId = inventoryStatus,
+                                UnitTypeId = (int)message.UnitTypeId,
+                                Sources = new List<ProductSource> { 
+                                    new ProductSource 
+                                    {
+                                        CropId = dbCrop.CropId
+                                    }
+                                }
+                            });
+                        }
+                    }
 
                     if(dbCrop.StatusId != message.CropStatusId)
                         dbCrop.StatusId = message.CropStatusId;

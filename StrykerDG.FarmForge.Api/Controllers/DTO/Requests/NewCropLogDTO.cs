@@ -10,5 +10,7 @@ namespace StrykerDG.FarmForge.LocalApi.Controllers.DTO.Requests
         public int LogTypeId { get; set; }
         public int CropStatusId { get; set; }
         public string Notes { get; set; }
+        public int? UnitTypeId { get; set; }
+        public int? Quantity { get; set; }
     }
 }

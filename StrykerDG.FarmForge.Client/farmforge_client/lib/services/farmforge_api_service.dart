@@ -246,4 +246,9 @@ class FarmForgeApiService {
   Future<FarmForgeResponse> getStatusesByType(String type) async {
     return await request('Statuses/$type', null, 'GET');
   }
+
+  // Inventory 
+  Future<FarmForgeResponse> getUnitTypes() async {
+    return await request('Units', null, 'GET');
+  }
 }

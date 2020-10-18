@@ -21,6 +21,7 @@ using StrykerDG.FarmForge.Actors.Devices;
 using StrykerDG.FarmForge.Actors.Locations;
 using StrykerDG.FarmForge.Actors.LogTypes;
 using StrykerDG.FarmForge.Actors.Statuses;
+using StrykerDG.FarmForge.Actors.Units;
 using StrykerDG.FarmForge.Actors.WebSockets;
 using StrykerDG.FarmForge.Actors.WebSockets.Messages;
 using StrykerDG.FarmForge.DataModel.Contexts;
@@ -178,6 +179,11 @@ namespace StrykerDG.FarmForge.Api
                     actorSystem.ActorOf(Props.Create(() =>
                         new CropLogActor(serviceScopeFactory)),
                         "CropLogActor"
+                ));
+                Actors.Add(
+                    actorSystem.ActorOf(Props.Create(() =>
+                        new UnitActor(serviceScopeFactory)),
+                        "UnitActor"
                 ));
 
                 return actorSystem;

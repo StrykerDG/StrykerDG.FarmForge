@@ -8,6 +8,7 @@ import 'package:farmforge_client/models/general/log_type.dart';
 import 'package:farmforge_client/models/general/status.dart';
 import 'package:farmforge_client/models/farmforge_response.dart';
 import 'package:farmforge_client/models/dto/new_crop_log_dto.dart';
+import 'package:farmforge_client/models/inventory/unit_type.dart';
 
 import 'package:farmforge_client/utilities/constants.dart';
 import 'package:farmforge_client/utilities/ui_utility.dart';
@@ -26,10 +27,13 @@ class _AddCropLogState extends State<AddCropLog> {
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
   List<LogType> _logTypes = [];
   List<Status> _cropStatuses = [];
+  List<UnitType> _unitTypes = [];
   int _cropStatus;
   int _logType;
+  int _unitType;
 
   TextEditingController _notesController = TextEditingController();
+  TextEditingController _quantityController = TextEditingController();
 
   void loadData() async {
     try {
@@ -39,13 +43,18 @@ class _AddCropLogState extends State<AddCropLog> {
       Future<FarmForgeResponse> logTypeFuture = Provider
         .of<CoreProvider>(context, listen: false)
         .farmForgeService.getLogsByType('Crop.Log');
+      Future<FarmForgeResponse> unitTypeFuture = Provider
+        .of<CoreProvider>(context, listen: false)
+        .farmForgeService.getUnitTypes();
 
-      Future.wait([cropStatusFuture, logTypeFuture])
+      Future.wait([cropStatusFuture, logTypeFuture, unitTypeFuture])
         .then((responses) {
           Provider.of<DataProvider>(context, listen: false)
             .setStatuses(responses[0].data);
           Provider.of<DataProvider>(context, listen: false)
             .setLogTypes(responses[1].data);
+          Provider.of<DataProvider>(context, listen: false)
+            .setUnitTypes(responses[2].data);
         });
     }
     catch(e) {
@@ -69,6 +78,12 @@ class _AddCropLogState extends State<AddCropLog> {
     });
   }
 
+  void handleUnitSelect(int newValue) {
+    setState(() {
+      _unitType = newValue;
+    });
+  }
+
   void handleSave() async {
     if(_formKey.currentState.validate()) {
       try {
@@ -78,6 +93,16 @@ class _AddCropLogState extends State<AddCropLog> {
           cropStatusId: _cropStatus,
           notes: _notesController.text
         );
+
+        LogType selectedLogType = _logTypes.firstWhere(
+          (t) => t.logTypeId == _logType,
+          orElse: () => null
+        );
+
+        if(selectedLogType?.name == "harvest") {
+          logDTO.unitTypeId = _unitType;
+          logDTO.quantity = int.parse(_quantityController.text);
+        }
 
         FarmForgeResponse logResult = await Provider
           .of<CoreProvider>(context, listen: false)
@@ -118,6 +143,7 @@ class _AddCropLogState extends State<AddCropLog> {
   @override
   void dispose() {
     _notesController.dispose();
+    _quantityController.dispose();
 
     super.dispose();
   }
@@ -130,6 +156,7 @@ class _AddCropLogState extends State<AddCropLog> {
         .where((lt) => lt.entityType == 'Crop.Log').toList(); 
       _cropStatuses = Provider.of<DataProvider>(context).statuses
         .where((s) => s.entityType == 'Crop.Status').toList();
+      _unitTypes = Provider.of<DataProvider>(context).unitTypes;
     });
   }
 
@@ -148,6 +175,44 @@ class _AddCropLogState extends State<AddCropLog> {
       validator: Validation.isNotEmpty,
       decoration: InputDecoration(
         labelText: 'Log Type'
+      ),
+    );
+  }
+
+  Container getQuantityTextField() {
+    return Container(
+      width: kNarrowInput,
+      child: Padding(
+        padding: EdgeInsets.only(right: kMediumPadding),
+        child: TextFormField(
+          controller: _quantityController,
+          validator: Validation.isNumeric,
+          decoration: InputDecoration(
+            labelText: 'Quantity'
+          ),
+        ),
+      ),
+    );
+  }
+
+  Container getUnitDropdown() {
+    List<DropdownMenuItem<int>> unitOptions = _unitTypes.map((u) => 
+      DropdownMenuItem<int>(
+        value: u.unitTypeId,
+        child: Text(u.label),
+      )
+    ).toList();
+
+    return Container(
+      width: kStandardInput,
+      child: DropdownButtonFormField<int>(
+        value: _unitType,
+        onChanged: handleUnitSelect,
+        items: unitOptions,
+        validator: Validation.isNotEmpty,
+        decoration: InputDecoration(
+          labelText: 'Unit'
+        ),
       ),
     );
   }
@@ -174,6 +239,19 @@ class _AddCropLogState extends State<AddCropLog> {
   @override
   Widget build(BuildContext context) {
 
+    LogType selectedLogType = _logTypes.firstWhere(
+      (t) => t.logTypeId == _logType,
+      orElse: () => null
+    );
+
+    Widget quantityWidget = Container();
+    Widget unitWidget = Container();
+
+    if(selectedLogType?.name == "harvest") {
+      quantityWidget = getQuantityTextField();
+      unitWidget = getUnitDropdown();
+    }
+
     DropdownButtonFormField<int> logTypeDropdown = getTypeDropdown();
     DropdownButtonFormField<int> statusDropdown = getStatusDropdown();
 
@@ -184,6 +262,13 @@ class _AddCropLogState extends State<AddCropLog> {
           Container(
             width: kStandardInput,
             child: logTypeDropdown
+          ),
+          Wrap(
+            alignment: WrapAlignment.spaceEvenly,
+            children: [
+              quantityWidget,
+              unitWidget
+            ],
           ),
           Container(
             width: kStandardInput,
