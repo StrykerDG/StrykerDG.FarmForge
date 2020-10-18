@@ -3,12 +3,16 @@ class NewCropLogDTO {
   int logTypeId;
   int cropStatusId;
   String notes;
+  int unitTypeId;
+  int quantity;
 
   NewCropLogDTO({
     this.cropId,
     this.logTypeId,
     this.cropStatusId,
-    this.notes
+    this.notes,
+    this.unitTypeId,
+    this.quantity
   });
 
   Map<String, dynamic> toMap() {
@@ -16,7 +20,9 @@ class NewCropLogDTO {
       'CropId': cropId,
       'LogTypeId': logTypeId,
       'CropStatusId': cropStatusId,
-      'Notes': notes
+      'Notes': notes,
+      'UnitTypeId': unitTypeId,
+      'Quantity': quantity
     };
   }
 }

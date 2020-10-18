@@ -8,6 +8,7 @@ import 'package:farmforge_client/models/general/location.dart';
 import 'package:farmforge_client/models/general/log_type.dart';
 import 'package:farmforge_client/models/general/status.dart';
 import 'package:farmforge_client/models/general/crop_log.dart';
+import 'package:farmforge_client/models/inventory/unit_type.dart';
 import 'package:farmforge_client/models/general/user.dart';
 
 class DataProvider extends ChangeNotifier {
@@ -18,6 +19,7 @@ class DataProvider extends ChangeNotifier {
   List<Location> locations = [];
   List<LogType> logTypes = [];
   List<Status> statuses = [];
+  List<UnitType> unitTypes = [];
   List<User> users = [];
 
   // Crops
@@ -215,6 +217,15 @@ class DataProvider extends ChangeNotifier {
 
   void deleteUser(int id) {
     users.removeWhere((u) => u.userId == id);
+    notifyListeners();
+  }
+
+  // Inventory
+  void setUnitTypes(List<dynamic> newUnitTypes) {
+    unitTypes.clear();
+    newUnitTypes.forEach((unitData) { 
+      unitTypes.add(UnitType.fromMap(unitData));
+    });
     notifyListeners();
   }
 }

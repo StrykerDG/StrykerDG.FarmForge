@@ -29,6 +29,20 @@ namespace StrykerDG.FarmForge.DataModel.Contexts
         public DbSet<CropType> CropTypes { get; set; }
         public DbSet<CropVariety> CropVarieties { get; set; }
 
+        // Inventory & Sales
+        public DbSet<Customer> Customers { get; set; }
+        public DbSet<Order> Orders { get; set; }
+        public DbSet<Payment> Payments { get; set; }
+        public DbSet<Product> Products { get; set; }
+        public DbSet<ProductCategory> ProductCategories { get; set; }
+        public DbSet<ProductDestination> ProductDestinations { get; set; }
+        public DbSet<ProductSource> ProductSources { get; set; }
+        public DbSet<ProductType> ProductTypes { get; set; }
+        public DbSet<Supplier> Suppliers { get; set; }
+        public DbSet<SupplierProductTypeMap> SupplierProductTypeMaps { get; set; }
+        public DbSet<UnitType> UnitTypes { get; set; }
+        public DbSet<UnitTypeConversion> UnitTypeConversions { get; set; }
+
         public static void SetTriggers()
         {
             SetBaseTriggers();
@@ -78,6 +92,42 @@ namespace StrykerDG.FarmForge.DataModel.Contexts
 
             Triggers<CropVariety>.Inserting += BaseTriggers<CropVariety>.OnInserting;
             Triggers<CropVariety>.Updating += BaseTriggers<CropVariety>.OnUpdating;
+
+            Triggers<Customer>.Inserting += BaseTriggers<Customer>.OnInserting;
+            Triggers<Customer>.Updating += BaseTriggers<Customer>.OnUpdating;
+
+            Triggers<Order>.Inserting += BaseTriggers<Order>.OnInserting;
+            Triggers<Order>.Updating += BaseTriggers<Order>.OnUpdating;
+
+            Triggers<Payment>.Inserting += BaseTriggers<Payment>.OnInserting;
+            Triggers<Payment>.Updating += BaseTriggers<Payment>.OnUpdating;
+
+            Triggers<Product>.Inserting += BaseTriggers<Product>.OnInserting;
+            Triggers<Product>.Updating += BaseTriggers<Product>.OnUpdating;
+
+            Triggers<ProductCategory>.Inserting += BaseTriggers<ProductCategory>.OnInserting;
+            Triggers<ProductCategory>.Updating += BaseTriggers<ProductCategory>.OnUpdating;
+
+            Triggers<ProductDestination>.Inserting += BaseTriggers<ProductDestination>.OnInserting;
+            Triggers<ProductDestination>.Updating += BaseTriggers<ProductDestination>.OnUpdating;
+
+            Triggers<ProductSource>.Inserting += BaseTriggers<ProductSource>.OnInserting;
+            Triggers<ProductSource>.Updating += BaseTriggers<ProductSource>.OnUpdating;
+
+            Triggers<ProductType>.Inserting += BaseTriggers<ProductType>.OnInserting;
+            Triggers<ProductType>.Updating += BaseTriggers<ProductType>.OnUpdating;
+
+            Triggers<Supplier>.Inserting += BaseTriggers<Supplier>.OnInserting;
+            Triggers<Supplier>.Updating += BaseTriggers<Supplier>.OnUpdating;
+
+            Triggers<SupplierProductTypeMap>.Inserting += BaseTriggers<SupplierProductTypeMap>.OnInserting;
+            Triggers<SupplierProductTypeMap>.Updating += BaseTriggers<SupplierProductTypeMap>.OnUpdating;
+
+            Triggers<UnitType>.Inserting += BaseTriggers<UnitType>.OnInserting;
+            Triggers<UnitType>.Updating += BaseTriggers<UnitType>.OnUpdating;
+
+            Triggers<UnitTypeConversion>.Inserting += BaseTriggers<UnitTypeConversion>.OnInserting;
+            Triggers<UnitTypeConversion>.Updating += BaseTriggers<UnitTypeConversion>.OnUpdating;
         }
     }
 }

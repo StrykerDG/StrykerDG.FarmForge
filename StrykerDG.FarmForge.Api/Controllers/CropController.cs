@@ -94,7 +94,9 @@ namespace StrykerDG.FarmForge.LocalApi.Controllers
                 cropId,
                 logDto.LogTypeId,
                 logDto.CropStatusId,
-                logDto.Notes
+                logDto.Notes,
+                logDto.Quantity,
+                logDto.UnitTypeId
             ));
 
             return ValidateActorResult(result);
