@@ -90,41 +90,44 @@ namespace StrykerDG.FarmForge.DataModel.Contexts
             Triggers<CropType>.Inserting += BaseTriggers<CropType>.OnInserting;
             Triggers<CropType>.Updating += BaseTriggers<CropType>.OnUpdating;
 
-            Triggers<Customer>.Inserting += BaseTriggers<CropVariety>.OnInserting;
-            Triggers<Customer>.Updating += BaseTriggers<CropVariety>.OnUpdating;
+            Triggers<CropVariety>.Inserting += BaseTriggers<CropVariety>.OnInserting;
+            Triggers<CropVariety>.Updating += BaseTriggers<CropVariety>.OnUpdating;
 
-            Triggers<Order>.Inserting += BaseTriggers<CropVariety>.OnInserting;
-            Triggers<Order>.Updating += BaseTriggers<CropVariety>.OnUpdating;
+            Triggers<Customer>.Inserting += BaseTriggers<Customer>.OnInserting;
+            Triggers<Customer>.Updating += BaseTriggers<Customer>.OnUpdating;
 
-            Triggers<Payment>.Inserting += BaseTriggers<CropVariety>.OnInserting;
-            Triggers<Payment>.Updating += BaseTriggers<CropVariety>.OnUpdating;
+            Triggers<Order>.Inserting += BaseTriggers<Order>.OnInserting;
+            Triggers<Order>.Updating += BaseTriggers<Order>.OnUpdating;
 
-            Triggers<Product>.Inserting += BaseTriggers<CropVariety>.OnInserting;
-            Triggers<Product>.Updating += BaseTriggers<CropVariety>.OnUpdating;
+            Triggers<Payment>.Inserting += BaseTriggers<Payment>.OnInserting;
+            Triggers<Payment>.Updating += BaseTriggers<Payment>.OnUpdating;
 
-            Triggers<ProductCategory>.Inserting += BaseTriggers<CropVariety>.OnInserting;
-            Triggers<ProductCategory>.Updating += BaseTriggers<CropVariety>.OnUpdating;
+            Triggers<Product>.Inserting += BaseTriggers<Product>.OnInserting;
+            Triggers<Product>.Updating += BaseTriggers<Product>.OnUpdating;
 
-            Triggers<ProductDestination>.Inserting += BaseTriggers<CropVariety>.OnInserting;
-            Triggers<ProductDestination>.Updating += BaseTriggers<CropVariety>.OnUpdating;
+            Triggers<ProductCategory>.Inserting += BaseTriggers<ProductCategory>.OnInserting;
+            Triggers<ProductCategory>.Updating += BaseTriggers<ProductCategory>.OnUpdating;
 
-            Triggers<ProductSource>.Inserting += BaseTriggers<CropVariety>.OnInserting;
-            Triggers<ProductSource>.Updating += BaseTriggers<CropVariety>.OnUpdating;
+            Triggers<ProductDestination>.Inserting += BaseTriggers<ProductDestination>.OnInserting;
+            Triggers<ProductDestination>.Updating += BaseTriggers<ProductDestination>.OnUpdating;
 
-            Triggers<ProductType>.Inserting += BaseTriggers<CropVariety>.OnInserting;
-            Triggers<ProductType>.Updating += BaseTriggers<CropVariety>.OnUpdating;
+            Triggers<ProductSource>.Inserting += BaseTriggers<ProductSource>.OnInserting;
+            Triggers<ProductSource>.Updating += BaseTriggers<ProductSource>.OnUpdating;
 
-            Triggers<Supplier>.Inserting += BaseTriggers<CropVariety>.OnInserting;
-            Triggers<Supplier>.Updating += BaseTriggers<CropVariety>.OnUpdating;
+            Triggers<ProductType>.Inserting += BaseTriggers<ProductType>.OnInserting;
+            Triggers<ProductType>.Updating += BaseTriggers<ProductType>.OnUpdating;
 
-            Triggers<SupplierProductTypeMap>.Inserting += BaseTriggers<CropVariety>.OnInserting;
-            Triggers<SupplierProductTypeMap>.Updating += BaseTriggers<CropVariety>.OnUpdating;
+            Triggers<Supplier>.Inserting += BaseTriggers<Supplier>.OnInserting;
+            Triggers<Supplier>.Updating += BaseTriggers<Supplier>.OnUpdating;
 
-            Triggers<UnitType>.Inserting += BaseTriggers<CropVariety>.OnInserting;
-            Triggers<UnitType>.Updating += BaseTriggers<CropVariety>.OnUpdating;
+            Triggers<SupplierProductTypeMap>.Inserting += BaseTriggers<SupplierProductTypeMap>.OnInserting;
+            Triggers<SupplierProductTypeMap>.Updating += BaseTriggers<SupplierProductTypeMap>.OnUpdating;
 
-            Triggers<UnitTypeConversion>.Inserting += BaseTriggers<CropVariety>.OnInserting;
-            Triggers<UnitTypeConversion>.Updating += BaseTriggers<CropVariety>.OnUpdating;
+            Triggers<UnitType>.Inserting += BaseTriggers<UnitType>.OnInserting;
+            Triggers<UnitType>.Updating += BaseTriggers<UnitType>.OnUpdating;
+
+            Triggers<UnitTypeConversion>.Inserting += BaseTriggers<UnitTypeConversion>.OnInserting;
+            Triggers<UnitTypeConversion>.Updating += BaseTriggers<UnitTypeConversion>.OnUpdating;
         }
     }
 }
