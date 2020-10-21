@@ -20,6 +20,7 @@ using StrykerDG.FarmForge.Actors.CropTypes;
 using StrykerDG.FarmForge.Actors.Devices;
 using StrykerDG.FarmForge.Actors.Locations;
 using StrykerDG.FarmForge.Actors.LogTypes;
+using StrykerDG.FarmForge.Actors.Products;
 using StrykerDG.FarmForge.Actors.Statuses;
 using StrykerDG.FarmForge.Actors.Units;
 using StrykerDG.FarmForge.Actors.WebSockets;
@@ -184,6 +185,11 @@ namespace StrykerDG.FarmForge.Api
                     actorSystem.ActorOf(Props.Create(() =>
                         new UnitActor(serviceScopeFactory)),
                         "UnitActor"
+                ));
+                Actors.Add(
+                    actorSystem.ActorOf(Props.Create(() =>
+                        new ProductActor(serviceScopeFactory)),
+                        "ProductActor"
                 ));
 
                 return actorSystem;

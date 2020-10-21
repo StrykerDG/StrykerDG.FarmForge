@@ -10,12 +10,14 @@ import 'package:farmforge_client/models/general/status.dart';
 import 'package:farmforge_client/models/general/crop_log.dart';
 import 'package:farmforge_client/models/inventory/unit_type.dart';
 import 'package:farmforge_client/models/general/user.dart';
+import 'package:farmforge_client/models/dto/inventory_dto.dart';
 
 class DataProvider extends ChangeNotifier {
   DateTime defaultDate = DateTime.now().subtract(Duration(days: 60));
   List<Crop> crops = [];
   List<CropType> cropTypes = [];
   List<CropClassification> cropClassifications = [];
+  List<InventoryDTO> inventory = [];
   List<Location> locations = [];
   List<LogType> logTypes = [];
   List<Status> statuses = [];
@@ -225,6 +227,14 @@ class DataProvider extends ChangeNotifier {
     unitTypes.clear();
     newUnitTypes.forEach((unitData) { 
       unitTypes.add(UnitType.fromMap(unitData));
+    });
+    notifyListeners();
+  }
+
+  void setInventory(List<dynamic> newInventory) {
+    inventory.clear();
+    newInventory.forEach((inventoryData) { 
+      inventory.add(InventoryDTO.fromMap(inventoryData));
     });
     notifyListeners();
   }

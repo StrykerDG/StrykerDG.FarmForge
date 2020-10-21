@@ -16,6 +16,12 @@ const kSecondaryColor = Color(0xff03a9f4);
 const kSecondaryLightColor = Color(0xff67daff);
 const kSecondaryDarkColor = Color(0xff007ac1);
 
+// Icons
+const IconData kDashboardIcon = Icons.dashboard;
+const IconData kCropIcon = Icons.agriculture;
+const IconData kInventoryIcon = Icons.inventory;
+const IconData kSettingsIcon = Icons.settings;
+
 // Padding
 const double kSmallPadding = 8.0;
 const double kMediumPadding = 16.0;

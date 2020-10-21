@@ -5,7 +5,10 @@ import 'package:farmforge_client/provider/core_provider.dart';
 
 import 'package:farmforge_client/screens/crops/crops.dart';
 import 'package:farmforge_client/screens/dashboard/dashboard.dart';
+import 'package:farmforge_client/screens/inventory/inventory.dart';
 import 'package:farmforge_client/screens/settings/settings.dart';
+
+import 'package:farmforge_client/utilities/constants.dart';
 
 class FarmForgeDrawer extends StatelessWidget {
   void handleNavigation(
@@ -32,7 +35,7 @@ class FarmForgeDrawer extends StatelessWidget {
           // Image
           children: [
             ListTile(
-              leading: Icon(Icons.dashboard),
+              leading: Icon(kDashboardIcon),
               title: Text('Dashboard'),
               onTap: () {
                 handleNavigation(
@@ -45,7 +48,7 @@ class FarmForgeDrawer extends StatelessWidget {
               },
             ),
             ListTile(
-              leading: Icon(Icons.agriculture),
+              leading: Icon(kCropIcon),
               title: Text('Crops'),
               onTap: () {
                 handleNavigation(
@@ -57,11 +60,24 @@ class FarmForgeDrawer extends StatelessWidget {
                 );
               },
             ),
+            ListTile(
+              leading: Icon(kInventoryIcon),
+              title: Text('Inventory'),
+              onTap: () {
+                handleNavigation(
+                  context,
+                  Inventory(), 
+                  Inventory.title, 
+                  Inventory.fabIcon,
+                  Inventory.fabAction
+                );
+              },
+            ),
             Expanded(
               child: Container(),
             ),
             ListTile(
-              leading: Icon(Icons.settings),
+              leading: Icon(kSettingsIcon),
               title: Text('Settings'),
               onTap: () {
                 handleNavigation(

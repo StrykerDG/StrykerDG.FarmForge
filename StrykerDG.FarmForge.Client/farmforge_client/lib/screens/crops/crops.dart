@@ -109,7 +109,7 @@ class _CropsState extends State<Crops> {
   }
 
   generateColumns() {
-        return [
+    return [
       FarmForgeDataTableColumn(
         label: 'Type',
         property: 'CropType.Label'
@@ -142,7 +142,7 @@ class _CropsState extends State<Crops> {
         propertyFunc: (Crop c) => 
           IconButton(
             icon: Icon(Icons.note),
-              onPressed: () { handleAddLog(c); },
+            onPressed: () { handleAddLog(c); },
           )
       ),
     ];
