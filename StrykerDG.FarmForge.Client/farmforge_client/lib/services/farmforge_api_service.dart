@@ -252,7 +252,24 @@ class FarmForgeApiService {
     return await request('Units', null, 'GET');
   }
 
+  Future<FarmForgeResponse> getProductTypes() async {
+    return await request('Products', null, 'GET');
+  }
+
   Future<FarmForgeResponse> getInventory() async {
     return await request('Products/Inventory', null, 'GET');
+  }
+
+  Future<FarmForgeResponse> moveInventoryToLocation(
+    List<int> productIds, 
+    int newLocationId) async {
+
+    Map<String, dynamic> requestBody = {
+      'ProductIds': productIds,
+      'LocationId': newLocationId
+    };
+
+    String jsonBody = convert.jsonEncode(requestBody);
+    return await request('Products/Inventory/Transfer', jsonBody, 'POST');
   }
 }

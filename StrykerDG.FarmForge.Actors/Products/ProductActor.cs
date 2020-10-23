@@ -17,6 +17,8 @@ namespace StrykerDG.FarmForge.Actors.Products
         public ProductActor(IServiceScopeFactory factory) : base(factory)
         {
             Receive<AskForInventory>(HandleAskForInventory);
+            Receive<AskToTransferInventory>(HandleAskToTransferInventory);
+            Receive<AskForProductTypes>(HandleAskForProductTypes);
         }
 
         // Message Methods
@@ -82,6 +84,53 @@ namespace StrykerDG.FarmForge.Actors.Products
                 }
 
                 Sender.Tell(results);
+            });
+        }
+
+        public void HandleAskToTransferInventory(AskToTransferInventory message)
+        {
+            Using<FarmForgeDataContext>((context) =>
+            {
+                try
+                {
+                    var requestedLocation = context.Locations
+                        .AsNoTracking()
+                        .Where(l =>
+                            l.LocationId == message.LocationId &&
+                            l.IsDeleted == false
+                        )
+                        .FirstOrDefault();
+
+                    if (requestedLocation == null)
+                        throw new Exception("Location does not exist");
+
+                    var dbProducts = context.Products
+                        .Where(p => message.ProductIds.Contains(p.ProductId))
+                        .ToList();
+
+                    foreach(var product in dbProducts)
+                        product.LocationId = message.LocationId;
+
+                    context.SaveChanges();
+
+                    Sender.Tell(dbProducts);
+                }
+                catch(Exception ex)
+                {
+                    Sender.Tell(ex);
+                }
+            });
+        }
+
+        private void HandleAskForProductTypes(AskForProductTypes message)
+        {
+            Using<FarmForgeDataContext>((context) =>
+            {
+                var productTypes = context.ProductTypes
+                    .Where(pt => pt.IsDeleted == false)
+                    .ToList();
+
+                Sender.Tell(productTypes);
             });
         }
 

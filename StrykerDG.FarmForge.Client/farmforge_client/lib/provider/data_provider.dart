@@ -9,6 +9,7 @@ import 'package:farmforge_client/models/general/log_type.dart';
 import 'package:farmforge_client/models/general/status.dart';
 import 'package:farmforge_client/models/general/crop_log.dart';
 import 'package:farmforge_client/models/inventory/unit_type.dart';
+import 'package:farmforge_client/models/inventory/product_type.dart';
 import 'package:farmforge_client/models/general/user.dart';
 import 'package:farmforge_client/models/dto/inventory_dto.dart';
 
@@ -20,6 +21,7 @@ class DataProvider extends ChangeNotifier {
   List<InventoryDTO> inventory = [];
   List<Location> locations = [];
   List<LogType> logTypes = [];
+  List<ProductType> productTypes = [];
   List<Status> statuses = [];
   List<UnitType> unitTypes = [];
   List<User> users = [];
@@ -235,6 +237,14 @@ class DataProvider extends ChangeNotifier {
     inventory.clear();
     newInventory.forEach((inventoryData) { 
       inventory.add(InventoryDTO.fromMap(inventoryData));
+    });
+    notifyListeners();
+  }
+
+  void setProductTypes(List<dynamic> newProductTypes) {
+    productTypes.clear();
+    newProductTypes.forEach((productData) { 
+      productTypes.add(ProductType.fromMap(productData));
     });
     notifyListeners();
   }

@@ -7,6 +7,9 @@ import 'package:farmforge_client/models/farmforge_response.dart';
 
 import 'package:farmforge_client/screens/inventory/large_inventory.dart';
 
+import 'package:farmforge_client/widgets/farmforge_dialog.dart';
+import 'package:farmforge_client/widgets/inventory/add_inventory_dialog.dart';
+
 import 'package:farmforge_client/utilities/constants.dart';
 import 'package:farmforge_client/utilities/ui_utility.dart';
 
@@ -17,7 +20,14 @@ class Inventory extends StatefulWidget {
   static const Function fabAction = handleAddInventory;
 
   static void handleAddInventory(BuildContext context) {
-
+    showDialog(
+      context: context,
+      builder: (context) => FarmForgeDialog(
+        title: 'Add Inventory',
+        content: AddInventoryDialog(),
+        width: kSmallDesktopModalWidth,
+      )
+    );
   }
 
   @override

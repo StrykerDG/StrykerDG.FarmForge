@@ -1,9 +1,11 @@
+import 'package:farmforge_client/models/farm_forge_model.dart';
 import 'package:farmforge_client/models/general/status.dart';
 import 'package:farmforge_client/models/general/location.dart';
 import 'package:farmforge_client/models/inventory/product_type.dart';
 import 'package:farmforge_client/models/inventory/unit_type.dart';
+import 'package:farmforge_client/utilities/date_time_utility.dart';
 
-class Product {
+class Product extends FarmForgeModel {
   int productId;
   int productTypeId;
   ProductType productType;
@@ -14,6 +16,7 @@ class Product {
   Status status;
   int unitTypeId;
   UnitType unitType;
+  DateTime created;
 
   Product({
     this.productId,
@@ -25,7 +28,8 @@ class Product {
     this.statusId,
     this.status,
     this.unitTypeId,
-    this.unitType
+    this.unitType,
+    this.created
   });
 
   factory Product.fromMap(Map<String, dynamic> data) {
@@ -45,6 +49,10 @@ class Product {
       ? UnitType.fromMap(data['UnitType'])
       : null;
 
+    DateTime created = data['Created'] != null
+      ? DateTime.tryParse(data['Created'])
+      : null;
+
     return Product(
       productId: data['ProductId'],
       productTypeId: data['ProductTypeId'],
@@ -55,10 +63,12 @@ class Product {
       statusId: data['StatusId'],
       status: status,
       unitTypeId: data['UnitTypeId'],
-      unitType: unitType
+      unitType: unitType,
+      created: created
     );
   }
 
+  @override
   Map<String, dynamic> toMap() {
     Map<String, dynamic> productType = this.productType?.toMap();
     Map<String, dynamic> location = this.location?.toMap();
@@ -74,7 +84,8 @@ class Product {
       'StatusId': this.statusId,
       'Status': status,
       'UnitTypeId': this.unitTypeId,
-      'UnitType': unitType
+      'UnitType': unitType,
+      'Created': DateTimeUtility.formatDateTime(this.created)
     };
   }
 }
