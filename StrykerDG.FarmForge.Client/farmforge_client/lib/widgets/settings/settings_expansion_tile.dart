@@ -4,7 +4,7 @@ import 'package:farmforge_client/utilities/constants.dart';
 
 class SettingsExpansionTile extends StatelessWidget {
   final String title;
-  final List<Widget> content;
+  final Widget content;
 
   SettingsExpansionTile({@required this.title, @required this.content});
 
@@ -15,7 +15,9 @@ class SettingsExpansionTile extends StatelessWidget {
       child: Card(
         child: ExpansionTile(
           title: Text(title),
-          children: content
+          children: [
+            content
+          ]
         ),
       ),
     );
