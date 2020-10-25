@@ -5,6 +5,7 @@ using StrykerDG.FarmForge.Actors.DTO.Responses;
 using StrykerDG.FarmForge.Actors.Products.Messages;
 using StrykerDG.FarmForge.DataModel.Contexts;
 using StrykerDG.FarmForge.DataModel.Extensions;
+using StrykerDG.FarmForge.DataModel.Models;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -19,6 +20,11 @@ namespace StrykerDG.FarmForge.Actors.Products
             Receive<AskForInventory>(HandleAskForInventory);
             Receive<AskToTransferInventory>(HandleAskToTransferInventory);
             Receive<AskForProductTypes>(HandleAskForProductTypes);
+            Receive<AskToCreateProductType>(HandleAskToCreateProductType);
+            Receive<AskToDeleteProductType>(HandleAskToDeleteProductType);
+            Receive<AskForProductCategories>(HandleAskForProductCategories);
+            Receive<AskToCreateProductCategory>(HandleAskToCreateProductCategory);
+            Receive<AskToDeleteProductCategory>(HandleAskToDeleteProductCategory);
         }
 
         // Message Methods
@@ -131,6 +137,200 @@ namespace StrykerDG.FarmForge.Actors.Products
                     .ToList();
 
                 Sender.Tell(productTypes);
+            });
+        }
+
+        private void HandleAskToCreateProductType(AskToCreateProductType message)
+        {
+            Using<FarmForgeDataContext>((context) =>
+            {
+                try
+                {
+                    if (message.ProductType == null || message.ProductType.ProductTypeId != 0)
+                        throw new Exception("Invalid Type Object");
+
+                    if (
+                        message.ProductType.Label == null || 
+                        message.ProductType.Label == string.Empty ||
+                        message.ProductType.ProductCategoryId == 0
+                    )
+                        throw new Exception("Must provide a label and categoryId");
+
+                    if (
+                        message.ProductType.Name == null || 
+                        message.ProductType.Name == string.Empty
+                    )
+                        message.ProductType.Name = message.ProductType.Label
+                            .ToLower()
+                            .Replace(" ", "_");
+
+                    var existingProductType = context.ProductTypes
+                        .Where(pt => 
+                            pt.Name == message.ProductType.Name &&
+                            pt.IsDeleted == false
+                        )
+                        .FirstOrDefault();
+
+                    if (existingProductType != null)
+                        throw new Exception("ProductType already exists");
+
+                    var existingCategory = context.ProductCategories
+                        .AsNoTracking()
+                        .Where(pc => 
+                            pc.ProductCategoryId == message.ProductType.ProductCategoryId &&
+                            pc.IsDeleted == false
+                        )
+                        .FirstOrDefault();
+
+                    if (existingCategory == null)
+                        throw new Exception("ProductCategory does not exist");
+
+                    // Remove the category object so a new item isn't created or an existing
+                    // item isn't updated
+                    if (message.ProductType.ProductCategory != null)
+                        message.ProductType.ProductCategory = null;
+
+                    // TODO: handle supplier
+                    message.ProductType.Suppliers = null;
+
+                    var result = context.Add(message.ProductType).Entity;
+                    context.SaveChanges();
+
+                    // Build the full ProductType object
+                    var suppliers = context.SupplierProductTypeMaps
+                        .AsNoTracking()
+                        .Include("Supplier")
+                        .Where(sptm => sptm.ProductTypeId == result.ProductTypeId)
+                        .ToList();
+
+                    result.ProductCategory = existingCategory;
+                    result.Suppliers = suppliers;
+
+                    Sender.Tell(result);
+                }
+                catch (Exception ex)
+                {
+                    Sender.Tell(ex);
+                }
+            });
+        }
+
+        private void HandleAskToDeleteProductType(AskToDeleteProductType message)
+        {
+            Using<FarmForgeDataContext>((context) =>
+            {
+                try
+                {
+                    // Make sure the product exists
+                    var existingProductType = context.ProductTypes
+                        .Where(pt =>
+                            pt.ProductTypeId == message.ProductTypeId &&
+                            pt.IsDeleted == false
+                        )
+                        .FirstOrDefault();
+
+                    if (existingProductType == null)
+                        throw new Exception("ProductType does not exist");
+
+                    // We cant delete if there are products or crops using the type
+                    var dependentCrops = context.Crops
+                        .AsNoTracking()
+                        .Where(c => 
+                            c.CropType.OutputTypeId == existingProductType.ProductTypeId &&
+                            c.IsDeleted == false
+                        )
+                        .FirstOrDefault();
+
+                    var dependentProducts = context.Products
+                        .Where(p =>
+                            p.ProductTypeId == existingProductType.ProductTypeId &&
+                            p.IsDeleted == false
+                        )
+                        .FirstOrDefault();
+
+                    if (dependentCrops != null || dependentProducts != null)
+                        throw new Exception("Cannot delete product type. In use by products and / or crops");
+
+                    existingProductType.IsDeleted = true;
+
+                    context.SaveChanges();
+                    Sender.Tell(true);
+                }
+                catch(Exception ex)
+                {
+                    Sender.Tell(ex);
+                }
+            });
+        }
+
+        private void HandleAskForProductCategories(AskForProductCategories message)
+        {
+            Using<FarmForgeDataContext>((context) =>
+            {
+                var productCategories = context.ProductCategories
+                    .Where(pc => pc.IsDeleted == false)
+                    .ToList();
+
+                Sender.Tell(productCategories);
+            });
+        }
+
+        private void HandleAskToCreateProductCategory(AskToCreateProductCategory message)
+        {
+            Using<FarmForgeDataContext>((context) =>
+            {
+                try
+                {
+                    if (message.ProductCategory == null || message.ProductCategory.ProductCategoryId != 0)
+                        throw new Exception("Invalid Cateogry Object");
+
+                    var result = context.Add(message).Entity;
+                    Sender.Tell(result);
+                }
+                catch (Exception ex) 
+                {
+                    Sender.Tell(ex);
+                }
+            });
+        }
+
+        private void HandleAskToDeleteProductCategory(AskToDeleteProductCategory message)
+        {
+            Using<FarmForgeDataContext>((context) =>
+            {
+                try
+                {
+                    // Make sure the category exists
+                    var existingCategory = context.ProductCategories
+                        .Where(pc =>
+                            pc.ProductCategoryId == message.ProductCategoryId &&
+                            pc.IsDeleted == false
+                        )
+                        .FirstOrDefault();
+
+                    if (existingCategory == null)
+                        throw new Exception("Product Category does not exist");
+
+                    // Make sure there arent any product types using the category
+                    var dependentTypes = context.ProductTypes
+                        .Where(pt =>
+                            pt.ProductCategoryId == existingCategory.ProductCategoryId &&
+                            pt.IsDeleted == false
+                        )
+                        .FirstOrDefault();
+
+                    if (dependentTypes != null)
+                        throw new Exception("Cannot delete product category. In use by product types");
+
+                    existingCategory.IsDeleted = true;
+
+                    context.SaveChanges();
+                    Sender.Tell(true);
+                }
+                catch(Exception ex)
+                {
+                    Sender.Tell(ex);
+                }
             });
         }
 

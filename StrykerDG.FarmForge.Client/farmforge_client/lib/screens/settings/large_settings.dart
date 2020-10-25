@@ -9,6 +9,9 @@ import 'package:farmforge_client/models/crops/crop_variety.dart';
 import 'package:farmforge_client/models/general/location.dart';
 import 'package:farmforge_client/models/farmforge_response.dart';
 import 'package:farmforge_client/models/general/user.dart';
+import 'package:farmforge_client/models/inventory/product_category.dart';
+import 'package:farmforge_client/models/inventory/product_type.dart';
+import 'package:farmforge_client/models/suppliers/supplier.dart';
 
 import 'package:farmforge_client/widgets/farmforge_dialog.dart';
 import 'package:farmforge_client/widgets/settings/settings_expansion_tile.dart';
@@ -16,6 +19,9 @@ import 'package:farmforge_client/widgets/settings/add_location.dart';
 import 'package:farmforge_client/widgets/settings/add_crop_type.dart';
 import 'package:farmforge_client/widgets/settings/add_crop_variety.dart';
 import 'package:farmforge_client/widgets/settings/add_user.dart';
+import 'package:farmforge_client/widgets/settings/add_product_category.dart';
+import 'package:farmforge_client/widgets/settings/add_product_type.dart';
+import 'package:farmforge_client/widgets/settings/add_supplier.dart';
 
 import 'package:farmforge_client/utilities/constants.dart';
 import 'package:farmforge_client/utilities/ui_utility.dart';
@@ -30,11 +36,17 @@ class _LargeSettingsState extends State<LargeSettings> {
   List<CropType> _cropTypes = [];
   List<Location> _locations = [];
   List<User> _users = [];
+  List<ProductType> _productTypes = [];
+  List<ProductCategory> _productCategories = [];
+  List<Supplier> _suppliers = [];
   int _selectedRow;
   int _selectedLocation;
   int _selectedParentLocation;
   int _selectedUser;
   int _selectedCropType;
+  int _selectedProductType;
+  int _selectedProductCategory;
+  int _selectedSupplier;
 
   void setSelectedRow(int index) {
     setState(() {
@@ -437,7 +449,7 @@ class _LargeSettingsState extends State<LargeSettings> {
         child: Wrap(
           children: [
             Container(
-              width: 200,
+              width: kStandardInput,
               child: DropdownButtonFormField<int>(
                 value: _selectedUser,
                 items: userOptions,
@@ -458,6 +470,188 @@ class _LargeSettingsState extends State<LargeSettings> {
           ],
         ),
       )
+    ];
+  }
+
+  void handleSupplierSelection(int newValue) {
+    setState(() {
+      _selectedSupplier = newValue;
+    });
+  }
+
+  void handleDeleteSupplier() {
+    
+  }
+
+  void handleAddSupplier() {
+    showDialog(
+      context: context,
+      builder: (context) => FarmForgeDialog(
+        title: 'Add New Supplier',
+        content: AddSupplier(),
+        width: kSmallDesktopModalWidth,
+      )
+    );
+  }
+
+  void handleProductCategorySelection(int newValue) {
+    setState(() {
+      _selectedProductCategory = newValue;
+    });
+  }
+
+  void handleDeleteProductCategory() {
+
+  }
+
+  void handleAddProductCategory() {
+    showDialog(
+      context: context,
+      builder: (context) => FarmForgeDialog(
+        title: 'Add New Product Category',
+        content: AddProductCategory(),
+        width: kSmallDesktopModalWidth,
+      )
+    );
+  }
+
+  void handleProductTypeSelection(int newValue) {
+    setState(() {
+      _selectedProductType = newValue;
+    });
+  }
+
+  void handleDeleteProductType() {
+
+  }
+
+  void handleAddProductType() {
+    showDialog(
+      context: context,
+      builder: (context) => FarmForgeDialog(
+        title: 'Add New Product Type',
+        content: AddProductType(),
+        width: kSmallDesktopModalWidth,
+      )
+    );
+  }
+
+  List<Widget> getInventoryContent() {
+    List<DropdownMenuItem<int>> supplierOptions = _suppliers.map((supplier) => 
+      DropdownMenuItem<int>(
+        value: supplier.supplierId,
+        child: Text(supplier.name),
+      )
+    ).toList();
+
+    Function supplierDeleteAction = _selectedSupplier == null
+      ? null
+      : handleDeleteSupplier;
+
+    List<DropdownMenuItem<int>> categoryOptions = _productCategories.map((category) => 
+      DropdownMenuItem<int>(
+        value: category.productCategoryId,
+        child: Text(category.label),
+      )
+    ).toList();
+
+    Function categoryDeleteAction = _selectedProductCategory == null
+      ? null
+      : handleDeleteProductCategory;
+
+    List<DropdownMenuItem<int>> typeOptions = _productTypes.map((type) => 
+      DropdownMenuItem<int>(
+        value: type.productTypeId,
+        child: Text(type.label),
+      )
+    ).toList();
+
+    Function typeDeleteAction = _selectedProductType == null
+      ? null
+      : handleDeleteProductType;
+
+    return [
+      // Suppliers
+      Padding(
+        padding: EdgeInsets.all(kSmallPadding),
+        child: Wrap(
+          children: [
+            Container(
+              width: kStandardInput,
+              child: DropdownButtonFormField<int>(
+                value: _selectedSupplier,
+                items: supplierOptions,
+                onChanged: handleSupplierSelection,
+                decoration: (InputDecoration(
+                  labelText: 'Supplier'
+                )),
+              ),
+            ),
+            IconButton(
+              icon: Icon(Icons.delete),
+              onPressed: supplierDeleteAction,
+            ),
+            IconButton(
+              icon: Icon(Icons.add), 
+              onPressed: handleAddSupplier
+            )
+          ],
+        ),
+      ),
+      // Product Categories
+      Padding(
+        padding: EdgeInsets.all(kSmallPadding),
+        child: Wrap(
+          children: [
+            Container(
+              width: kStandardInput,
+              child: DropdownButtonFormField<int>(
+                value: _selectedProductCategory,
+                items: categoryOptions,
+                onChanged: handleProductCategorySelection,
+                decoration: (InputDecoration(
+                  labelText: 'Product Category'
+                )),
+              ),
+            ),
+            IconButton(
+              icon: Icon(Icons.delete),
+              onPressed: categoryDeleteAction,
+            ),
+            IconButton(
+              icon: Icon(Icons.add), 
+              onPressed: handleAddProductCategory
+            )
+          ],
+        ),
+      ),
+      // Product Types
+      Padding(
+        padding: EdgeInsets.all(kSmallPadding),
+        child: Wrap(
+          children: [
+            Container(
+              width: kStandardInput,
+              child: DropdownButtonFormField<int>(
+                value: _selectedProductType,
+                items: typeOptions,
+                onChanged: handleProductTypeSelection,
+                decoration: (InputDecoration(
+                  labelText: 'Product Type'
+                )),
+              ),
+            ),
+            IconButton(
+              icon: Icon(Icons.delete),
+              onPressed: typeDeleteAction,
+            ),
+            IconButton(
+              icon: Icon(Icons.add), 
+              onPressed: handleAddProductType
+            )
+          ],
+        )
+      ),
     ];
   }
 
@@ -513,6 +707,9 @@ class _LargeSettingsState extends State<LargeSettings> {
       _locations = Provider.of<DataProvider>(context).locations;
       _users = Provider.of<DataProvider>(context).users;
       _cropTypes = Provider.of<DataProvider>(context).cropTypes;
+      _suppliers = Provider.of<DataProvider>(context).suppliers;
+      _productCategories = Provider.of<DataProvider>(context).productCategories;
+      _productTypes = Provider.of<DataProvider>(context).productTypes;
     });
   }
 
@@ -522,6 +719,7 @@ class _LargeSettingsState extends State<LargeSettings> {
     List<Widget> cropContent = getCropContent();
     List<Widget> locationContent = getLocationContent();
     List<Widget> userContent = getUserContent();
+    List<Widget> inventoryContent = getInventoryContent();
 
     return SingleChildScrollView(
       child: Column(
@@ -537,6 +735,10 @@ class _LargeSettingsState extends State<LargeSettings> {
           SettingsExpansionTile(
             title: 'Users',
             content: userContent
+          ),
+          SettingsExpansionTile(
+            title: 'Inventory',
+            content: inventoryContent,
           )
         ],
       ),

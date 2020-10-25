@@ -6,12 +6,11 @@ import 'package:farmforge_client/provider/data_provider.dart';
 
 import 'package:farmforge_client/models/farmforge_response.dart';
 
-import 'package:farmforge_client/utilities/constants.dart';
 import 'package:farmforge_client/utilities/ui_utility.dart';
 
 import 'large_settings.dart';
 // import 'medium_settings.dart';
-import 'small_settings.dart';
+// import 'small_settings.dart';
 
 class Settings extends StatefulWidget {
   static const String title = 'Settings';
@@ -33,8 +32,14 @@ class _SettingsState extends State<Settings> {
         .farmForgeService.getLocations();
       Future<FarmForgeResponse> userFuture = Provider.of<CoreProvider>(context, listen: false)
         .farmForgeService.getUsers();
+      Future<FarmForgeResponse> productTypes = Provider.of<CoreProvider>(context, listen: false)
+        .farmForgeService.getProductTypes();
+      Future<FarmForgeResponse> productCategories = Provider.of<CoreProvider>(context, listen: false)
+        .farmForgeService.getProductCategories();
+      Future<FarmForgeResponse> suppliers = Provider.of<CoreProvider>(context, listen: false)
+        .farmForgeService.getSuppliers();
 
-      Future.wait([cropTypeFuture, locationFuture, userFuture])
+      Future.wait([cropTypeFuture, locationFuture, userFuture, productTypes, productCategories, suppliers])
         .then((responses) {
           Provider.of<DataProvider>(context, listen: false)
             .setCropTypes(responses[0].data);
@@ -42,6 +47,12 @@ class _SettingsState extends State<Settings> {
             .setLocations(responses[1].data);
           Provider.of<DataProvider>(context, listen: false)
             .setUsers(responses[2].data);
+          Provider.of<DataProvider>(context, listen: false)
+            .setProductTypes(responses[3].data);
+          Provider.of<DataProvider>(context, listen: false)
+            .setProductCategories(responses[4].data);
+          Provider.of<DataProvider>(context, listen: false)
+            .setSupliers(responses[5].data);
         });
     }
     catch(e) {

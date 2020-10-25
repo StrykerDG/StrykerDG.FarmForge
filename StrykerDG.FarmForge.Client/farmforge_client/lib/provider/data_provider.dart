@@ -12,6 +12,8 @@ import 'package:farmforge_client/models/inventory/unit_type.dart';
 import 'package:farmforge_client/models/inventory/product_type.dart';
 import 'package:farmforge_client/models/general/user.dart';
 import 'package:farmforge_client/models/dto/inventory_dto.dart';
+import 'package:farmforge_client/models/inventory/product_category.dart';
+import 'package:farmforge_client/models/suppliers/supplier.dart';
 
 class DataProvider extends ChangeNotifier {
   DateTime defaultDate = DateTime.now().subtract(Duration(days: 60));
@@ -22,7 +24,9 @@ class DataProvider extends ChangeNotifier {
   List<Location> locations = [];
   List<LogType> logTypes = [];
   List<ProductType> productTypes = [];
+  List<ProductCategory> productCategories = [];
   List<Status> statuses = [];
+  List<Supplier> suppliers = [];
   List<UnitType> unitTypes = [];
   List<User> users = [];
 
@@ -245,6 +249,22 @@ class DataProvider extends ChangeNotifier {
     productTypes.clear();
     newProductTypes.forEach((productData) { 
       productTypes.add(ProductType.fromMap(productData));
+    });
+    notifyListeners();
+  }
+
+  void setProductCategories(List<dynamic> newProductCategories) {
+    productCategories.clear();
+    newProductCategories.forEach((categoryData) {
+      productCategories.add(ProductCategory.fromMap(categoryData));
+    });
+    notifyListeners();
+  }
+
+  void setSupliers(List<dynamic> newSuppliers) {
+    suppliers.clear();
+    newSuppliers.forEach((supplierData) { 
+      suppliers.add(Supplier.fromMap(supplierData));
     });
     notifyListeners();
   }

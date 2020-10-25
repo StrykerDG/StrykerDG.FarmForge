@@ -256,6 +256,10 @@ class FarmForgeApiService {
     return await request('Products', null, 'GET');
   }
 
+  Future<FarmForgeResponse> getProductCategories() async {
+    return await request('Products/Categories', null, 'GET');
+  }
+
   Future<FarmForgeResponse> getInventory() async {
     return await request('Products/Inventory', null, 'GET');
   }
@@ -271,5 +275,10 @@ class FarmForgeApiService {
 
     String jsonBody = convert.jsonEncode(requestBody);
     return await request('Products/Inventory/Transfer', jsonBody, 'POST');
+  }
+
+  // Suppliers
+  Future<FarmForgeResponse> getSuppliers() async {
+    return await request('Suppliers', null, 'GET');
   }
 }
