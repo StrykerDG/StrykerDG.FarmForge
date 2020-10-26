@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
 import 'package:farmforge_client/provider/data_provider.dart';
+import 'package:farmforge_client/provider/core_provider.dart';
+import 'package:farmforge_client/models/farmforge_response.dart';
 import 'package:farmforge_client/models/inventory/product_category.dart';
 import 'package:farmforge_client/models/inventory/product_type.dart';
 import 'package:farmforge_client/models/suppliers/supplier.dart';
@@ -12,6 +14,7 @@ import 'package:farmforge_client/widgets/settings/inventory/add_product_type.dar
 import 'package:farmforge_client/widgets/settings/inventory/add_supplier.dart';
 
 import 'package:farmforge_client/utilities/constants.dart';
+import 'package:farmforge_client/utilities/ui_utility.dart';
 
 class InventoryContent extends StatefulWidget {
   @override
@@ -56,8 +59,31 @@ class _InventoryContentState extends State<InventoryContent> {
     });
   }
 
-  void handleDeleteProductCategory() {
+  void handleDeleteProductCategory() async {
+    try {
+      FarmForgeResponse deleteResponse = await Provider
+        .of<CoreProvider>(context, listen: false)
+        .farmForgeService
+        .deleteProductCategory(_selectedProductCategory);
 
+      if(deleteResponse.data != null) {
+        Provider.of<DataProvider>(context, listen: false)
+          .deleteProductCategory(_selectedProductCategory);
+
+        setState(() {
+          _selectedProductCategory = null;
+        });
+      }
+      else
+        throw deleteResponse.error;
+    }
+    catch(e) {
+      UiUtility.handleError(
+        context: context, 
+        title: 'Delete Error', 
+        error: e.toString()
+      );
+    }
   }
 
   void handleAddProductCategory() {
@@ -77,8 +103,31 @@ class _InventoryContentState extends State<InventoryContent> {
     });
   }
 
-  void handleDeleteProductType() {
+  void handleDeleteProductType() async {
+    try {
+      FarmForgeResponse deleteResponse = await Provider
+        .of<CoreProvider>(context, listen: false)
+        .farmForgeService
+        .deleteProductType(_selectedProductType);
 
+      if(deleteResponse.data != null) {
+        Provider.of<DataProvider>(context, listen: false)
+          .deleteProductType(_selectedProductType);
+
+        setState(() {
+          _selectedProductType = null;
+        });
+      }
+      else
+        throw deleteResponse.error;
+    }
+    catch(e) {
+      UiUtility.handleError(
+        context: context, 
+        title: 'Delete Error', 
+        error: e.toString()
+      );
+    }
   }
 
   void handleAddProductType() {

@@ -2,10 +2,14 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
 import 'package:farmforge_client/provider/data_provider.dart';
+import 'package:farmforge_client/provider/core_provider.dart';
+import 'package:farmforge_client/models/farmforge_response.dart';
+import 'package:farmforge_client/models/inventory/product_type.dart';
 import 'package:farmforge_client/models/inventory/product_category.dart';
 
 import 'package:farmforge_client/utilities/constants.dart';
 import 'package:farmforge_client/utilities/validation.dart';
+import 'package:farmforge_client/utilities/ui_utility.dart';
 
 class AddProductType extends StatefulWidget {
   @override
@@ -23,6 +27,39 @@ class _AddProductTypeState extends State<AddProductType> {
     setState(() {
       _selectedCategory = newValue;
     });
+  }
+
+  void handleSave() async {
+    if(_formKey.currentState.validate()) {
+      try {
+        ProductType newType = ProductType(
+          label: _labelController.text,
+          reorderLevel: int.tryParse(_reorderLevelController.text),
+          productCategoryId: _selectedCategory
+        );
+
+        FarmForgeResponse addResponse = await Provider
+          .of<CoreProvider>(context, listen: false)
+          .farmForgeService
+          .addProductType(newType);
+
+        if(addResponse.data != null) {
+          Provider.of<DataProvider>(context, listen: false)
+            .addProductType(addResponse.data);
+
+          Navigator.pop(context);
+        }
+        else
+          throw(addResponse.error);
+      }
+      catch(e) {
+        UiUtility.handleError(
+          context: context, 
+          title: 'Save Error', 
+          error: e.toString()
+        );
+      }
+    }
   }
 
   @override
@@ -88,7 +125,7 @@ class _AddProductTypeState extends State<AddProductType> {
         ),
         RaisedButton(
           child: Text('Save'),
-          onPressed: () {}
+          onPressed: handleSave
         )
       ],
     );

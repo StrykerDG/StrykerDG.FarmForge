@@ -253,11 +253,31 @@ class DataProvider extends ChangeNotifier {
     notifyListeners();
   }
 
+  void addProductType(dynamic newType) {
+    productTypes.add(ProductType.fromMap(newType));
+    notifyListeners();
+  }
+
+  void deleteProductType(int id) {
+    productTypes.removeWhere((t) => t.productTypeId == id);
+    notifyListeners();
+  }
+
   void setProductCategories(List<dynamic> newProductCategories) {
     productCategories.clear();
     newProductCategories.forEach((categoryData) {
       productCategories.add(ProductCategory.fromMap(categoryData));
     });
+    notifyListeners();
+  }
+
+  void addProductCategory(dynamic newCategory) {
+    productCategories.add(ProductCategory.fromMap(newCategory));
+    notifyListeners();
+  }
+
+  void deleteProductCategory(int id) {
+    productCategories.removeWhere((c) => c.productCategoryId == id);
     notifyListeners();
   }
 

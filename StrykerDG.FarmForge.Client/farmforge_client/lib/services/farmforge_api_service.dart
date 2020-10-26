@@ -1,4 +1,3 @@
-import 'package:farmforge_client/models/crops/crop.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert' as convert;
 
@@ -6,6 +5,9 @@ import 'package:farmforge_client/models/farmforge_response.dart';
 import 'package:farmforge_client/models/general/location.dart';
 import 'package:farmforge_client/models/dto/new_crop_dto.dart';
 import 'package:farmforge_client/models/dto/new_crop_log_dto.dart';
+import 'package:farmforge_client/models/crops/crop.dart';
+import 'package:farmforge_client/models/inventory/product_category.dart';
+import 'package:farmforge_client/models/inventory/product_type.dart';
 
 class FarmForgeApiService {
   static String token;
@@ -256,8 +258,36 @@ class FarmForgeApiService {
     return await request('Products', null, 'GET');
   }
 
+  Future<FarmForgeResponse> addProductType(ProductType type) async {
+    if(type.productTypeId == null)
+      type.productTypeId = 0;
+
+    Map<String, dynamic> requestBody = type.toMap();
+    String jsonBody = convert.jsonEncode(requestBody);
+
+    return await request('Products', jsonBody, 'POST');
+  }
+
+  Future<FarmForgeResponse> deleteProductType(int typeId) async {
+    return await request('Products/$typeId', null, 'DELETE');
+  }
+
   Future<FarmForgeResponse> getProductCategories() async {
     return await request('Products/Categories', null, 'GET');
+  }
+
+  Future<FarmForgeResponse> addProductCategory(ProductCategory category) async {
+    if(category.productCategoryId == null)
+      category.productCategoryId = 0;
+
+    Map<String, dynamic> requestBody = category.toMap();
+    String jsonBody = convert.jsonEncode(requestBody);
+
+    return await request('Products/Categories', jsonBody, 'POST');
+  }
+
+  Future<FarmForgeResponse> deleteProductCategory(int categoryId) async {
+    return await request('Products/Categories/$categoryId', null, 'DELETE');
   }
 
   Future<FarmForgeResponse> getInventory() async {

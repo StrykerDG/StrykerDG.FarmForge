@@ -284,7 +284,25 @@ namespace StrykerDG.FarmForge.Actors.Products
                     if (message.ProductCategory == null || message.ProductCategory.ProductCategoryId != 0)
                         throw new Exception("Invalid Cateogry Object");
 
-                    var result = context.Add(message).Entity;
+                    if (
+                        (message.ProductCategory.Label == null ||
+                        message.ProductCategory.Label == string.Empty) &&
+                        (message.ProductCategory.Name == null ||
+                        message.ProductCategory.Name == string.Empty)
+                    )
+                        throw new Exception("Categories must have a name or label");
+
+
+                    if (message.ProductCategory.Name == null)
+                        message.ProductCategory.Name = message.ProductCategory.Label
+                            .ToLower()
+                            .Replace(" ", "_");
+                    else if (message.ProductCategory.Label == null)
+                        message.ProductCategory.Label = message.ProductCategory.Name;
+
+                    var result = context.Add(message.ProductCategory).Entity;
+                    context.SaveChanges();
+
                     Sender.Tell(result);
                 }
                 catch (Exception ex) 
