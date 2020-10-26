@@ -37,6 +37,7 @@ const double kSmallRadius = 10.0;
 const double kMediumRadius = 20.0;
 
 // Dialog / Modal 
+const double kNarrowModalWidth = 100.0;
 const double kSmallDesktopModalWidth = 500.0;
 const double kMediumDesktopModalWidth = 750.0;
 
