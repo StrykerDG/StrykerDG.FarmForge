@@ -17,6 +17,5 @@ namespace StrykerDG.FarmForge.DataModel.Models
         public string Name { get; set; }
         public string Label { get; set; }
         public int? ReorderLevel { get; set; }
-        public ICollection<SupplierProductTypeMap> Suppliers { get; set; }
     }
 }

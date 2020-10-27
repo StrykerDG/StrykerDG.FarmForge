@@ -15,5 +15,7 @@ namespace StrykerDG.FarmForge.DataModel.Models
         [ForeignKey("SupplierId")]
         public Supplier Supplier { get; set; }
         public int ProductTypeId { get; set; }
+        [ForeignKey("ProductTypeId")]
+        public ProductType ProductType { get; set; }
     }
 }

@@ -8,6 +8,7 @@ import 'package:farmforge_client/models/dto/new_crop_log_dto.dart';
 import 'package:farmforge_client/models/crops/crop.dart';
 import 'package:farmforge_client/models/inventory/product_category.dart';
 import 'package:farmforge_client/models/inventory/product_type.dart';
+import 'package:farmforge_client/models/dto/new_supplier_dto.dart';
 
 class FarmForgeApiService {
   static String token;
@@ -310,5 +311,12 @@ class FarmForgeApiService {
   // Suppliers
   Future<FarmForgeResponse> getSuppliers() async {
     return await request('Suppliers', null, 'GET');
+  }
+
+  Future<FarmForgeResponse> createSupplier(NewSupplierDTO requestObject) async {
+    Map<String, dynamic> requestBody = requestObject.toMap();
+    String jsonBody = convert.jsonEncode(requestBody);
+    
+    return await request('Suppliers', jsonBody, 'POST');
   }
 }

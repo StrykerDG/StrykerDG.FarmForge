@@ -288,4 +288,9 @@ class DataProvider extends ChangeNotifier {
     });
     notifyListeners();
   }
+
+  void addSupplier(dynamic newSupplier) {
+    suppliers.add(Supplier.fromMap(newSupplier));
+    notifyListeners();
+  }
 }

@@ -2,7 +2,7 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using StrykerDG.FarmForge.Actors.Suppliers.Messages;
-using StrykerDG.FarmForge.DataModel.Models;
+using StrykerDG.FarmForge.LocalApi.Controllers.DTO.Requests;
 using StrykerDG.FarmForge.LocalApi.Controllers.DTO.Responses;
 using System;
 using System.Collections.Generic;
@@ -34,9 +34,12 @@ namespace StrykerDG.FarmForge.LocalApi.Controllers
 
         [HttpPost]
         [Authorize(Policy = "AuthenticatedWebClient")]
-        public async Task<IActionResult> AddSupplier([FromBody]Supplier newSupplier)
+        public async Task<IActionResult> AddSupplier([FromBody]NewSupplierDTO supplier)
         {
-            var result = await SupplierActor.Ask(new AskToCreateSupplier(newSupplier));
+            var result = await SupplierActor.Ask(new AskToCreateSupplier(
+                supplier.Supplier,
+                supplier.ProductIds
+            ));
             return ValidateActorResult(result);
         }
 

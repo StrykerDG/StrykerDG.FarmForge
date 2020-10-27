@@ -6,7 +6,7 @@ class Supplier {
   String email;
 
   Supplier({
-    this.supplierId,
+    this.supplierId = 0,
     this.name,
     this.address,
     this.phone,

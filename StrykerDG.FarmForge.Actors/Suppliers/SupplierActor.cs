@@ -1,4 +1,5 @@
 ﻿using Akka.Actor;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using StrykerDG.FarmForge.Actors.Suppliers.Messages;
 using StrykerDG.FarmForge.DataModel.Contexts;
@@ -47,7 +48,10 @@ namespace StrykerDG.FarmForge.Actors.Suppliers
                         .Where(s => s.Name == message.Supplier.Name)
                         .FirstOrDefault();
 
-                    if (existingSupplier != null && existingSupplier.IsDeleted == true)
+                    if (existingSupplier != null && existingSupplier.IsDeleted == false)
+                        throw new Exception("Supplier with the provided name already exists");
+
+                    else if (existingSupplier != null && existingSupplier.IsDeleted == true)
                     {
                         existingSupplier.Address = message.Supplier.Address;
                         existingSupplier.Phone = message.Supplier.Phone;
@@ -56,12 +60,33 @@ namespace StrykerDG.FarmForge.Actors.Suppliers
 
                         result = existingSupplier;
                     }
-                    else if (existingSupplier != null && existingSupplier.IsDeleted == false)
-                        throw new Exception("Supplier Already Exists");
+
                     else
                         result = context.Add(message.Supplier).Entity;
 
+                    // Save to get the Id before adding supplier maps
                     context.SaveChanges();
+
+                    // Create any Supplier Product Maps that are specified
+                    if (message.ProductIds != null)
+                    {
+                        var existingProducts = context.ProductTypes
+                            .AsNoTracking()
+                            .Where(p =>
+                                message.ProductIds.Contains(p.ProductTypeId) &&
+                                p.IsDeleted == false
+                            )
+                            .ToList();
+
+                        foreach (var product in existingProducts)
+                            context.Add(new SupplierProductTypeMap
+                            {
+                                SupplierId = result.SupplierId,
+                                ProductTypeId = product.ProductTypeId
+                            });
+
+                        context.SaveChanges();
+                    }
 
                     Sender.Tell(result);
                 }

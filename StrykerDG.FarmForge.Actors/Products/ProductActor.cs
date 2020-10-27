@@ -190,21 +190,11 @@ namespace StrykerDG.FarmForge.Actors.Products
                     if (message.ProductType.ProductCategory != null)
                         message.ProductType.ProductCategory = null;
 
-                    // TODO: handle supplier
-                    message.ProductType.Suppliers = null;
-
                     var result = context.Add(message.ProductType).Entity;
                     context.SaveChanges();
 
                     // Build the full ProductType object
-                    var suppliers = context.SupplierProductTypeMaps
-                        .AsNoTracking()
-                        .Include("Supplier")
-                        .Where(sptm => sptm.ProductTypeId == result.ProductTypeId)
-                        .ToList();
-
                     result.ProductCategory = existingCategory;
-                    result.Suppliers = suppliers;
 
                     Sender.Tell(result);
                 }

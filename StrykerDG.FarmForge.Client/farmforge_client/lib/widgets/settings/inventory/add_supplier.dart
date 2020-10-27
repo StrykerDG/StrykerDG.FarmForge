@@ -1,14 +1,19 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
+import 'package:farmforge_client/provider/core_provider.dart';
 import 'package:farmforge_client/provider/data_provider.dart';
 import 'package:farmforge_client/models/inventory/product_type.dart';
+import 'package:farmforge_client/models/dto/new_supplier_dto.dart';
+import 'package:farmforge_client/models/farmforge_response.dart';
+import 'package:farmforge_client/models/suppliers/supplier.dart';
 
 import 'package:farmforge_client/widgets/multi_select/multi_select_dialog.dart';
 import 'package:farmforge_client/widgets/multi_select/multi_select_options.dart';
 
 import 'package:farmforge_client/utilities/constants.dart';
 import 'package:farmforge_client/utilities/validation.dart';
+import 'package:farmforge_client/utilities/ui_utility.dart';
 
 class AddSupplier extends StatefulWidget {
   @override
@@ -41,6 +46,45 @@ class _AddSupplierState extends State<AddSupplier> {
         _supplyController.text = '${_selectedSupplierProducts.length} ' +
           ' item(s) selected';
       });
+  }
+
+  void handleSave() async {
+    if(_formKey.currentState.validate()) {
+      try {
+        Supplier newSupplier = Supplier(
+          address: _addressController.text,
+          name: _nameController.text,
+          phone: _phoneController.text,
+          email: _emailController.text
+        );
+        
+        NewSupplierDTO supplierRequest = NewSupplierDTO(
+          supplier: newSupplier,
+          productIds: _selectedSupplierProducts
+        );
+
+        FarmForgeResponse supplierResponse = await Provider
+          .of<CoreProvider>(context, listen: false)
+          .farmForgeService
+          .createSupplier(supplierRequest);
+
+        if(supplierResponse.data != null) {
+          Provider.of<DataProvider>(context, listen: false)
+            .addSupplier(supplierResponse.data);
+
+          Navigator.pop(context);
+        }
+        else
+          throw supplierResponse.error;
+      }
+      catch(e) {
+        UiUtility.handleError(
+          context: context, 
+          title: 'Save Error', 
+          error: e.toString()
+        );
+      }
+    }
   }
 
   @override
@@ -132,7 +176,7 @@ class _AddSupplierState extends State<AddSupplier> {
         ),
         RaisedButton(
           child: Text('Save'),
-          onPressed: () {}
+          onPressed: handleSave
         )
       ],
     );
