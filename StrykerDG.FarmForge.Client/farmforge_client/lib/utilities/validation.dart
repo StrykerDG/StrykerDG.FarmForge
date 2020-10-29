@@ -15,6 +15,17 @@ class Validation {
       : null;
   }
 
+  static String isEmptyOrNumeric(dynamic value) {
+    String result;
+
+    if(value == null)
+      result = null;
+    else if(value.runtimeType == String && !value.isEmpty)
+      result = isNumeric(value);
+
+    return result;
+  }
+
   static String isValidDate(String value) {
     print('Validating: $value');
     return DateTime.tryParse(value) == null

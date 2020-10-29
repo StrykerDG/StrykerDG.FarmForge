@@ -138,8 +138,6 @@ namespace StrykerDG.FarmForge.Actors.Locations
             {
                 try
                 {
-                    var now = DateTime.Now;
-
                     var existingLocation = context.Locations
                         .Where(l =>
                             l.LocationId == message.LocationId &&
