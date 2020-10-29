@@ -16,6 +16,10 @@ import 'package:farmforge_client/utilities/validation.dart';
 import 'package:farmforge_client/utilities/ui_utility.dart';
 
 class AddSupplier extends StatefulWidget {
+  final Supplier supplier;
+
+  AddSupplier({this.supplier});
+
   @override
   _AddSupplierState createState() => _AddSupplierState();
 }
@@ -30,6 +34,37 @@ class _AddSupplierState extends State<AddSupplier> {
   TextEditingController _phoneController = TextEditingController();
   TextEditingController _emailController = TextEditingController();
   TextEditingController _supplyController = TextEditingController();
+
+  void loadSupplierProducts() async {
+    try {
+      FarmForgeResponse suppliedProducts = await Provider
+        .of<CoreProvider>(context, listen: false)
+        .farmForgeService
+        .getSupplierProducts(widget.supplier?.supplierId);
+
+      if(suppliedProducts.data != null) {
+        List<int> suppliedProductIds = [];
+        suppliedProducts.data.forEach((productData) {
+          suppliedProductIds.add(productData['ProductTypeId']);
+        });
+
+        setState(() {
+          _selectedSupplierProducts = suppliedProductIds;
+          _supplyController.text = '${_selectedSupplierProducts.length} ' +
+          ' item(s) selected';
+        });
+      }
+      else
+        throw(suppliedProducts.error);
+    }
+    catch(e) {
+      UiUtility.handleError(
+        context: context, 
+        title: 'Load Error', 
+        error: e.toString()
+      );
+    }
+  }
 
   void handleMultiSelectTap() async {
     List<int> results = await showDialog(
@@ -52,6 +87,7 @@ class _AddSupplierState extends State<AddSupplier> {
     if(_formKey.currentState.validate()) {
       try {
         Supplier newSupplier = Supplier(
+          supplierId: widget.supplier?.supplierId ?? 0,
           address: _addressController.text,
           name: _nameController.text,
           phone: _phoneController.text,
@@ -63,14 +99,22 @@ class _AddSupplierState extends State<AddSupplier> {
           productIds: _selectedSupplierProducts
         );
 
+        String method = widget.supplier == null
+          ? 'POST'
+          : 'PATCH';
+
         FarmForgeResponse supplierResponse = await Provider
           .of<CoreProvider>(context, listen: false)
           .farmForgeService
-          .createSupplier(supplierRequest);
+          .createOrUpdateSupplier(supplierRequest, method);
 
         if(supplierResponse.data != null) {
-          Provider.of<DataProvider>(context, listen: false)
-            .addSupplier(supplierResponse.data);
+          if(widget.supplier == null)
+            Provider.of<DataProvider>(context, listen: false)
+              .addSupplier(supplierResponse.data);
+          else 
+            Provider.of<DataProvider>(context, listen: false)
+              .updateSupplier(supplierResponse.data);
 
           Navigator.pop(context);
         }
@@ -84,6 +128,22 @@ class _AddSupplierState extends State<AddSupplier> {
           error: e.toString()
         );
       }
+    }
+  }
+
+  @override
+  void initState() {
+    super.initState();
+
+    if(widget.supplier != null) {
+      loadSupplierProducts();
+
+      setState(() {
+        _nameController.text = widget.supplier.name;
+        _addressController.text = widget.supplier.address;
+        _phoneController.text = widget.supplier.phone;
+        _emailController.text = widget.supplier.email;
+      });
     }
   }
 

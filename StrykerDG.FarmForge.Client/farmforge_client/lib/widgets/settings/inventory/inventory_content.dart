@@ -38,8 +38,47 @@ class _InventoryContentState extends State<InventoryContent> {
     });
   }
 
-  void handleDeleteSupplier() {
-    
+  void handleDeleteSupplier() async {
+    try {
+      FarmForgeResponse deleteResponse = await Provider
+        .of<CoreProvider>(context, listen: false)
+        .farmForgeService
+        .deleteSupplier(_selectedSupplier);
+
+      if(deleteResponse.data != null) {
+        Provider.of<DataProvider>(context, listen: false)
+          .deleteSupplier(_selectedSupplier);
+
+        setState(() {
+          _selectedSupplier = null;
+        });
+      }
+      else
+        throw deleteResponse.error;
+    }
+    catch(e) {
+      UiUtility.handleError(
+        context: context, 
+        title: 'Delete Error', 
+        error: e.toString()
+      );
+    }
+  }
+
+  void handleEditSupplier() {
+    Supplier selectedSupplier = _suppliers.firstWhere((s) => 
+      s.supplierId == _selectedSupplier,
+      orElse: () => null
+    );
+
+    showDialog(
+      context: context,
+      builder: (context) => FarmForgeDialog(
+        title: 'Edit Product Type',
+        content: AddSupplier(supplier: selectedSupplier),
+        width: kSmallDesktopModalWidth,
+      )
+    );
   }
 
   void handleAddSupplier() {
@@ -130,6 +169,22 @@ class _InventoryContentState extends State<InventoryContent> {
     }
   }
 
+  void handleEditProductType() {
+    ProductType selectedType = _productTypes.firstWhere((pt) => 
+      pt.productTypeId == _selectedProductType,
+      orElse: () => null
+    );
+
+    showDialog(
+      context: context,
+      builder: (context) => FarmForgeDialog(
+        title: 'Edit Product Type',
+        content: AddProductType(productType: selectedType),
+        width: kSmallDesktopModalWidth,
+      )
+    );
+  }
+
   void handleAddProductType() {
     showDialog(
       context: context,
@@ -145,6 +200,10 @@ class _InventoryContentState extends State<InventoryContent> {
     Function supplierDeleteAction = _selectedSupplier == null
       ? null
       : handleDeleteSupplier;
+
+    Function supplierEditAction = _selectedSupplier == null
+      ? null
+      : handleEditSupplier;
 
     return Padding(
       padding: EdgeInsets.all(kSmallPadding),
@@ -167,7 +226,7 @@ class _InventoryContentState extends State<InventoryContent> {
           ),
           IconButton(
             icon: Icon(Icons.edit),
-            onPressed: () {},
+            onPressed: supplierEditAction,
           ),
           IconButton(
             icon: Icon(Icons.add), 
@@ -216,6 +275,10 @@ class _InventoryContentState extends State<InventoryContent> {
       ? null
       : handleDeleteProductType;
 
+    Function typeEditAction = _selectedProductType == null
+      ? null
+      : handleEditProductType;
+
     return Padding(
       padding: EdgeInsets.all(kSmallPadding),
       child: Wrap(
@@ -237,7 +300,7 @@ class _InventoryContentState extends State<InventoryContent> {
           ),
           IconButton(
             icon: Icon(Icons.edit),
-            onPressed: () {},
+            onPressed: typeEditAction,
           ),
           IconButton(
             icon: Icon(Icons.add), 
@@ -288,9 +351,9 @@ class _InventoryContentState extends State<InventoryContent> {
 
     return Column(
       children: [
-        supplierContent,
         categoryContent,
         typeContent,
+        supplierContent,
       ],
     );
   }

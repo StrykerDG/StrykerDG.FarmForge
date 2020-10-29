@@ -21,6 +21,7 @@ namespace StrykerDG.FarmForge.Actors.Products
             Receive<AskToTransferInventory>(HandleAskToTransferInventory);
             Receive<AskForProductTypes>(HandleAskForProductTypes);
             Receive<AskToCreateProductType>(HandleAskToCreateProductType);
+            Receive<AskToUpdateProductType>(HandleAskToUpdateProductType);
             Receive<AskToDeleteProductType>(HandleAskToDeleteProductType);
             Receive<AskForProductCategories>(HandleAskForProductCategories);
             Receive<AskToCreateProductCategory>(HandleAskToCreateProductCategory);
@@ -199,6 +200,59 @@ namespace StrykerDG.FarmForge.Actors.Products
                     Sender.Tell(result);
                 }
                 catch (Exception ex)
+                {
+                    Sender.Tell(ex);
+                }
+            });
+        }
+
+        private void HandleAskToUpdateProductType(AskToUpdateProductType message)
+        {
+            Using<FarmForgeDataContext>((context) =>
+            {
+                try
+                {
+                    // Make sure the product exists
+                    if (message.ProductType == null)
+                        throw new Exception("ProductType cannot be null");
+
+                    if (message.ProductType.Label == null && message.ProductType.Name == null)
+                        throw new Exception("ProductType must have a name or label");
+
+                    var existingProductType = context.ProductTypes
+                        .Where(pt =>
+                            pt.ProductTypeId == message.ProductType.ProductTypeId &&
+                            pt.IsDeleted == false
+                        )
+                        .FirstOrDefault();
+
+                    if (existingProductType == null)
+                        throw new Exception("ProductType does not exist");
+
+                    var properties = message.ProductType.GetType().GetProperties();
+                    foreach (var property in properties)
+                    {
+                        var providedValue = message
+                            .ProductType
+                            .GetType()
+                            .GetProperty(property.Name)
+                            .GetValue(message.ProductType, null);
+
+                        existingProductType
+                            .GetType()
+                            .GetProperty(property.Name)
+                            .SetValue(existingProductType, providedValue);
+                    }
+
+                    if (existingProductType.Name == null)
+                        existingProductType.Name = existingProductType.Label.ToLower().Replace(" ", "_");
+                    if (existingProductType.Label == null)
+                        existingProductType.Label = existingProductType.Name;
+
+                    context.SaveChanges();
+                    Sender.Tell(existingProductType);
+                }
+                catch(Exception ex)
                 {
                     Sender.Tell(ex);
                 }

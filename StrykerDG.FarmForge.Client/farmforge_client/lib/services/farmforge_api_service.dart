@@ -269,6 +269,13 @@ class FarmForgeApiService {
     return await request('Products', jsonBody, 'POST');
   }
 
+  Future<FarmForgeResponse> updateProductType(ProductType type) async {
+    Map<String, dynamic> requestBody = type.toMap();
+    String jsonBody = convert.jsonEncode(requestBody);
+
+    return await request('Products', jsonBody, 'PATCH');
+  }
+
   Future<FarmForgeResponse> deleteProductType(int typeId) async {
     return await request('Products/$typeId', null, 'DELETE');
   }
@@ -313,10 +320,21 @@ class FarmForgeApiService {
     return await request('Suppliers', null, 'GET');
   }
 
-  Future<FarmForgeResponse> createSupplier(NewSupplierDTO requestObject) async {
+  Future<FarmForgeResponse> getSupplierProducts(int supplierId) async {
+    return await request('Suppliers/$supplierId/Products', null, 'GET');
+  }
+
+  Future<FarmForgeResponse> createOrUpdateSupplier(
+    NewSupplierDTO requestObject, 
+    String method) async {
+
     Map<String, dynamic> requestBody = requestObject.toMap();
     String jsonBody = convert.jsonEncode(requestBody);
     
-    return await request('Suppliers', jsonBody, 'POST');
+    return await request('Suppliers', jsonBody, method);
+  }
+
+  Future<FarmForgeResponse> deleteSupplier(int supplierId) async {
+    return await request('Suppliers/$supplierId', null, 'DELETE');
   }
 }

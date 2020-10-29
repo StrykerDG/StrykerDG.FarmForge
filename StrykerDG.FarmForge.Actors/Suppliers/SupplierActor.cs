@@ -17,7 +17,9 @@ namespace StrykerDG.FarmForge.Actors.Suppliers
         {
             Receive<AskForSuppliers>(HandleAskForSuppliers);
             Receive<AskToCreateSupplier>(HandleAskToCreateSupplier);
+            Receive<AskToUpdateSupplier>(HandleAskToUpdateSupplier);
             Receive<AskToDeleteSupplier>(HandleAskToDeleteSupplier);
+            Receive<AskForSupplierProducts>(HandleAskForSupplierProducts);
         }
 
         // Message Methods
@@ -97,6 +99,102 @@ namespace StrykerDG.FarmForge.Actors.Suppliers
             });
         }
 
+        public void HandleAskToUpdateSupplier(AskToUpdateSupplier message)
+        {
+            Using<FarmForgeDataContext>((context) =>
+            {
+                var result = new Supplier();
+
+                try
+                {
+                    var existingSupplier = context.Suppliers
+                        .Where(s => s.Name == message.Supplier.Name)
+                        .FirstOrDefault();
+
+                    if (existingSupplier == null)
+                        throw new Exception("Supplier does not exist");
+
+                    if (existingSupplier.IsDeleted == true)
+                        existingSupplier.IsDeleted = false;
+
+                    // Update using the latest supplied properties
+                    var properties = message.Supplier.GetType().GetProperties();
+                    foreach (var property in properties)
+                    {
+                        var providedValue = message
+                            .Supplier
+                            .GetType()
+                            .GetProperty(property.Name)
+                            .GetValue(message.Supplier, null);
+
+                        existingSupplier
+                            .GetType()
+                            .GetProperty(property.Name)
+                            .SetValue(existingSupplier, providedValue);
+                    }
+
+                    // Update any Supplier Product Maps
+                    var existingSupplierMaps = context.SupplierProductTypeMaps
+                        .Where(sptm => sptm.SupplierId == existingSupplier.SupplierId)
+                        .ToList();
+
+                    var existingSupplierMapProductIds = existingSupplierMaps
+                        .Select(m => m.ProductTypeId)
+                        .ToList();
+
+                    if (message.ProductIds == null)
+                        foreach (var map in existingSupplierMaps)
+                            map.IsDeleted = true;
+                    else
+                    {
+                        var mapsToRemove = existingSupplierMaps
+                            .Where(m => !message.ProductIds.Contains(m.ProductTypeId))
+                            .ToList();
+
+                        var mapsToEnable = existingSupplierMaps
+                            .Where(m =>
+                                message.ProductIds.Contains(m.ProductTypeId) &&
+                                m.IsDeleted == true
+                            )
+                            .ToList();
+
+                        var mapsToAdd = message.ProductIds
+                            .Where(id => !existingSupplierMapProductIds.Contains(id))
+                            .ToList();
+
+                        var existingProducts = context.ProductTypes
+                            .AsNoTracking()
+                            .Where(pt => mapsToAdd.Contains(pt.ProductTypeId))
+                            .ToList();
+
+                        // Remove
+                        foreach (var map in mapsToRemove)
+                            map.IsDeleted = true;
+
+                        // Update
+                        foreach (var map in mapsToEnable)
+                            map.IsDeleted = false;
+
+                        // Create
+                        foreach (var product in existingProducts)
+                            context.Add(new SupplierProductTypeMap
+                            {
+                                SupplierId = existingSupplier.SupplierId,
+                                ProductTypeId = product.ProductTypeId
+                            });
+                    }
+
+                    context.SaveChanges();
+
+                    Sender.Tell(existingSupplier);
+                }
+                catch(Exception ex)
+                {
+                    Sender.Tell(ex);
+                }
+            });
+        }
+
         public void HandleAskToDeleteSupplier(AskToDeleteSupplier message)
         {
             Using<FarmForgeDataContext>((context) =>
@@ -115,6 +213,13 @@ namespace StrykerDG.FarmForge.Actors.Suppliers
 
                     existingSupplier.IsDeleted = true;
 
+                    var supplierProductMaps = context.SupplierProductTypeMaps
+                        .Where(sptm => sptm.SupplierId == existingSupplier.SupplierId)
+                        .ToList();
+
+                    foreach (var map in supplierProductMaps)
+                        map.IsDeleted = true;
+
                     context.SaveChanges();
                     Sender.Tell(true);
                 }
@@ -122,6 +227,23 @@ namespace StrykerDG.FarmForge.Actors.Suppliers
                 {
                     Sender.Tell(ex);
                 }
+            });
+        }
+
+        public void HandleAskForSupplierProducts(AskForSupplierProducts message)
+        {
+            Using<FarmForgeDataContext>((context) =>
+            {
+                var supplierProducts = context.SupplierProductTypeMaps
+                    .Include("ProductType")
+                    .Where(sptm =>
+                        sptm.SupplierId == message.SupplierId &&
+                        sptm.IsDeleted == false
+                    )
+                    .Select(sptm => sptm.ProductType)
+                    .ToList();
+
+                Sender.Tell(supplierProducts);
             });
         }
 

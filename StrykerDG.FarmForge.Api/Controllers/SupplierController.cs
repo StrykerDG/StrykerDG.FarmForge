@@ -43,12 +43,31 @@ namespace StrykerDG.FarmForge.LocalApi.Controllers
             return ValidateActorResult(result);
         }
 
+        [HttpPatch]
+        [Authorize(Policy = "AuthenticatedWebClient")]
+        public async Task<IActionResult> UpdateSupplier([FromBody]NewSupplierDTO supplier)
+        {
+            var result = await SupplierActor.Ask(new AskToUpdateSupplier(
+                supplier.Supplier,
+                supplier.ProductIds
+            ));
+            return ValidateActorResult(result);
+        }
+
         [HttpDelete("{supplierId}")]
         [Authorize(Policy = "AuthenticatedWebClient")]
         public async Task<IActionResult> DeleteSupplier(int supplierId)
         {
             var result = await SupplierActor.Ask(new AskToDeleteSupplier(supplierId));
             return ValidateActorResult(result);
+        }
+
+        [HttpGet("{supplierId}/Products")]
+        [Authorize(Policy = "AuthenticatedWebClient")]
+        public async Task<IActionResult> GetSupplierProducts(int supplierId)
+        {
+            var result = await SupplierActor.Ask(new AskForSupplierProducts(supplierId));
+            return Ok(FarmForgeApiResponse.Success(result));
         }
     }
 }

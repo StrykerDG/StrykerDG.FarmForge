@@ -55,16 +55,20 @@ namespace StrykerDG.FarmForge.LocalApi.Controllers
 
         [HttpPost]
         [Authorize(Policy = "AuthenticatedWebClient")]
-        //public async Task<IActionResult> CreateProductType([FromBody]NewProductTypeDTO newProduct)
         public async Task<IActionResult> CreateProductType([FromBody]ProductType newProduct)
         {
             var result = await ProductActor.Ask(new AskToCreateProductType(
                 newProduct
-                //newProduct.Label,
-                //newProduct.ReOrderLevel,
-                //newProduct.ProductCategoryId
             ));
 
+            return ValidateActorResult(result);
+        }
+
+        [HttpPatch]
+        [Authorize(Policy = "AuthenticatedWebClient")]
+        public async Task<IActionResult> UpdateProductType([FromBody]ProductType product)
+        {
+            var result = await ProductActor.Ask(new AskToUpdateProductType(product));
             return ValidateActorResult(result);
         }
 

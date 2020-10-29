@@ -5,11 +5,11 @@ using System.Text;
 
 namespace StrykerDG.FarmForge.Actors.Products.Messages
 {
-    public class AskToCreateProductType
+    public class AskToUpdateProductType
     {
         public ProductType ProductType { get; private set; }
 
-        public AskToCreateProductType(ProductType type)
+        public AskToUpdateProductType(ProductType type)
         {
             ProductType = type;
         }

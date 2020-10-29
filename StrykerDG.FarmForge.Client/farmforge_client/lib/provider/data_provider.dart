@@ -258,6 +258,19 @@ class DataProvider extends ChangeNotifier {
     notifyListeners();
   }
 
+  void updateProductType(dynamic updatedType) {
+    ProductType typeToUpdate = ProductType.fromMap(updatedType);
+
+    int typeIndex = productTypes.indexWhere(
+      (pt) => pt.productTypeId == typeToUpdate.productTypeId,
+    );
+
+    if(typeIndex != -1) {
+      productTypes[typeIndex] = typeToUpdate;
+      notifyListeners();
+    }
+  }
+
   void deleteProductType(int id) {
     productTypes.removeWhere((t) => t.productTypeId == id);
     notifyListeners();
@@ -291,6 +304,24 @@ class DataProvider extends ChangeNotifier {
 
   void addSupplier(dynamic newSupplier) {
     suppliers.add(Supplier.fromMap(newSupplier));
+    notifyListeners();
+  }
+
+  void updateSupplier(dynamic updatedSupplier) {
+    Supplier supplierToUpdate = Supplier.fromMap(updatedSupplier);
+
+    int supplierIndex = suppliers.indexWhere(
+      (s) => s.supplierId == supplierToUpdate.supplierId,
+    );
+
+    if(supplierIndex != -1) {
+      suppliers[supplierIndex] = supplierToUpdate;
+      notifyListeners();
+    }
+  }
+
+  void deleteSupplier(int id) {
+    suppliers.removeWhere((s) => s.supplierId == id);
     notifyListeners();
   }
 }

@@ -12,6 +12,10 @@ import 'package:farmforge_client/utilities/validation.dart';
 import 'package:farmforge_client/utilities/ui_utility.dart';
 
 class AddProductType extends StatefulWidget {
+  final ProductType productType;
+
+  AddProductType({this.productType});
+
   @override
   _AddProductTypeState createState() => _AddProductTypeState();
 }
@@ -33,24 +37,45 @@ class _AddProductTypeState extends State<AddProductType> {
     if(_formKey.currentState.validate()) {
       try {
         ProductType newType = ProductType(
+          productTypeId: widget.productType?.productTypeId,
           label: _labelController.text,
           reorderLevel: int.tryParse(_reorderLevelController.text),
           productCategoryId: _selectedCategory
         );
 
-        FarmForgeResponse addResponse = await Provider
-          .of<CoreProvider>(context, listen: false)
-          .farmForgeService
-          .addProductType(newType);
+        // Create
+        if(widget.productType == null) {
+          FarmForgeResponse addResponse = await Provider
+            .of<CoreProvider>(context, listen: false)
+            .farmForgeService
+            .addProductType(newType);
 
-        if(addResponse.data != null) {
-          Provider.of<DataProvider>(context, listen: false)
-            .addProductType(addResponse.data);
+          if(addResponse.data != null) {
+            Provider.of<DataProvider>(context, listen: false)
+              .addProductType(addResponse.data);
 
-          Navigator.pop(context);
+            Navigator.pop(context);
+          }
+          else
+            throw(addResponse.error);
         }
-        else
-          throw(addResponse.error);
+        // Update
+        else {
+          FarmForgeResponse updateResponse = await Provider
+            .of<CoreProvider>(context, listen: false)
+            .farmForgeService
+            .updateProductType(newType);
+
+          if(updateResponse.data != null) {
+            Provider.of<DataProvider>(context, listen: false)
+              .updateProductType(updateResponse.data);
+
+            Navigator.pop(context);
+          }
+          else
+            throw updateResponse.error;
+        }
+
       }
       catch(e) {
         UiUtility.handleError(
@@ -59,6 +84,19 @@ class _AddProductTypeState extends State<AddProductType> {
           error: e.toString()
         );
       }
+    }
+  }
+
+  @override
+  void initState() {
+    super.initState();
+
+    if(widget.productType != null) { 
+      setState(() {
+        _labelController.text = widget.productType.label;
+        _reorderLevelController.text = widget.productType.reorderLevel?.toString();
+        _selectedCategory = widget.productType.productCategoryId;
+      });
     }
   }
 
