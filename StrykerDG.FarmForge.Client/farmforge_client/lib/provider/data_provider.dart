@@ -10,6 +10,7 @@ import 'package:farmforge_client/models/general/status.dart';
 import 'package:farmforge_client/models/general/crop_log.dart';
 import 'package:farmforge_client/models/inventory/unit_type.dart';
 import 'package:farmforge_client/models/inventory/product_type.dart';
+import 'package:farmforge_client/models/inventory/unit_type_conversion.dart';
 import 'package:farmforge_client/models/general/user.dart';
 import 'package:farmforge_client/models/dto/inventory_dto.dart';
 import 'package:farmforge_client/models/inventory/product_category.dart';
@@ -28,6 +29,7 @@ class DataProvider extends ChangeNotifier {
   List<Status> statuses = [];
   List<Supplier> suppliers = [];
   List<UnitType> unitTypes = [];
+  List<UnitTypeConversion> unitTypeConversions = [];
   List<User> users = [];
 
   // Crops
@@ -234,6 +236,48 @@ class DataProvider extends ChangeNotifier {
     newUnitTypes.forEach((unitData) { 
       unitTypes.add(UnitType.fromMap(unitData));
     });
+    notifyListeners();
+  }
+
+  void addUnitType(dynamic newUnitType) {
+    unitTypes.add(UnitType.fromMap(newUnitType));
+    notifyListeners();
+  }
+
+  void deleteUnitType(int id) {
+    unitTypes.removeWhere((u) => u.unitTypeId == id);
+    notifyListeners();
+  }
+
+  void setUnitTypeConversions(List<dynamic> newConversions) {
+    unitTypeConversions.clear();
+    newConversions.forEach((conversionData) { 
+      unitTypeConversions.add(UnitTypeConversion.fromMap(conversionData));
+    });
+    notifyListeners();
+  }
+
+  void addUnitTypeConversion(dynamic newUnitConversion) {
+    unitTypeConversions.add(UnitTypeConversion.fromMap(newUnitConversion));
+    notifyListeners();
+  }
+
+  void updateUnitTypeConversion(dynamic updatedConversion) {
+    UnitTypeConversion conversionToUpdate = UnitTypeConversion
+      .fromMap(updatedConversion);
+
+    int conversionIndex = unitTypeConversions.indexWhere(
+      (uc) => uc.unitTypeConversionId == conversionToUpdate.unitTypeConversionId
+    );
+
+    if(conversionIndex != -1) {
+      unitTypeConversions[conversionIndex] = conversionToUpdate;
+      notifyListeners();
+    }
+  }
+
+  void deleteUnitTypeConversion(int id) {
+    unitTypeConversions.removeWhere((uc) => uc.unitTypeConversionId == id);
     notifyListeners();
   }
 

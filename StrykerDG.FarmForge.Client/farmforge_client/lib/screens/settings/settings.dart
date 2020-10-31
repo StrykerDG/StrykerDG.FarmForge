@@ -38,8 +38,15 @@ class _SettingsState extends State<Settings> {
         .farmForgeService.getProductCategories();
       Future<FarmForgeResponse> suppliers = Provider.of<CoreProvider>(context, listen: false)
         .farmForgeService.getSuppliers();
+      Future<FarmForgeResponse> units = Provider.of<CoreProvider>(context, listen: false)
+        .farmForgeService.getUnitTypes();
+      Future<FarmForgeResponse> conversions = Provider.of<CoreProvider>(context, listen: false)
+        .farmForgeService.getUnitConversions();
 
-      Future.wait([cropTypeFuture, locationFuture, userFuture, productTypes, productCategories, suppliers])
+      Future.wait([
+        cropTypeFuture, locationFuture, userFuture, productTypes, 
+        productCategories, suppliers, units, conversions
+      ])
         .then((responses) {
           Provider.of<DataProvider>(context, listen: false)
             .setCropTypes(responses[0].data);
@@ -53,6 +60,10 @@ class _SettingsState extends State<Settings> {
             .setProductCategories(responses[4].data);
           Provider.of<DataProvider>(context, listen: false)
             .setSupliers(responses[5].data);
+          Provider.of<DataProvider>(context, listen: false)
+            .setUnitTypes(responses[6].data);
+          Provider.of<DataProvider>(context, listen: false)
+            .setUnitTypeConversions(responses[7].data);
         });
     }
     catch(e) {

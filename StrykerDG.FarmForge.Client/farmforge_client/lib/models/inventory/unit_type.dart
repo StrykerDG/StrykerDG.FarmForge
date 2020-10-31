@@ -5,7 +5,7 @@ class UnitType {
   String description;
 
   UnitType({
-    this.unitTypeId,
+    this.unitTypeId = 0,
     this.name,
     this.label,
     this.description

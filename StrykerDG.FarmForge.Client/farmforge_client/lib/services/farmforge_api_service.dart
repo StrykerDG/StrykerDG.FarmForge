@@ -8,6 +8,8 @@ import 'package:farmforge_client/models/dto/new_crop_log_dto.dart';
 import 'package:farmforge_client/models/crops/crop.dart';
 import 'package:farmforge_client/models/inventory/product_category.dart';
 import 'package:farmforge_client/models/inventory/product_type.dart';
+import 'package:farmforge_client/models/inventory/unit_type.dart';
+import 'package:farmforge_client/models/inventory/unit_type_conversion.dart';
 import 'package:farmforge_client/models/dto/new_supplier_dto.dart';
 
 class FarmForgeApiService {
@@ -253,6 +255,35 @@ class FarmForgeApiService {
   // Inventory 
   Future<FarmForgeResponse> getUnitTypes() async {
     return await request('Units', null, 'GET');
+  }
+
+  Future<FarmForgeResponse> addUnitType(UnitType unit) async {
+    Map<String, dynamic> requestBody = unit.toMap();
+    String jsonBody = convert.jsonEncode(requestBody);
+
+    return await request('Units', jsonBody, 'POST');
+  }
+
+  Future<FarmForgeResponse> deleteUnitType(int id) async {
+    return await request('Units/$id', null, 'DELETE');
+  }
+
+  Future<FarmForgeResponse> getUnitConversions() async {
+    return await request('Units/Conversions', null, 'GET');
+  }
+
+  Future<FarmForgeResponse> createOrUpdateUnitConversion(
+    UnitTypeConversion conversion,
+    String method) async {
+
+    Map<String, dynamic> requestBody = conversion.toMap();
+    String jsonBody = convert.jsonEncode(requestBody);
+
+    return await request('Units/Conversions', jsonBody, method);
+  }
+
+  Future<FarmForgeResponse> deleteUnitTypeConversion(int id) async {
+    return await request('Units/Convers/$id', null, 'DELETE');
   }
 
   Future<FarmForgeResponse> getProductTypes() async {
