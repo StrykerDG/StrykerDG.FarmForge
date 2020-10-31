@@ -7,11 +7,15 @@ import 'package:farmforge_client/models/farmforge_response.dart';
 import 'package:farmforge_client/models/inventory/product_category.dart';
 import 'package:farmforge_client/models/inventory/product_type.dart';
 import 'package:farmforge_client/models/suppliers/supplier.dart';
+import 'package:farmforge_client/models/inventory/unit_type.dart';
+import 'package:farmforge_client/models/inventory/unit_type_conversion.dart';
 
 import 'package:farmforge_client/widgets/farmforge_dialog.dart';
 import 'package:farmforge_client/widgets/settings/inventory/add_product_category.dart';
 import 'package:farmforge_client/widgets/settings/inventory/add_product_type.dart';
 import 'package:farmforge_client/widgets/settings/inventory/add_supplier.dart';
+import 'package:farmforge_client/widgets/settings/inventory/add_unit_conversion.dart';
+import 'package:farmforge_client/widgets/settings/inventory/add_unit_type.dart';
 
 import 'package:farmforge_client/utilities/constants.dart';
 import 'package:farmforge_client/utilities/ui_utility.dart';
@@ -25,12 +29,18 @@ class _InventoryContentState extends State<InventoryContent> {
   List<ProductType> _productTypes = [];
   List<ProductCategory> _productCategories = [];
   List<Supplier> _suppliers = [];
+  List<UnitType> _units = [];
+  List<UnitTypeConversion> _conversions = [];
   List<DropdownMenuItem<int>> _supplierOptions = [];
   List<DropdownMenuItem<int>> _categoryOptions = [];
   List<DropdownMenuItem<int>> _typeOptions = [];
+  List<DropdownMenuItem<int>> _unitOptions = [];
+  List<DropdownMenuItem<int>> _conversionOptions = [];
   int _selectedProductType;
   int _selectedProductCategory;
   int _selectedSupplier;
+  int _selectedUnit;
+  int _selectedConversion;
 
   void handleSupplierSelection(int newValue) {
     setState(() {
@@ -196,6 +206,112 @@ class _InventoryContentState extends State<InventoryContent> {
     );
   }
 
+  void handleUnitTypeSelection(int newValue) {
+    setState(() {
+      _selectedUnit = newValue;
+    });
+  }
+
+  void  handleAddUnit() {
+    showDialog(
+      context: context,
+      builder: (context) => FarmForgeDialog(
+        title: 'Add New Unit Type',
+        content: AddUnitType(),
+        width: kSmallDesktopModalWidth,
+      )
+    );
+  }
+
+  void handleDeleteUnitType() async {
+    try {
+      FarmForgeResponse deleteResponse = await Provider
+        .of<CoreProvider>(context, listen: false)
+        .farmForgeService
+        .deleteUnitType(_selectedUnit);
+
+      if(deleteResponse.data != null) {
+        Provider.of<DataProvider>(context, listen: false)
+          .deleteUnitType(_selectedUnit);
+
+        setState(() {
+          _selectedUnit = null;
+        });
+      }
+      else
+        throw deleteResponse.error;
+    }
+    catch(e) {
+      UiUtility.handleError(
+        context: context, 
+        title: 'Delete Error', 
+        error: e.toString()
+      );
+    }
+  }
+
+  void handleConversionSelection(int newValue) {
+    setState(() {
+      _selectedConversion = newValue;
+    });
+  }
+
+  void handleAddConversion() {
+    showDialog(
+      context: context,
+      builder: (context) => FarmForgeDialog(
+        title: 'Add New Conversion',
+        content: AddUnitConversion(),
+        width: kSmallDesktopModalWidth,
+      )
+    );
+  }
+
+  void handleEditConversion() {
+    UnitTypeConversion selectedConversion = _conversions.firstWhere((c) => 
+      c.unitTypeConversionId == _selectedConversion,
+      orElse: () => null
+    );
+
+    showDialog(
+      context: context,
+      builder: (context) => FarmForgeDialog(
+        title: 'Add New Conversion',
+        content: AddUnitConversion(
+          conversion: selectedConversion,
+        ),
+        width: kSmallDesktopModalWidth,
+      )
+    );
+  }
+
+  void handleDeleteConversion() async {
+    try {
+      FarmForgeResponse deleteResponse = await Provider
+        .of<CoreProvider>(context, listen: false)
+        .farmForgeService
+        .deleteUnitTypeConversion(_selectedConversion);
+
+      if(deleteResponse.data != null) {
+        Provider.of<DataProvider>(context, listen: false)
+          .deleteUnitTypeConversion(_selectedConversion);
+
+        setState(() {
+          _selectedConversion = null;
+        });
+      }
+      else
+        throw deleteResponse.error;
+    }
+    catch(e) {
+      UiUtility.handleError(
+        context: context, 
+        title: 'Delete Error', 
+        error: e.toString()
+      );
+    }
+  }
+
   Widget getSupplierContent() {
     Function supplierDeleteAction = _selectedSupplier == null
       ? null
@@ -311,6 +427,82 @@ class _InventoryContentState extends State<InventoryContent> {
     );
   }
 
+  Widget getUnitContent() {
+
+    Function unitDeleteAction = _selectedUnit == null
+      ? null
+      : handleDeleteUnitType;
+
+    return Padding(
+      padding: EdgeInsets.all(kSmallPadding),
+      child: Wrap(
+        children: [
+          Container(
+            width: kStandardInput,
+            child: DropdownButtonFormField<int>(
+              value: _selectedUnit,
+              items: _unitOptions,
+              onChanged: handleUnitTypeSelection,
+              decoration: (InputDecoration(
+                labelText: 'Unit Type'
+              )),
+            ),
+          ),
+          IconButton(
+            icon: Icon(Icons.delete),
+            onPressed: unitDeleteAction,
+          ),
+          IconButton(
+            icon: Icon(Icons.add), 
+            onPressed: handleAddUnit
+          )
+        ],
+      )
+    );
+  }
+
+  Widget getConversionContent() {
+
+    Function conversionDeleteAction = _selectedConversion == null
+      ? null
+      : handleDeleteConversion;
+
+    Function conversionEditAction = _selectedConversion == null
+      ? null
+      : handleEditConversion;
+
+    return Padding(
+      padding: EdgeInsets.all(kSmallPadding),
+      child: Wrap(
+        children: [
+          Container(
+            width: kStandardInput,
+            child: DropdownButtonFormField<int>(
+              value: _selectedConversion,
+              items: _conversionOptions,
+              onChanged: handleConversionSelection,
+              decoration: (InputDecoration(
+                labelText: 'Unit Conversion'
+              )),
+            ),
+          ),
+          IconButton(
+            icon: Icon(Icons.delete),
+            onPressed: conversionDeleteAction,
+          ),
+          IconButton(
+            icon: Icon(Icons.edit),
+            onPressed: conversionEditAction,
+          ),
+          IconButton(
+            icon: Icon(Icons.add), 
+            onPressed: handleAddConversion
+          )
+        ],
+      )
+    );
+  }
+
   @override
   void didChangeDependencies() {
     super.didChangeDependencies();
@@ -319,6 +511,8 @@ class _InventoryContentState extends State<InventoryContent> {
       _suppliers = Provider.of<DataProvider>(context).suppliers;
       _productCategories = Provider.of<DataProvider>(context).productCategories;
       _productTypes = Provider.of<DataProvider>(context).productTypes;
+      _units = Provider.of<DataProvider>(context).unitTypes;
+      _conversions = Provider.of<DataProvider>(context).unitTypeConversions;
 
       _supplierOptions = _suppliers.map((supplier) => 
         DropdownMenuItem<int>(
@@ -340,6 +534,23 @@ class _InventoryContentState extends State<InventoryContent> {
           child: Text(type.label),
         )
       ).toList();
+
+      _unitOptions = _units.map((unit) => 
+        DropdownMenuItem<int>(
+          value: unit.unitTypeId,
+          child: Text(unit.label),
+        )
+      ).toList();
+
+      _conversionOptions = _conversions.map((conversion) =>
+        DropdownMenuItem<int>(
+          value: conversion.unitTypeConversionId,
+          child: Text(
+            '${conversion.fromQuantity} ${conversion.fromUnit.label} to ' +
+            '${conversion.toQuantity} ${conversion.toUnit.label}'
+          )
+        )
+      ).toList();
     });
   }
 
@@ -348,12 +559,16 @@ class _InventoryContentState extends State<InventoryContent> {
     Widget supplierContent = getSupplierContent();
     Widget categoryContent = getCategoryContent();
     Widget typeContent = getTypeContent();
+    Widget unitContent = getUnitContent();
+    Widget conversionContent = getConversionContent();
 
     return Column(
       children: [
         categoryContent,
         typeContent,
         supplierContent,
+        unitContent,
+        conversionContent
       ],
     );
   }

@@ -5,6 +5,7 @@ using StrykerDG.FarmForge.Actors.Crops;
 using StrykerDG.FarmForge.Actors.Units.Messages;
 using StrykerDG.FarmForge.DataModel.Contexts;
 using StrykerDG.FarmForge.DataModel.Extensions;
+using StrykerDG.FarmForge.DataModel.Models;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -183,7 +184,10 @@ namespace StrykerDG.FarmForge.Actors.Units
                         throw new Exception("Conversion already exists");
 
                     else if (existingConversion != null && existingConversion.IsDeleted == true)
+                    {
                         existingConversion.IsDeleted = false;
+                        UpdateUnitTypeConversionProperties(ref existingConversion, message.Conversion);
+                    }
 
                     else
                     {
@@ -220,7 +224,50 @@ namespace StrykerDG.FarmForge.Actors.Units
         {
             Using<FarmForgeDataContext>((context) =>
             {
+                try
+                {
+                    var existingConversion = context.UnitTypeConversions
+                        .Where(c => c.UnitTypeConversionId == message.Conversion.UnitTypeConversionId)
+                        .FirstOrDefault();
 
+                    if (existingConversion == null)
+                        throw new Exception("UnitTypeConversion not found");
+
+                    var existingUnits = context.UnitTypes
+                        .AsNoTracking()
+                        .Where(u =>
+                            u.UnitTypeId == message.Conversion.FromUnitId ||
+                            u.UnitTypeId == message.Conversion.ToUnitId
+                        )
+                        .ToList();
+
+                    if (existingUnits.Count != 2)
+                        throw new Exception("Invalid UnitIds specified");
+
+                    if (existingConversion.IsDeleted == true)
+                        existingConversion.IsDeleted = false;
+
+                    UpdateUnitTypeConversionProperties(ref existingConversion, message.Conversion);
+
+                    context.SaveChanges();
+
+                    // Return the entire object
+                    var toUnit = existingUnits
+                        .Where(u => u.UnitTypeId == message.Conversion.ToUnitId)
+                        .FirstOrDefault();
+                    var fromUnit = existingUnits
+                        .Where(u => u.UnitTypeId == message.Conversion.FromUnitId)
+                        .FirstOrDefault();
+
+                    existingConversion.ToUnit = toUnit;
+                    existingConversion.FromUnit = fromUnit;
+
+                    Sender.Tell(existingConversion);
+                }
+                catch(Exception ex)
+                {
+                    Sender.Tell(ex);
+                }
             });
         }
 
@@ -253,5 +300,24 @@ namespace StrykerDG.FarmForge.Actors.Units
         }
 
         // Helpers
+        private void UpdateUnitTypeConversionProperties(
+            ref UnitTypeConversion existingConversion,
+            UnitTypeConversion newConversion
+        )
+        {
+            var properties = newConversion.GetType().GetProperties();
+            foreach (var property in properties)
+            {
+                var providedValue = newConversion
+                    .GetType()
+                    .GetProperty(property.Name)
+                    .GetValue(newConversion, null);
+
+                existingConversion
+                    .GetType()
+                    .GetProperty(property.Name)
+                    .SetValue(existingConversion, providedValue);
+            }
+        }
     }
 }
