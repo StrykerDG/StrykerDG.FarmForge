@@ -18,6 +18,7 @@ namespace StrykerDG.FarmForge.Actors.Products
         public ProductActor(IServiceScopeFactory factory) : base(factory)
         {
             Receive<AskForInventory>(HandleAskForInventory);
+            Receive<AskToAddInventory>(HandleAskToAddInventory);
             Receive<AskToTransferInventory>(HandleAskToTransferInventory);
             Receive<AskForProductTypes>(HandleAskForProductTypes);
             Receive<AskToCreateProductType>(HandleAskToCreateProductType);
@@ -91,6 +92,87 @@ namespace StrykerDG.FarmForge.Actors.Products
                 }
 
                 Sender.Tell(results);
+            });
+        }
+
+        public void HandleAskToAddInventory(AskToAddInventory message)
+        {
+            Using<FarmForgeDataContext>((context) =>
+            {
+                var results = new List<Product>();
+
+                try
+                {
+                    // Check that the provided information is correct
+                    var dbSupplier = context.Suppliers
+                        .AsNoTracking()
+                        .Where(s => s.SupplierId == message.SupplierId && s.IsDeleted == false)
+                        .FirstOrDefault();
+
+                    var dbProductType = context.ProductTypes
+                        .AsNoTracking()
+                        .Where(pt => pt.ProductTypeId == message.ProductTypeId && pt.IsDeleted == false)
+                        .FirstOrDefault();
+
+                    var dbLocation = context.Locations
+                        .AsNoTracking()
+                        .Where(l => l.LocationId == message.LocationId && l.IsDeleted == false)
+                        .FirstOrDefault();
+
+                    var dbUnitType = context.UnitTypes
+                        .AsNoTracking()
+                        .Where(u => u.UnitTypeId == message.UnitTypeId && u.IsDeleted == false)
+                        .FirstOrDefault();
+
+                    if (dbSupplier == null)
+                        throw new Exception("Supplier not found");
+
+                    if (dbProductType == null)
+                        throw new Exception("ProductType not found");
+
+                    if (dbLocation == null)
+                        throw new Exception("Location not found");
+
+                    if (dbUnitType == null)
+                        throw new Exception("UnitType not found");
+
+                    if (message.Quantity <= 0)
+                        throw new Exception("Quantity must be greater than 0");
+
+                    var inventoryStatus = context.Statuses
+                        .AsNoTracking()
+                        .Where(s =>
+                            s.EntityType == "Product.Status" &&
+                            s.Name == "inventory"
+                        )
+                        .Select(s => s.StatusId)
+                        .FirstOrDefault();
+
+                    for(var i = 0; i < message.Quantity; i++)
+                    {
+                        results.Add(new Product
+                        {
+                            ProductTypeId = dbProductType.ProductTypeId,
+                            LocationId = dbLocation.LocationId,
+                            StatusId = inventoryStatus,
+                            UnitTypeId = dbUnitType.UnitTypeId,
+                            Sources = new List<ProductSource> {
+                                new ProductSource
+                                {
+                                    SupplierId = dbSupplier.SupplierId
+                                }
+                            }
+                        });
+                    }
+
+                    context.AddRange(results);
+                    context.SaveChanges();
+                    Sender.Tell(results);
+                }
+                catch(Exception ex)
+                {
+                    Sender.Tell(ex);
+                }
             });
         }
 

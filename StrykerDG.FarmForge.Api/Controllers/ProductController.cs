@@ -33,6 +33,20 @@ namespace StrykerDG.FarmForge.LocalApi.Controllers
             return Ok(FarmForgeApiResponse.Success(result));
         }
 
+        [HttpPost("Inventory")]
+        [Authorize(Policy = "AuthenticatedWebClient")]
+        public async Task<IActionResult> AddInventory([FromBody]NewInventoryDTO newInventory)
+        {
+            var result = await ProductActor.Ask(new AskToAddInventory(
+                newInventory.SupplierId,
+                newInventory.ProductTypeId,
+                newInventory.LocationId,
+                newInventory.Quantity,
+                newInventory.UnitTypeId
+            ));
+            return ValidateActorResult(result);
+        }
+
         [HttpPost("Inventory/Transfer")]
         [Authorize(Policy = "AuthenticatedWebClient")]
         public async Task<IActionResult> TransferInventoryToNewLocation([FromBody]TransferInventoryDTO transferData)

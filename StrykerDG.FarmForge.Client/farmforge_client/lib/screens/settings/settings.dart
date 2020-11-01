@@ -59,7 +59,7 @@ class _SettingsState extends State<Settings> {
           Provider.of<DataProvider>(context, listen: false)
             .setProductCategories(responses[4].data);
           Provider.of<DataProvider>(context, listen: false)
-            .setSupliers(responses[5].data);
+            .setSuppliers(responses[5].data);
           Provider.of<DataProvider>(context, listen: false)
             .setUnitTypes(responses[6].data);
           Provider.of<DataProvider>(context, listen: false)

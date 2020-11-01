@@ -100,20 +100,17 @@ class _MoveInventoryDialogState extends State<MoveInventoryDialog> {
           .moveInventoryToLocation(productsToUpdate, _location);
 
         if(result.data != null) {
-          // Reload Inventory
           FarmForgeResponse inventoryResponse = await Provider
             .of<CoreProvider>(context, listen: false)
             .farmForgeService
             .getInventory();
 
-          if(inventoryResponse.data != null) {
+          if(inventoryResponse.data != null)
             Provider.of<DataProvider>(context, listen: false)
               .setInventory(inventoryResponse.data);
-          }
           else
             throw inventoryResponse.error;
 
-          // Pop the modal
           Navigator.pop(context);
         }
         else

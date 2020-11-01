@@ -5,7 +5,9 @@ import 'package:farmforge_client/provider/core_provider.dart';
 import 'package:farmforge_client/provider/data_provider.dart';
 import 'package:farmforge_client/models/farmforge_response.dart';
 import 'package:farmforge_client/models/general/location.dart';
-import 'package:farmforge_client/models/inventory/product_type.dart';
+import 'package:farmforge_client/models/suppliers/supplier.dart';
+import 'package:farmforge_client/models/dto/add_inventory_dto.dart';
+import 'package:farmforge_client/models/inventory/unit_type.dart';
 
 import 'package:farmforge_client/utilities/constants.dart';
 import 'package:farmforge_client/utilities/ui_utility.dart';
@@ -21,26 +23,35 @@ class _AddInventoryDialogState extends State<AddInventoryDialog> {
   TextEditingController _quantityController = TextEditingController();
   int _location;
   int _productType;
+  int _supplier;
+  int _unitType;
+  List<Supplier> _suppliers;
   List<Location> _locations;
-  List<ProductType> _productTypes;
+  List<UnitType> _units;
 
   void loadData() {
     try {
-      Future<FarmForgeResponse> productTypeFuture = Provider
+      Future<FarmForgeResponse> supplierFuture = Provider
         .of<CoreProvider>(context, listen: false)
         .farmForgeService
-        .getProductTypes();
+        .getSuppliers(includes: 'Products');
       Future<FarmForgeResponse> locationFuture = Provider
         .of<CoreProvider>(context, listen: false)
         .farmForgeService
         .getLocations();
+      Future<FarmForgeResponse> unitFuture = Provider
+        .of<CoreProvider>(context, listen: false)
+        .farmForgeService
+        .getUnitTypes();
 
-      Future.wait([productTypeFuture, locationFuture])
+      Future.wait([supplierFuture, locationFuture, unitFuture])
         .then((responses) {
           Provider.of<DataProvider>(context, listen: false)
-            .setProductTypes(responses[0].data);
+            .setSuppliers(responses[0].data);
           Provider.of<DataProvider>(context, listen: false)
             .setLocations(responses[1].data);
+          Provider.of<DataProvider>(context, listen: false)
+            .setUnitTypes(responses[2].data);
         });
     }
     catch(e) {
@@ -52,9 +63,42 @@ class _AddInventoryDialogState extends State<AddInventoryDialog> {
     }
   }
 
-  void handleSave() {
+  void handleSave() async {
     if(_formKey.currentState.validate()) {
-      print('would be saving...');
+      try {
+        AddInventoryDTO newInventory = AddInventoryDTO(
+          supplierId: _supplier,
+          productTypeId: _productType,
+          locationId: _location,
+          unitTypeId: _unitType,
+          quantity: int.parse(_quantityController.text)
+        );
+
+        FarmForgeResponse result = await Provider
+          .of<CoreProvider>(context, listen: false)
+          .farmForgeService
+          .addInventory(newInventory);
+
+        if(result.data != null) {
+          FarmForgeResponse inventoryResponse = await Provider
+            .of<CoreProvider>(context, listen: false)
+            .farmForgeService
+            .getInventory();
+
+          if(inventoryResponse.data != null)
+            Provider.of<DataProvider>(context, listen: false)
+              .setInventory(inventoryResponse.data);
+          else
+            throw inventoryResponse.error;
+
+          Navigator.pop(context);
+        }
+        else
+          throw result.error;
+      }
+      catch(e) {
+
+      }
     }
   }
 
@@ -70,19 +114,31 @@ class _AddInventoryDialogState extends State<AddInventoryDialog> {
     });
   }
 
+  void handleSupplierSelect(int value) {
+    setState(() {
+      _supplier = value;
+    });
+  }
+
+  void handleUnitSelect(int value) {
+    setState(() {
+      _unitType = value;
+    });
+  }
+
   DropdownButtonFormField<int> getSupplierDropDown() {
-    List<DropdownMenuItem<int>> locationOptions = [0, 1, 2].map((l) => 
+    List<DropdownMenuItem<int>> supplierOptions = _suppliers.map((s) => 
       DropdownMenuItem<int>(
-        value: l,
-        child: Text(l.toString()),
+        value: s.supplierId,
+        child: Text(s.name.toString()),
       )
     ).toList();
 
     return DropdownButtonFormField<int>(
-      value: 0,
-      onChanged: (int newValue) { },
-      items: locationOptions,
-      // validator: Validation.isNotEmpty,
+      value: _supplier,
+      onChanged: handleSupplierSelect,
+      items: supplierOptions,
+      validator: Validation.isNotEmpty,
       decoration: InputDecoration(
         labelText: 'Supplier'
       ),
@@ -90,12 +146,21 @@ class _AddInventoryDialogState extends State<AddInventoryDialog> {
   }
   
   DropdownButtonFormField<int> getProductTypeDropdown() {
-    List<DropdownMenuItem<int>> productOptions = _productTypes.map((pt) => 
-      DropdownMenuItem<int>(
-        value: pt.productTypeId,
-        child: Text(pt.label),
-      )
-    ).toList();
+    List<DropdownMenuItem<int>> productOptions = [];
+    
+    if(_supplier != null) {
+      Supplier selectedSupplier = _suppliers.firstWhere(
+        (s) => s.supplierId == _supplier,
+        orElse: () => null
+      );
+
+      productOptions = selectedSupplier?.products?.map((p) => 
+        DropdownMenuItem(
+          value: p.productTypeId,
+          child: Text(p.label)
+        )
+      )?.toList() ?? [];
+    }
 
     return DropdownButtonFormField<int>(
       value: _productType,
@@ -127,6 +192,25 @@ class _AddInventoryDialogState extends State<AddInventoryDialog> {
     );
   }
 
+  DropdownButtonFormField<int> getUnitTypeDropdown() {
+    List<DropdownMenuItem<int>> unitOptions = _units.map((u) => 
+      DropdownMenuItem(
+        value: u.unitTypeId,
+        child: Text(u.label)
+      )
+    ).toList();
+
+    return DropdownButtonFormField<int>(
+      value: _unitType,
+      onChanged: handleUnitSelect,
+      items: unitOptions, 
+      validator: Validation.isNotEmpty,
+      decoration: InputDecoration(
+        labelText: 'Unit Type'
+      ),
+    );
+  }
+
   @override
   void initState() {
     super.initState();
@@ -140,7 +224,8 @@ class _AddInventoryDialogState extends State<AddInventoryDialog> {
 
     setState(() {
       _locations = Provider.of<DataProvider>(context).locations;
-      _productTypes = Provider.of<DataProvider>(context).productTypes;
+      _suppliers = Provider.of<DataProvider>(context).suppliers;
+      _units = Provider.of<DataProvider>(context).unitTypes;
     });
   }
 
@@ -157,6 +242,7 @@ class _AddInventoryDialogState extends State<AddInventoryDialog> {
     DropdownButtonFormField<int> supplierDropdown = getSupplierDropDown();
     DropdownButtonFormField<int> productTypeDropdown = getProductTypeDropdown();
     DropdownButtonFormField<int> locationDropdown = getLocationDropdown();
+    DropdownButtonFormField<int> unitTypeDropdown = getUnitTypeDropdown();
 
     return Column(
       children: [
@@ -175,7 +261,8 @@ class _AddInventoryDialogState extends State<AddInventoryDialog> {
                   decoration: InputDecoration(
                     labelText: ('Quantity')
                   ),
-                )
+                ),
+                unitTypeDropdown
               ],
             ),
           ),

@@ -5,6 +5,7 @@ import 'package:farmforge_client/models/farmforge_response.dart';
 import 'package:farmforge_client/models/general/location.dart';
 import 'package:farmforge_client/models/dto/new_crop_dto.dart';
 import 'package:farmforge_client/models/dto/new_crop_log_dto.dart';
+import 'package:farmforge_client/models/dto/add_inventory_dto.dart';
 import 'package:farmforge_client/models/crops/crop.dart';
 import 'package:farmforge_client/models/inventory/product_category.dart';
 import 'package:farmforge_client/models/inventory/product_type.dart';
@@ -346,9 +347,20 @@ class FarmForgeApiService {
     return await request('Products/Inventory/Transfer', jsonBody, 'POST');
   }
 
+  Future<FarmForgeResponse> addInventory(AddInventoryDTO newInventory) async {
+    Map<String, dynamic> requestBody = newInventory.toMap();
+    String jsonBody = convert.jsonEncode(requestBody);
+
+    return await request('Products/Inventory', jsonBody, 'POST');
+  }
+
   // Suppliers
-  Future<FarmForgeResponse> getSuppliers() async {
-    return await request('Suppliers', null, 'GET');
+  Future<FarmForgeResponse> getSuppliers({String includes}) async {
+    String uri = includes != null
+      ? 'Suppliers?includes=$includes'
+      : 'Suppliers';
+
+    return await request(uri, null, 'GET');
   }
 
   Future<FarmForgeResponse> getSupplierProducts(int supplierId) async {

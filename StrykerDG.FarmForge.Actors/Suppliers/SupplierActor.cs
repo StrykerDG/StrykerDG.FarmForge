@@ -3,6 +3,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using StrykerDG.FarmForge.Actors.Suppliers.Messages;
 using StrykerDG.FarmForge.DataModel.Contexts;
+using StrykerDG.FarmForge.DataModel.Extensions;
 using StrykerDG.FarmForge.DataModel.Models;
 using System;
 using System.Collections.Generic;
@@ -27,9 +28,32 @@ namespace StrykerDG.FarmForge.Actors.Suppliers
         {
             Using<FarmForgeDataContext>((context) =>
             {
-                var suppliers = context.Suppliers
-                    .Where(s => s.IsDeleted == false)
+                var supplierMaps = context.SupplierProductTypeMaps
+                    .AsNoTracking()
+                    .WithIncludes("Supplier,ProductType")
+                    .Where(map =>
+                        map.IsDeleted == false &&
+                        map.Supplier.IsDeleted == false &&
+                        map.ProductType.IsDeleted == false
+                    )
                     .ToList();
+
+                var suppliers = supplierMaps
+                    .Select(map => map.Supplier)
+                    .DistinctBy(supplier => supplier.SupplierId)
+                    .ToList();
+
+                if (message.Includes == "Products")
+                    foreach (var supplier in suppliers)
+                    {
+                        var supplierProducts = supplierMaps
+                            .Where(map => map.SupplierId == supplier.SupplierId)
+                            .Select(map => map.ProductType)
+                            .Distinct()
+                            .ToList();
+
+                        supplier.Products = supplierProducts;
+                    }
 
                 Sender.Tell(suppliers);
             });
