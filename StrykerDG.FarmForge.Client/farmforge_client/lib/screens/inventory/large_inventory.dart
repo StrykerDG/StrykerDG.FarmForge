@@ -7,6 +7,7 @@ import 'package:farmforge_client/models/farm_forge_data_table_column.dart';
 
 import 'package:farmforge_client/widgets/farm_forge_data_table.dart';
 import 'package:farmforge_client/widgets/inventory/move_inventory_dialog.dart';
+import 'package:farmforge_client/widgets/inventory/consume_inventory_dialog.dart';
 import 'package:farmforge_client/widgets/farmforge_dialog.dart';
 
 import 'package:farmforge_client/utilities/constants.dart';
@@ -41,6 +42,14 @@ class _LargeInventoryState extends State<LargeInventory> {
       case InventoryAction.SPLIT:
         break;
       case InventoryAction.CONSUME:
+        showDialog(
+          context: context,
+          builder: (context) => FarmForgeDialog(
+            title: 'Consume Inventory',
+            content: ConsumeInventoryDialog(products: inventory.products),
+            width: kSmallDesktopModalWidth,
+          )
+        );
         break;
     }
   }

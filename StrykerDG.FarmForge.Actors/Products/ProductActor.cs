@@ -20,6 +20,7 @@ namespace StrykerDG.FarmForge.Actors.Products
             Receive<AskForInventory>(HandleAskForInventory);
             Receive<AskToAddInventory>(HandleAskToAddInventory);
             Receive<AskToTransferInventory>(HandleAskToTransferInventory);
+            Receive<AskToConsumeInventory>(HandleAskToConsumeInventory);
             Receive<AskForProductTypes>(HandleAskForProductTypes);
             Receive<AskToCreateProductType>(HandleAskToCreateProductType);
             Receive<AskToUpdateProductType>(HandleAskToUpdateProductType);
@@ -208,6 +209,36 @@ namespace StrykerDG.FarmForge.Actors.Products
                 {
                     Sender.Tell(ex);
                 }
+            });
+        }
+
+        private void HandleAskToConsumeInventory(AskToConsumeInventory message)
+        {
+            Using<FarmForgeDataContext>((context) =>
+            {
+                var dbProducts = context.Products
+                    .Where(p => message.ProductIds.Contains(p.ProductId))
+                    .ToList();
+
+                var consumedStatus = context.Statuses
+                    .Where(s => s.Name == "consumed")
+                    .Select(s => s.StatusId)
+                    .FirstOrDefault();
+
+                var unknownLocation = context.Locations
+                    .Where(l => l.Name == "unknown")
+                    .Select(l => l.LocationId)
+                    .FirstOrDefault();
+
+                foreach (var product in dbProducts)
+                {
+                    product.StatusId = consumedStatus;
+                    product.LocationId = unknownLocation;
+                }
+
+                context.SaveChanges();
+
+                Sender.Tell(true);
             });
         }
 

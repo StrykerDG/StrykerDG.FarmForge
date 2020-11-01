@@ -354,6 +354,15 @@ class FarmForgeApiService {
     return await request('Products/Inventory', jsonBody, 'POST');
   }
 
+  Future<FarmForgeResponse> consumeInventory(List<int> productIds) async {
+    Map<String, dynamic> requestBody = {
+      'ProductIds': productIds
+    };
+    String jsonBody = convert.jsonEncode(requestBody);
+
+    return await request('Products/Inventory/Consume', jsonBody, 'POST');
+  }
+
   // Suppliers
   Future<FarmForgeResponse> getSuppliers({String includes}) async {
     String uri = includes != null
