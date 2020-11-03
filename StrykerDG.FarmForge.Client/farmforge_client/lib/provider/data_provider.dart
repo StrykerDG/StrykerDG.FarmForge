@@ -338,7 +338,7 @@ class DataProvider extends ChangeNotifier {
     notifyListeners();
   }
 
-  void setSupliers(List<dynamic> newSuppliers) {
+  void setSuppliers(List<dynamic> newSuppliers) {
     suppliers.clear();
     newSuppliers.forEach((supplierData) { 
       suppliers.add(Supplier.fromMap(supplierData));

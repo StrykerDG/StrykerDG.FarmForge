@@ -26,9 +26,9 @@ namespace StrykerDG.FarmForge.LocalApi.Controllers
 
         [HttpGet]
         [Authorize(Policy = "AuthenticatedWebClient")]
-        public async Task<IActionResult> GetSuppliers()
+        public async Task<IActionResult> GetSuppliers(string includes)
         {
-            var result = await SupplierActor.Ask(new AskForSuppliers());
+            var result = await SupplierActor.Ask(new AskForSuppliers(includes));
             return Ok(FarmForgeApiResponse.Success(result));
         }
 

@@ -241,7 +241,7 @@ namespace StrykerDG.FarmForge.Migrations.Release_0001
                 .Row(new { EntityType = "Crop.Status", Name = "transplanted", Label = "Transplanted", Created = now, Modified = now, IsDeleted = false })
                 .Row(new { EntityType = "Product.Status", Name = "inventory", Label = "Inventory", Created = now, Modified = now, IsDeleted = false })
                 .Row(new { EntityType = "Product.Status", Name = "sold", Label = "Sold", Created = now, Modified = now, IsDeleted = false })
-                .Row(new { EntityType = "Product.Status", Name = "used", Label = "Used", Created = now, Modified = now, IsDeleted = false });
+                .Row(new { EntityType = "Product.Status", Name = "consumed", Label = "Consumed", Created = now, Modified = now, IsDeleted = false });
 
             Insert.IntoTable("Location")
                 .Row(new { Name = "unknown", Label = "Unknown", Created = now, Modified = now, IsDeleted = false });

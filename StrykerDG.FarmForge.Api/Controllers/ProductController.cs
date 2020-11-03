@@ -33,6 +33,28 @@ namespace StrykerDG.FarmForge.LocalApi.Controllers
             return Ok(FarmForgeApiResponse.Success(result));
         }
 
+        [HttpPost("Inventory")]
+        [Authorize(Policy = "AuthenticatedWebClient")]
+        public async Task<IActionResult> AddInventory([FromBody]NewInventoryDTO newInventory)
+        {
+            var result = await ProductActor.Ask(new AskToAddInventory(
+                newInventory.SupplierId,
+                newInventory.ProductTypeId,
+                newInventory.LocationId,
+                newInventory.Quantity,
+                newInventory.UnitTypeId
+            ));
+            return ValidateActorResult(result);
+        }
+
+        [HttpPost("Inventory/Consume")]
+        [Authorize(Policy = "AuthenticatedWebClient")]
+        public async Task<IActionResult> ConsumeInventory([FromBody]ConsumeInventoryDTO consumedInventory)
+        {
+            var result = await ProductActor.Ask(new AskToConsumeInventory(consumedInventory.ProductIds));
+            return Ok(FarmForgeApiResponse.Success(result));
+        }
+
         [HttpPost("Inventory/Transfer")]
         [Authorize(Policy = "AuthenticatedWebClient")]
         public async Task<IActionResult> TransferInventoryToNewLocation([FromBody]TransferInventoryDTO transferData)
@@ -42,6 +64,18 @@ namespace StrykerDG.FarmForge.LocalApi.Controllers
                 transferData.LocationId
             ));
 
+            return ValidateActorResult(result);
+        }
+
+        [HttpPost("Inventory/Split")]
+        [Authorize(Policy = "AuthenticatedWebClient")]
+        public async Task<IActionResult> SplitInventory([FromBody]SplitInventoryDTO request)
+        {
+            var result = await ProductActor.Ask(new AskToSplitInventory(
+                request.ProductIds, 
+                request.UnitTypeConversionId,
+                request.LocationId
+            ));
             return ValidateActorResult(result);
         }
 

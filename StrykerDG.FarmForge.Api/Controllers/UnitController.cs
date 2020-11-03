@@ -56,6 +56,14 @@ namespace StrykerDG.FarmForge.LocalApi.Controllers
             return Ok(FarmForgeApiResponse.Success(results));
         }
 
+        [HttpGet("Conversions/{unitId}")]
+        [Authorize(Policy = "AuthenticatedWebClient")]
+        public async Task<IActionResult> GetUnitConversionsForUnit(int unitId)
+        {
+            var results = await UnitActor.Ask(new AskForConversionsByUnit(unitId));
+            return Ok(FarmForgeApiResponse.Success(results));
+        }
+
         [HttpPost("Conversions")]
         [Authorize(Policy = "AuthenticatedWebClient")]
         public async Task<IActionResult> CreateUnitConversion([FromBody]UnitTypeConversion conversion)

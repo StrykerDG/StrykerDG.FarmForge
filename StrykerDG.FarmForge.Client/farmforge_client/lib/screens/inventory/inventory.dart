@@ -5,6 +5,7 @@ import 'package:farmforge_client/provider/core_provider.dart';
 import 'package:farmforge_client/provider/data_provider.dart';
 import 'package:farmforge_client/models/farmforge_response.dart';
 
+import 'package:farmforge_client/screens/inventory/small_inventory.dart';
 import 'package:farmforge_client/screens/inventory/large_inventory.dart';
 
 import 'package:farmforge_client/widgets/farmforge_dialog.dart';
@@ -76,10 +77,8 @@ class _InventoryState extends State<Inventory> {
         double deviceWidth = MediaQuery.of(context).size.width;
 
         return deviceWidth < kSmallWidthMax
-          ? Container()
-          : deviceWidth < kMediumWidthMax
-            ? Container()
-            : LargeInventory();
+          ? SmallInventory()
+          : LargeInventory();
       },
     );
   }
