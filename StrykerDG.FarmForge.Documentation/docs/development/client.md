@@ -54,7 +54,6 @@ FarmForgeResponse result = await Provider.of<CoreProvider>(context, listen: fals
     .farmForgeService.getLocations();
 ```
 
-
 ### FarmForgeModel
 
 FarmForgeModel is an interface that other FarmForge models (Crop, CropType, etc)
@@ -130,6 +129,23 @@ KpiModel is a generic model that is used for displaying data in charts.
 - measure (String): The label of the KPI
 - value (int): The value of the KPI
 
+### Enums
+
+Enums is a generic file that houses enumerations used within the FarmForge client.
+
+#### InventoryAction
+- A list of actions that can be performed on inventory
+
+### MultiSelectOption
+
+MultiSelectOption is provided to MultiSelectDialog do display an option that can
+be selected by the user
+
+#### Properties
+
+- value (int): The value of the option, typically an items primary key
+- label (string): The label that is shown to the user
+
 ## Providers
 
 Providers are the state management for FarmForge.
@@ -166,9 +182,15 @@ DataProvider stores the data utilized in various areas of the FarmForge app.
 - crops (List): List of Crops that have been planted 
 - cropTypes (List): List of available CropTypes that you can plant
 - cropClassifications (List): List of classifications that a crop can be
+- inventory (List): List of products that are currently in inventory
 - locations (List): List of available locations
 - logTypes (List): List of available log types
+- productTypes (List): List of available product types
+- ProductCategories (List): List of available product categories
 - statuses (List): List of available statuses
+- suppliers (List): List of available suppliers
+- unitTypes (List): List of available unit types
+- unitTypeConversions (List): List of available unit type conversions
 - users (List): List of available users
 
 #### Methods
@@ -206,10 +228,16 @@ summary of your farm and statistics.
 From the crops page, you can plant new crops, update their status, create logs, and
 view crop detils.
 
+### Inventory
+The inventory page allows you to view current inventory as well as add 
+inventory, move inventory to different locations, consume inventory, and convert
+inventory from one unit to another
+
 ### Settings
 
 The settings page allows you to create and delete users, crops, crop types, and 
-locations.
+locations. You can also manage products, product types, units, unit conversions,
+and suppliers
 
 ## Services
 
@@ -278,6 +306,8 @@ Validation provides a number of validation methods that can be used for forms.
 empty
 - static String isNumeric(String value): checks whether the provided string is 
 a numeric value
+- static String isEmptyOrNumeric(dynamic value): checks whetehr the provided 
+value is empty or numeric
 - static String isValidDate(String value): checks whether the provided string is
 a valid DateTime
 - static String isValidDateRange(String value): checks whether the provided string contains valid DateTimes
@@ -478,6 +508,63 @@ a list of TYPE that extends KpiModel
         height: kLargeCardHeight,
         title: 'Crops By Location',
         data: cropsByLocation,
+    );
+}
+```
+
+### MultiSelectDialog
+
+MultiSelectDialog is a widget that functions similar to a dropdown, but allows 
+you to select multiple options.
+
+#### Properties
+
+- options (List): a list of MultiSelectOptions that specify what options will 
+show up in the dialog
+- defaultValues (List): a list of items that will be selected by default
+
+#### Example
+
+```
+List<MultiSelectOption> _productTypeOptions = [
+    _productTypes.map((t) =>
+        MultiSelectOption(value: t.productTypeId, label: t.label)
+    ).toList()
+];
+
+List<int> _selectedSupplierProducts = [];
+
+void handleMultiSelectTap() async {
+    List<int> results = await showDialog(
+        context: context,
+        builder: (context) => MultiSelectDialog(
+            options: _productTypeOptions,
+            defaultValues: _selectedSupplierProducts
+        )
+    );
+}
+```
+
+### SettingsExpansionTile
+
+SettingsExpansionTiles are used within the settings area to display an 
+expandable tile containing related settings.
+
+#### Properties
+
+- title (String): The title displayed by the expansion tile
+- content (Widget): The content that will be displayed once the tile has been
+expanded
+
+#### Example
+
+```
+@override
+  Widget build(BuildContext context) {
+
+    return SettingsExpansionTile(
+        title: 'Crops',
+        content: CropContent()
     );
 }
 ```

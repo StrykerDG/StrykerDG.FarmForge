@@ -55,3 +55,33 @@ To add a parent location, make sure the parent is created, then select the child
 location. You can then select which location is the parent.
 
 ![Demo](/gif/AddLocationParent.gif)
+
+## Setting up Suppliers
+
+In order to add inventory via the inventory screen, you must first create 
+suppliers, and specify which products those suppliers provide. 
+
+To create a new product type, navigate to the Settings area and click on 
+Inventory. Then next to the Product Type, click the "+" icon.
+
+![Demo](/gif/AddProductType.gif)
+
+Now, click the "+" icon next to Supplier, and enter the required information
+
+![Demo](/gif/AddSupplier.gif)
+
+## Setting up Conversions
+
+Before you can convert inventory from one unit to another, you must first 
+create the individual units. Once the units have been created, you can create
+a new conversion between the two
+
+To create a unit, navigate to the Settings area and click on inventory. Next,
+click on the "+" icon next to Unit Type
+
+![Demo](/gif/AddUnitType.gif)
+
+Next, click the "+" icon next to Unit Conversion and specify the required 
+information
+
+![Demo](/gif/AddUnitTypeConversion.gif)
