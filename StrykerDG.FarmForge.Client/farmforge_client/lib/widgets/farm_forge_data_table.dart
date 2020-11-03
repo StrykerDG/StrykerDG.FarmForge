@@ -79,7 +79,6 @@ class _FarmForgeDataTableState<T extends FarmForgeModel> extends State<FarmForge
         List<Map<String, dynamic>> filteredDataMaps = List<Map<String, dynamic>>();
         // Filter the data based on this column's filter
         if(filter.isNotEmpty) {
-          print('not empty! $filter!');
           dataMaps.forEach((dataMap) { 
             dynamic property = dataMap;
             propertyPath.forEach((element) { 

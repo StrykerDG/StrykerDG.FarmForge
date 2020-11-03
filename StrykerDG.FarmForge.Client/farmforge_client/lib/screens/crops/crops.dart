@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 
 import 'package:farmforge_client/provider/core_provider.dart';
@@ -10,7 +9,6 @@ import 'package:farmforge_client/models/crops/crop.dart';
 import 'package:farmforge_client/models/farm_forge_data_table_column.dart';
 
 import 'large_crops.dart';
-// import 'medium_crops.dart';
 import 'small_crops.dart';
 import 'package:farmforge_client/widgets/crops/add_crop.dart';
 import 'package:farmforge_client/widgets/farmforge_dialog.dart';
@@ -132,10 +130,7 @@ class _CropsState extends State<Crops> {
       ),
       FarmForgeDataTableColumn(
         label: 'PlantedAt',
-        propertyFunc: (Crop c) =>
-          Text(
-            DateFormat.yMd().format(c?.plantedAt) ?? ""
-          )
+        property: 'PlantedAt'
       ),
       FarmForgeDataTableColumn(
         label: '',

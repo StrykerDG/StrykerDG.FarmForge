@@ -1,4 +1,7 @@
+import 'dart:html';
+
 import 'package:flutter/material.dart';
+import 'package:flutter/scheduler.dart';
 import 'package:provider/provider.dart';
 
 import 'package:farmforge_client/provider/core_provider.dart';
@@ -71,6 +74,38 @@ class _LoginState extends State<Login> {
         });
       }
     }
+  }
+
+  void checkForPriorLogin() {
+    // Check local storage to see if we have a token. If so, log in
+    Storage sessionStorage = window.sessionStorage;
+    String token = sessionStorage['token'];
+
+    if(token != null && token.isNotEmpty) {
+      try {
+          Provider.of<CoreProvider>(context, listen: false)
+            .farmForgeService.setToken(token);
+
+          Map<String, dynamic> tokenInfo = Utility.parseJwt(token);
+
+          Provider.of<UserProvider>(context, listen: false)
+            .setUsername(tokenInfo['User']);
+
+          Navigator.pushNamed(context, FarmForge.id);
+      }
+      catch(e) {
+        print('Error during auto login: ${e.toString()}');
+      }
+    }
+  }
+
+  @override
+  void initState() {
+    super.initState();
+
+    SchedulerBinding.instance.addPostFrameCallback((timeStamp) => {
+      checkForPriorLogin()
+    });
   }
 
   @override

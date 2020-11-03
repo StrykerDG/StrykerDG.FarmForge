@@ -27,7 +27,6 @@ class Validation {
   }
 
   static String isValidDate(String value) {
-    print('Validating: $value');
     return DateTime.tryParse(value) == null
       ? 'Invalid Date'
       : null;

@@ -1,3 +1,5 @@
+import 'dart:html';
+
 import 'package:http/http.dart' as http;
 import 'dart:convert' as convert;
 
@@ -68,10 +70,17 @@ class FarmForgeApiService {
     String jsonBody = convert.jsonEncode(loginObject);
     FarmForgeResponse response = await request('Auth/Login', jsonBody, 'POST');
 
-    if(response.data != null)
+    if(response.data != null) {
       token = response.data;
+      Storage sessionStorage = window.sessionStorage;
+      sessionStorage['token'] = token;
+    }
 
     return response;
+  }
+
+  void setToken(String newToken) {
+    token = newToken;
   }
 
   // User

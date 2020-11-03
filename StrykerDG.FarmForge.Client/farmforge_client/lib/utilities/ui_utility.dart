@@ -24,4 +24,32 @@ class UiUtility {
       )
     );
   }
+
+/*
+  static displayLoadingNotification(BuildContext context, String message) {
+    showDialog(
+      context: context,
+      builder: (context) => Dialog(
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(kMediumRadius)
+        ),
+        child: Opacity(
+          opacity: 0.3,
+          child: Container(
+            width: kSmallCardWidth,
+            height: kSmallCardHeight,
+            color: Colors.black54,
+            child: Center(
+              child: Text(message),
+            ),
+          ),
+        ),
+      )
+    );
+  }
+
+  static dismissLoadingNotification(BuildContext context) {
+    Navigator.pop(context);
+  }
+  */
 }
