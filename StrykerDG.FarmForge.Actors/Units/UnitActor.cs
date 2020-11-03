@@ -22,6 +22,7 @@ namespace StrykerDG.FarmForge.Actors.Units
             Receive<AskToCreateUnitType>(HandleAskToCreateUnitType);
             Receive<AskToDeleteUnitType>(HandleAskToDeleteUnitType);
             Receive<AskForUnitConversions>(HandleAskForConversions);
+            Receive<AskForConversionsByUnit>(HandleAskForConversionsByUnit);
             Receive<AskToCreateUnitConversion>(HandleAskToCreateUnitConversion);
             Receive<AskToUpdateUnitConversion>(HandleAskToUpdateUnitConversion);
             Receive<AskToDeleteUnitConversion>(HandleAskToDeleteUnitConversion);
@@ -137,8 +138,26 @@ namespace StrykerDG.FarmForge.Actors.Units
             Using<FarmForgeDataContext>((context) =>
             {
                 var results = context.UnitTypeConversions
+                    .AsNoTracking()
                     .WithIncludes("FromUnit,ToUnit")
                     .Where(c => c.IsDeleted == false)
+                    .ToList();
+
+                Sender.Tell(results);
+            });
+        }
+
+        private void HandleAskForConversionsByUnit(AskForConversionsByUnit message)
+        {
+            Using<FarmForgeDataContext>((context) =>
+            {
+                var results = context.UnitTypeConversions
+                    .AsNoTracking()
+                    .WithIncludes("FromUnit,ToUnit")
+                    .Where(c =>
+                        c.FromUnitId == message.UnitTypeId &&
+                        c.IsDeleted == false
+                    )
                     .ToList();
 
                 Sender.Tell(results);

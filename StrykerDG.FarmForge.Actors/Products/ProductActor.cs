@@ -2,6 +2,7 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using StrykerDG.FarmForge.Actors.DTO.Responses;
+using StrykerDG.FarmForge.Actors.Extensions;
 using StrykerDG.FarmForge.Actors.Products.Messages;
 using StrykerDG.FarmForge.DataModel.Contexts;
 using StrykerDG.FarmForge.DataModel.Extensions;
@@ -21,6 +22,7 @@ namespace StrykerDG.FarmForge.Actors.Products
             Receive<AskToAddInventory>(HandleAskToAddInventory);
             Receive<AskToTransferInventory>(HandleAskToTransferInventory);
             Receive<AskToConsumeInventory>(HandleAskToConsumeInventory);
+            Receive<AskToSplitInventory>(HandleAskToSplitInventory);
             Receive<AskForProductTypes>(HandleAskForProductTypes);
             Receive<AskToCreateProductType>(HandleAskToCreateProductType);
             Receive<AskToUpdateProductType>(HandleAskToUpdateProductType);
@@ -239,6 +241,156 @@ namespace StrykerDG.FarmForge.Actors.Products
                 context.SaveChanges();
 
                 Sender.Tell(true);
+            });
+        }
+
+        private void HandleAskToSplitInventory(AskToSplitInventory message)
+        {
+            Using<FarmForgeDataContext>((context) =>
+            {
+                var results = new List<Product>();
+
+                using (var transaction = context.Database.BeginTransaction())
+                {
+                    try
+                    {
+                        // Make sure we have all of the correct information
+                        var dbProducts = context.Products
+                            .Where(p =>
+                                message.ProductIds.Contains(p.ProductId) &&
+                                p.IsDeleted == false &&
+                                p.Status.Name == "inventory"
+                            )
+                            .ToList();
+
+                        var dbConversion = context.UnitTypeConversions
+                            .WithIncludes("FromUnit,ToUnit")
+                            .Where(c =>
+                                c.UnitTypeConversionId == message.UnitTypeConversionId &&
+                                c.IsDeleted == false
+                            )
+                            .FirstOrDefault();
+
+                        var dbLocation = context.Locations
+                            .Where(l =>
+                                l.LocationId == message.LocationId &&
+                                l.IsDeleted == false
+                            )
+                            .FirstOrDefault();
+
+                        if (dbProducts.Count != message.ProductIds.Count)
+                            throw new Exception("Invalid Product Id");
+
+                        if (dbProducts.Count == 0 || dbProducts.Count % dbConversion.FromQuantity != 0)
+                            throw new Exception("Invalid number of products");
+
+                        if (dbConversion == null || dbLocation == null)
+                            throw new Exception("Invalid conversion and / or location");
+
+                        var dbProductType = context.ProductTypes
+                            .Where(pt =>
+                                pt.ProductTypeId == dbProducts.First().ProductTypeId &&
+                                pt.IsDeleted == false
+                            )
+                            .FirstOrDefault();
+
+                        if (dbProductType == null)
+                            throw new Exception("Invalid ProductType");
+
+                        foreach (var product in dbProducts)
+                            if (
+                                product.UnitTypeId != dbConversion.FromUnitId ||
+                                product.ProductTypeId != dbProductType.ProductTypeId
+                            )
+                                throw new Exception("Invalid Products");
+
+                        var inventoryStatus = context.Statuses
+                            .Where(s =>
+                                s.EntityType == "Product.Status" &&
+                                s.Name == "inventory"
+                            )
+                            .FirstOrDefault();
+
+                        var consumedStatus = context.Statuses
+                            .Where(s =>
+                                s.EntityType == "Product.Status" &&
+                                s.Name == "consumed"
+                            )
+                            .FirstOrDefault();
+
+                        var iterations = dbProducts.Count / dbConversion.FromQuantity;
+                        var requiredProductCount = dbConversion.FromQuantity;
+
+                        // For every X products, create a new product of the specified unit
+                        var productStack = new Stack<Product>(dbProducts);
+                        for (var i = 0; i < iterations; i++)
+                        {
+                            var newProductInputs = productStack.PopRange(requiredProductCount);
+                            var newProductCount = dbConversion.ToQuantity;
+
+                            // Create the new products
+                            var newProducts = new List<Product>();
+                            for (var p = 0; p < newProductCount; p++)
+                            {
+                                newProducts.Add(new Product
+                                {
+                                    ProductTypeId = dbProductType.ProductTypeId,
+                                    LocationId = dbLocation.LocationId,
+                                    StatusId = inventoryStatus.StatusId,
+                                    UnitTypeId = dbConversion.ToUnitId,
+                                });
+                            }
+
+                            // Save to get the productIds
+                            context.AddRange(newProducts);
+                            context.SaveChanges();
+
+                            // Add sources to each new product. Each input is a source since
+                            // we don't know exactly which existing product went into each
+                            // new product
+                            var newProductSources = new List<ProductSource>();
+                            foreach (var newProduct in newProducts)
+                                foreach (var input in newProductInputs)
+                                    newProductSources.Add(new ProductSource
+                                    {
+                                        ProductId = newProduct.ProductId,
+                                        SourceProductId = input.ProductId
+                                    });
+
+                            context.AddRange(newProductSources);
+
+                             // Update the status and destination for old products
+                            foreach (var input in newProductInputs)
+                            {
+                                input.StatusId = consumedStatus.StatusId;
+
+                                // Add each new product as a destination since we don't know 
+                                // exactly which existing product whent into each new product
+                                var oldProductDestinations = new List<ProductDestination>();
+                                foreach (var newProduct in newProducts)
+                                    oldProductDestinations.Add(new ProductDestination
+                                    {
+                                        ProductId = input.ProductId,
+                                        DestinationProductId = newProduct.ProductId
+                                    });
+
+                                context.AddRange(oldProductDestinations);
+                            }
+
+                            context.SaveChanges();
+
+                            results.AddRange(newProducts);
+                        }
+
+                        transaction.Commit();
+                        Sender.Tell(results);
+                    }
+                    catch (Exception ex)
+                    {
+                        transaction.Rollback();
+                        Sender.Tell(ex);
+                    }
+                }
             });
         }
 

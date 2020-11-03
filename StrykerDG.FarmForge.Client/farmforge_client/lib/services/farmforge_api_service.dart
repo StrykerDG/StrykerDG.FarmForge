@@ -12,6 +12,7 @@ import 'package:farmforge_client/models/inventory/product_type.dart';
 import 'package:farmforge_client/models/inventory/unit_type.dart';
 import 'package:farmforge_client/models/inventory/unit_type_conversion.dart';
 import 'package:farmforge_client/models/dto/new_supplier_dto.dart';
+import 'package:farmforge_client/models/dto/split_inventory_dto.dart';
 
 class FarmForgeApiService {
   static String token;
@@ -273,6 +274,10 @@ class FarmForgeApiService {
     return await request('Units/Conversions', null, 'GET');
   }
 
+  Future<FarmForgeResponse> getConversionsByUnit(int unitTypeId) async {
+    return await request('Units/Conversions/$unitTypeId', null, 'GET');
+  }
+
   Future<FarmForgeResponse> createOrUpdateUnitConversion(
     UnitTypeConversion conversion,
     String method) async {
@@ -361,6 +366,13 @@ class FarmForgeApiService {
     String jsonBody = convert.jsonEncode(requestBody);
 
     return await request('Products/Inventory/Consume', jsonBody, 'POST');
+  }
+
+  Future<FarmForgeResponse> splitInventory(SplitInventoryDTO inventory) async {
+    Map<String, dynamic> requestBody = inventory.toMap();
+    String jsonBody = convert.jsonEncode(requestBody);
+
+    return await request('Products/Inventory/Split', jsonBody, 'POST');
   }
 
   // Suppliers

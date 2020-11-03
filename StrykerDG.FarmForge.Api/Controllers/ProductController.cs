@@ -67,6 +67,18 @@ namespace StrykerDG.FarmForge.LocalApi.Controllers
             return ValidateActorResult(result);
         }
 
+        [HttpPost("Inventory/Split")]
+        [Authorize(Policy = "AuthenticatedWebClient")]
+        public async Task<IActionResult> SplitInventory([FromBody]SplitInventoryDTO request)
+        {
+            var result = await ProductActor.Ask(new AskToSplitInventory(
+                request.ProductIds, 
+                request.UnitTypeConversionId,
+                request.LocationId
+            ));
+            return ValidateActorResult(result);
+        }
+
         [HttpGet]
         [Authorize(Policy = "AuthenticatedWebClient")]
         public async Task<IActionResult> GetProductTypes()

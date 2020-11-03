@@ -9,6 +9,7 @@ import 'package:farmforge_client/widgets/farm_forge_data_table.dart';
 import 'package:farmforge_client/widgets/inventory/move_inventory_dialog.dart';
 import 'package:farmforge_client/widgets/inventory/consume_inventory_dialog.dart';
 import 'package:farmforge_client/widgets/farmforge_dialog.dart';
+import 'package:farmforge_client/widgets/inventory/split_inventory_dialog.dart';
 
 import 'package:farmforge_client/utilities/constants.dart';
 
@@ -40,6 +41,19 @@ class _LargeInventoryState extends State<LargeInventory> {
         );
         break;
       case InventoryAction.SPLIT:
+        showDialog(
+          context: context,
+          builder: (context) => FarmForgeDialog(
+            title: 'Split Inventory',
+            content: SplitInventory(
+              products: inventory.products,
+              productType: inventory.productType,
+              unitType: inventory.unitType,
+              location: inventory.location
+            ),
+            width: kSmallDesktopModalWidth,
+          )
+        );
         break;
       case InventoryAction.CONSUME:
         showDialog(
