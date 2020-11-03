@@ -22,5 +22,37 @@ namespace StrykerDG.FarmForge.DataModel.Extensions
 
             return table;
         }
+
+        public static IEnumerable<T> DistinctBy<T, K>(
+            this IEnumerable<T> source,
+            Func<T, K> func
+        ) where T : BaseModel
+        {
+            List<K> distinctKeys = new List<K>();
+            List<T> distinctResults = new List<T>();
+
+            foreach(T element in source)
+            {
+                var funcResult = func(element);
+                if(typeof(K)  == typeof(int))
+                {
+                    if (!distinctKeys.Contains(funcResult))
+                    {
+                        distinctKeys.Add(funcResult);
+                        distinctResults.Add(element);
+                    }
+                }
+
+                else if(typeof(K) == typeof(bool))
+                {
+                    var stringBool = funcResult.ToString();
+                    if (stringBool == "True")
+                        distinctResults.Add(element);
+                }
+            }
+
+            IEnumerable<T> results = distinctResults;
+            return results;
+        }
     }
 }

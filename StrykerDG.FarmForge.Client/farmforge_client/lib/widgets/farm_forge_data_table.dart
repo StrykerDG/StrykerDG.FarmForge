@@ -17,12 +17,14 @@ class FarmForgeDataTable<T extends FarmForgeModel> extends StatefulWidget {
   final List<FarmForgeDataTableColumn> columns;
   final Function onRowClick;
   final bool showCheckBoxes;
+  final Function onSelectChange;
 
   FarmForgeDataTable({
     @required this.data, 
     @required this.columns, 
     this.onRowClick,
-    this.showCheckBoxes = false
+    this.showCheckBoxes = false,
+    this.onSelectChange
   });
 
   @override
@@ -34,6 +36,7 @@ class _FarmForgeDataTableState<T extends FarmForgeModel> extends State<FarmForge
   FocusNode _filterNode = FocusNode();
   int _filteringColumn;
   List<String> _filters;
+  List<bool> _selected = [];
 
   int _sortedColumn;
   SortType _sortType = SortType.None;
@@ -76,7 +79,6 @@ class _FarmForgeDataTableState<T extends FarmForgeModel> extends State<FarmForge
         List<Map<String, dynamic>> filteredDataMaps = List<Map<String, dynamic>>();
         // Filter the data based on this column's filter
         if(filter.isNotEmpty) {
-          print('not empty! $filter!');
           dataMaps.forEach((dataMap) { 
             dynamic property = dataMap;
             propertyPath.forEach((element) { 
@@ -200,7 +202,7 @@ class _FarmForgeDataTableState<T extends FarmForgeModel> extends State<FarmForge
   List<DataRow> buildRows(List<T> filteredAndSortedData) {
     List<DataRow> rows = List<DataRow>();
 
-    filteredAndSortedData.forEach((dataObject) { 
+    filteredAndSortedData.asMap().forEach((index, dataObject) { 
       // Build the data for the row
       List<DataCell> rowCells = List.generate(
         widget.columns.length, 
@@ -238,7 +240,18 @@ class _FarmForgeDataTableState<T extends FarmForgeModel> extends State<FarmForge
       rows.add(
         DataRow(
           cells: rowCells,
+          selected: _selected.length > 0
+            ? _selected[index]
+            : false,
           onSelectChanged: (bool value) {
+            if(widget.showCheckBoxes) {
+              setState(() {
+                _selected[index] = value;
+              });
+              if(widget.onSelectChange != null)
+                widget.onSelectChange(value, index);
+            }
+
             if(widget.onRowClick != null)
               widget.onRowClick(value, dataObject);
           }
@@ -253,6 +266,11 @@ class _FarmForgeDataTableState<T extends FarmForgeModel> extends State<FarmForge
   void initState() {
     super.initState();
 
+    _selected = List<bool>.generate(
+      widget.data?.length, 
+      (index) => false
+    );
+
     // Populate the list of empty filters
     _filters = new List<String>();
     widget.columns.forEach((columnDef) { 
@@ -260,6 +278,19 @@ class _FarmForgeDataTableState<T extends FarmForgeModel> extends State<FarmForge
     });
 
     _filterNode.addListener(onFocusChange);
+  }
+
+  @override
+  void didUpdateWidget(covariant FarmForgeDataTable<T> oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    if(widget.data.length != _selected.length) {
+      setState(() {
+        _selected = List<bool>.generate(
+          widget.data?.length, 
+          (index) => false
+        );
+      });
+    }
   }
 
   @override

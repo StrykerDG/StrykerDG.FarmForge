@@ -1,4 +1,5 @@
-import 'package:farmforge_client/models/crops/crop.dart';
+import 'dart:html';
+
 import 'package:http/http.dart' as http;
 import 'dart:convert' as convert;
 
@@ -6,6 +7,14 @@ import 'package:farmforge_client/models/farmforge_response.dart';
 import 'package:farmforge_client/models/general/location.dart';
 import 'package:farmforge_client/models/dto/new_crop_dto.dart';
 import 'package:farmforge_client/models/dto/new_crop_log_dto.dart';
+import 'package:farmforge_client/models/dto/add_inventory_dto.dart';
+import 'package:farmforge_client/models/crops/crop.dart';
+import 'package:farmforge_client/models/inventory/product_category.dart';
+import 'package:farmforge_client/models/inventory/product_type.dart';
+import 'package:farmforge_client/models/inventory/unit_type.dart';
+import 'package:farmforge_client/models/inventory/unit_type_conversion.dart';
+import 'package:farmforge_client/models/dto/new_supplier_dto.dart';
+import 'package:farmforge_client/models/dto/split_inventory_dto.dart';
 
 class FarmForgeApiService {
   static String token;
@@ -61,10 +70,17 @@ class FarmForgeApiService {
     String jsonBody = convert.jsonEncode(loginObject);
     FarmForgeResponse response = await request('Auth/Login', jsonBody, 'POST');
 
-    if(response.data != null)
+    if(response.data != null) {
       token = response.data;
+      Storage sessionStorage = window.sessionStorage;
+      sessionStorage['token'] = token;
+    }
 
     return response;
+  }
+
+  void setToken(String newToken) {
+    token = newToken;
   }
 
   // User
@@ -245,5 +261,153 @@ class FarmForgeApiService {
   // Statuses
   Future<FarmForgeResponse> getStatusesByType(String type) async {
     return await request('Statuses/$type', null, 'GET');
+  }
+
+  // Inventory 
+  Future<FarmForgeResponse> getUnitTypes() async {
+    return await request('Units', null, 'GET');
+  }
+
+  Future<FarmForgeResponse> addUnitType(UnitType unit) async {
+    Map<String, dynamic> requestBody = unit.toMap();
+    String jsonBody = convert.jsonEncode(requestBody);
+
+    return await request('Units', jsonBody, 'POST');
+  }
+
+  Future<FarmForgeResponse> deleteUnitType(int id) async {
+    return await request('Units/$id', null, 'DELETE');
+  }
+
+  Future<FarmForgeResponse> getUnitConversions() async {
+    return await request('Units/Conversions', null, 'GET');
+  }
+
+  Future<FarmForgeResponse> getConversionsByUnit(int unitTypeId) async {
+    return await request('Units/Conversions/$unitTypeId', null, 'GET');
+  }
+
+  Future<FarmForgeResponse> createOrUpdateUnitConversion(
+    UnitTypeConversion conversion,
+    String method) async {
+
+    Map<String, dynamic> requestBody = conversion.toMap();
+    String jsonBody = convert.jsonEncode(requestBody);
+
+    return await request('Units/Conversions', jsonBody, method);
+  }
+
+  Future<FarmForgeResponse> deleteUnitTypeConversion(int id) async {
+    return await request('Units/Convers/$id', null, 'DELETE');
+  }
+
+  Future<FarmForgeResponse> getProductTypes() async {
+    return await request('Products', null, 'GET');
+  }
+
+  Future<FarmForgeResponse> addProductType(ProductType type) async {
+    if(type.productTypeId == null)
+      type.productTypeId = 0;
+
+    Map<String, dynamic> requestBody = type.toMap();
+    String jsonBody = convert.jsonEncode(requestBody);
+
+    return await request('Products', jsonBody, 'POST');
+  }
+
+  Future<FarmForgeResponse> updateProductType(ProductType type) async {
+    Map<String, dynamic> requestBody = type.toMap();
+    String jsonBody = convert.jsonEncode(requestBody);
+
+    return await request('Products', jsonBody, 'PATCH');
+  }
+
+  Future<FarmForgeResponse> deleteProductType(int typeId) async {
+    return await request('Products/$typeId', null, 'DELETE');
+  }
+
+  Future<FarmForgeResponse> getProductCategories() async {
+    return await request('Products/Categories', null, 'GET');
+  }
+
+  Future<FarmForgeResponse> addProductCategory(ProductCategory category) async {
+    if(category.productCategoryId == null)
+      category.productCategoryId = 0;
+
+    Map<String, dynamic> requestBody = category.toMap();
+    String jsonBody = convert.jsonEncode(requestBody);
+
+    return await request('Products/Categories', jsonBody, 'POST');
+  }
+
+  Future<FarmForgeResponse> deleteProductCategory(int categoryId) async {
+    return await request('Products/Categories/$categoryId', null, 'DELETE');
+  }
+
+  Future<FarmForgeResponse> getInventory() async {
+    return await request('Products/Inventory', null, 'GET');
+  }
+
+  Future<FarmForgeResponse> moveInventoryToLocation(
+    List<int> productIds, 
+    int newLocationId) async {
+
+    Map<String, dynamic> requestBody = {
+      'ProductIds': productIds,
+      'LocationId': newLocationId
+    };
+
+    String jsonBody = convert.jsonEncode(requestBody);
+    return await request('Products/Inventory/Transfer', jsonBody, 'POST');
+  }
+
+  Future<FarmForgeResponse> addInventory(AddInventoryDTO newInventory) async {
+    Map<String, dynamic> requestBody = newInventory.toMap();
+    String jsonBody = convert.jsonEncode(requestBody);
+
+    return await request('Products/Inventory', jsonBody, 'POST');
+  }
+
+  Future<FarmForgeResponse> consumeInventory(List<int> productIds) async {
+    Map<String, dynamic> requestBody = {
+      'ProductIds': productIds
+    };
+    String jsonBody = convert.jsonEncode(requestBody);
+
+    return await request('Products/Inventory/Consume', jsonBody, 'POST');
+  }
+
+  Future<FarmForgeResponse> splitInventory(SplitInventoryDTO inventory) async {
+    Map<String, dynamic> requestBody = inventory.toMap();
+    String jsonBody = convert.jsonEncode(requestBody);
+
+    return await request('Products/Inventory/Split', jsonBody, 'POST');
+  }
+
+  // Suppliers
+  Future<FarmForgeResponse> getSuppliers({String includes}) async {
+    String uri = includes != null
+      ? 'Suppliers?includes=$includes'
+      : 'Suppliers';
+
+    return await request(uri, null, 'GET');
+  }
+
+  Future<FarmForgeResponse> getSupplierProducts(int supplierId) async {
+    return await request('Suppliers/$supplierId/Products', null, 'GET');
+  }
+
+  Future<FarmForgeResponse> createOrUpdateSupplier(
+    NewSupplierDTO requestObject, 
+    String method) async {
+
+    Map<String, dynamic> requestBody = requestObject.toMap();
+    String jsonBody = convert.jsonEncode(requestBody);
+    
+    return await request('Suppliers', jsonBody, method);
+  }
+
+  Future<FarmForgeResponse> deleteSupplier(int supplierId) async {
+    return await request('Suppliers/$supplierId', null, 'DELETE');
   }
 }

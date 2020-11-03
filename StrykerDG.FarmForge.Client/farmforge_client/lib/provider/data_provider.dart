@@ -8,16 +8,28 @@ import 'package:farmforge_client/models/general/location.dart';
 import 'package:farmforge_client/models/general/log_type.dart';
 import 'package:farmforge_client/models/general/status.dart';
 import 'package:farmforge_client/models/general/crop_log.dart';
+import 'package:farmforge_client/models/inventory/unit_type.dart';
+import 'package:farmforge_client/models/inventory/product_type.dart';
+import 'package:farmforge_client/models/inventory/unit_type_conversion.dart';
 import 'package:farmforge_client/models/general/user.dart';
+import 'package:farmforge_client/models/dto/inventory_dto.dart';
+import 'package:farmforge_client/models/inventory/product_category.dart';
+import 'package:farmforge_client/models/suppliers/supplier.dart';
 
 class DataProvider extends ChangeNotifier {
   DateTime defaultDate = DateTime.now().subtract(Duration(days: 60));
   List<Crop> crops = [];
   List<CropType> cropTypes = [];
   List<CropClassification> cropClassifications = [];
+  List<InventoryDTO> inventory = [];
   List<Location> locations = [];
   List<LogType> logTypes = [];
+  List<ProductType> productTypes = [];
+  List<ProductCategory> productCategories = [];
   List<Status> statuses = [];
+  List<Supplier> suppliers = [];
+  List<UnitType> unitTypes = [];
+  List<UnitTypeConversion> unitTypeConversions = [];
   List<User> users = [];
 
   // Crops
@@ -215,6 +227,145 @@ class DataProvider extends ChangeNotifier {
 
   void deleteUser(int id) {
     users.removeWhere((u) => u.userId == id);
+    notifyListeners();
+  }
+
+  // Inventory
+  void setUnitTypes(List<dynamic> newUnitTypes) {
+    unitTypes.clear();
+    newUnitTypes.forEach((unitData) { 
+      unitTypes.add(UnitType.fromMap(unitData));
+    });
+    notifyListeners();
+  }
+
+  void addUnitType(dynamic newUnitType) {
+    unitTypes.add(UnitType.fromMap(newUnitType));
+    notifyListeners();
+  }
+
+  void deleteUnitType(int id) {
+    unitTypes.removeWhere((u) => u.unitTypeId == id);
+    notifyListeners();
+  }
+
+  void setUnitTypeConversions(List<dynamic> newConversions) {
+    unitTypeConversions.clear();
+    newConversions.forEach((conversionData) { 
+      unitTypeConversions.add(UnitTypeConversion.fromMap(conversionData));
+    });
+    notifyListeners();
+  }
+
+  void addUnitTypeConversion(dynamic newUnitConversion) {
+    unitTypeConversions.add(UnitTypeConversion.fromMap(newUnitConversion));
+    notifyListeners();
+  }
+
+  void updateUnitTypeConversion(dynamic updatedConversion) {
+    UnitTypeConversion conversionToUpdate = UnitTypeConversion
+      .fromMap(updatedConversion);
+
+    int conversionIndex = unitTypeConversions.indexWhere(
+      (uc) => uc.unitTypeConversionId == conversionToUpdate.unitTypeConversionId
+    );
+
+    if(conversionIndex != -1) {
+      unitTypeConversions[conversionIndex] = conversionToUpdate;
+      notifyListeners();
+    }
+  }
+
+  void deleteUnitTypeConversion(int id) {
+    unitTypeConversions.removeWhere((uc) => uc.unitTypeConversionId == id);
+    notifyListeners();
+  }
+
+  void setInventory(List<dynamic> newInventory) {
+    inventory.clear();
+    newInventory.forEach((inventoryData) { 
+      inventory.add(InventoryDTO.fromMap(inventoryData));
+    });
+    notifyListeners();
+  }
+
+  void setProductTypes(List<dynamic> newProductTypes) {
+    productTypes.clear();
+    newProductTypes.forEach((productData) { 
+      productTypes.add(ProductType.fromMap(productData));
+    });
+    notifyListeners();
+  }
+
+  void addProductType(dynamic newType) {
+    productTypes.add(ProductType.fromMap(newType));
+    notifyListeners();
+  }
+
+  void updateProductType(dynamic updatedType) {
+    ProductType typeToUpdate = ProductType.fromMap(updatedType);
+
+    int typeIndex = productTypes.indexWhere(
+      (pt) => pt.productTypeId == typeToUpdate.productTypeId,
+    );
+
+    if(typeIndex != -1) {
+      productTypes[typeIndex] = typeToUpdate;
+      notifyListeners();
+    }
+  }
+
+  void deleteProductType(int id) {
+    productTypes.removeWhere((t) => t.productTypeId == id);
+    notifyListeners();
+  }
+
+  void setProductCategories(List<dynamic> newProductCategories) {
+    productCategories.clear();
+    newProductCategories.forEach((categoryData) {
+      productCategories.add(ProductCategory.fromMap(categoryData));
+    });
+    notifyListeners();
+  }
+
+  void addProductCategory(dynamic newCategory) {
+    productCategories.add(ProductCategory.fromMap(newCategory));
+    notifyListeners();
+  }
+
+  void deleteProductCategory(int id) {
+    productCategories.removeWhere((c) => c.productCategoryId == id);
+    notifyListeners();
+  }
+
+  void setSuppliers(List<dynamic> newSuppliers) {
+    suppliers.clear();
+    newSuppliers.forEach((supplierData) { 
+      suppliers.add(Supplier.fromMap(supplierData));
+    });
+    notifyListeners();
+  }
+
+  void addSupplier(dynamic newSupplier) {
+    suppliers.add(Supplier.fromMap(newSupplier));
+    notifyListeners();
+  }
+
+  void updateSupplier(dynamic updatedSupplier) {
+    Supplier supplierToUpdate = Supplier.fromMap(updatedSupplier);
+
+    int supplierIndex = suppliers.indexWhere(
+      (s) => s.supplierId == supplierToUpdate.supplierId,
+    );
+
+    if(supplierIndex != -1) {
+      suppliers[supplierIndex] = supplierToUpdate;
+      notifyListeners();
+    }
+  }
+
+  void deleteSupplier(int id) {
+    suppliers.removeWhere((s) => s.supplierId == id);
     notifyListeners();
   }
 }

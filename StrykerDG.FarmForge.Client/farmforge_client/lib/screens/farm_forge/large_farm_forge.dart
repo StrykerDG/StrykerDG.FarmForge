@@ -6,6 +6,7 @@ import 'package:farmforge_client/provider/user_provider.dart';
 
 import 'package:farmforge_client/screens/dashboard/dashboard.dart';
 import 'package:farmforge_client/screens/crops/crops.dart';
+import 'package:farmforge_client/screens/inventory/inventory.dart';
 import 'package:farmforge_client/screens/settings/settings.dart';
 
 import 'package:farmforge_client/utilities/constants.dart';
@@ -68,6 +69,7 @@ class _LargeFarmForgeState extends State<LargeFarmForge> {
                   children: [
                     Image.asset('assets/images/FarmForge.png'),
                     ListTile(
+                      leading: Icon(kDashboardIcon),
                       title: Text("Dashboard"),
                       onTap: () { 
                         handleNavigation(
@@ -79,6 +81,7 @@ class _LargeFarmForgeState extends State<LargeFarmForge> {
                       },
                     ),
                     ListTile(
+                      leading: Icon(kCropIcon),
                       title: Text('Crops'),
                       onTap: () { 
                         handleNavigation(
@@ -89,12 +92,20 @@ class _LargeFarmForgeState extends State<LargeFarmForge> {
                         ); 
                       },
                     ),
+                    ListTile(
+                      leading: Icon(kInventoryIcon),
+                      title: Text('Inventory'),
+                      onTap: () {
+                        handleNavigation(
+                          Inventory(), 
+                          Inventory.title, 
+                          Inventory.fabIcon,
+                          Inventory.fabAction
+                        );
+                      },
+                    ),
                     // ListTile(
                     //   title: Text('Devices'),
-                    //   onTap: () { handleNavigation(context, ""); },
-                    // ),
-                    // ListTile(
-                    //   title: Text('Inventory'),
                     //   onTap: () { handleNavigation(context, ""); },
                     // ),
                     Expanded(
@@ -105,6 +116,7 @@ class _LargeFarmForgeState extends State<LargeFarmForge> {
                     //   onTap: () { handleNavigation(context, ""); },
                     // ),
                     ListTile(
+                      leading: Icon(kSettingsIcon),
                       title: Text('Settings'),
                       onTap: () { 
                         handleNavigation(
