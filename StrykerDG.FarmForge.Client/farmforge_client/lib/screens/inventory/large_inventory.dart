@@ -6,18 +6,9 @@ import 'package:farmforge_client/models/dto/inventory_dto.dart';
 import 'package:farmforge_client/models/farm_forge_data_table_column.dart';
 
 import 'package:farmforge_client/widgets/farm_forge_data_table.dart';
-import 'package:farmforge_client/widgets/inventory/move_inventory_dialog.dart';
-import 'package:farmforge_client/widgets/inventory/consume_inventory_dialog.dart';
-import 'package:farmforge_client/widgets/farmforge_dialog.dart';
-import 'package:farmforge_client/widgets/inventory/split_inventory_dialog.dart';
+import 'package:farmforge_client/widgets/inventory/inventory_action_button.dart';
 
 import 'package:farmforge_client/utilities/constants.dart';
-
-enum InventoryAction {
-  MOVE,
-  SPLIT,
-  CONSUME
-}
 
 class LargeInventory extends StatefulWidget {
   @override
@@ -27,66 +18,6 @@ class LargeInventory extends StatefulWidget {
 class _LargeInventoryState extends State<LargeInventory> {
   List<FarmForgeDataTableColumn> _columns;
   List<InventoryDTO> _inventory = [];
-
-  void handleActionSelect(InventoryAction action, InventoryDTO inventory) {
-    switch(action) {
-      case InventoryAction.MOVE:
-        showDialog(
-          context: context,
-          builder: (context) => FarmForgeDialog(
-            title: 'Move Inventory',
-            content: MoveInventoryDialog(products: inventory.products),
-            width: kSmallDesktopModalWidth,
-          )
-        );
-        break;
-      case InventoryAction.SPLIT:
-        showDialog(
-          context: context,
-          builder: (context) => FarmForgeDialog(
-            title: 'Split Inventory',
-            content: SplitInventory(
-              products: inventory.products,
-              productType: inventory.productType,
-              unitType: inventory.unitType,
-              location: inventory.location
-            ),
-            width: kSmallDesktopModalWidth,
-          )
-        );
-        break;
-      case InventoryAction.CONSUME:
-        showDialog(
-          context: context,
-          builder: (context) => FarmForgeDialog(
-            title: 'Consume Inventory',
-            content: ConsumeInventoryDialog(products: inventory.products),
-            width: kSmallDesktopModalWidth,
-          )
-        );
-        break;
-    }
-  }
-
-  Widget getColumnActionButton(InventoryDTO inventory) {
-    return PopupMenuButton<InventoryAction>(
-      onSelected: (selection) => handleActionSelect(selection, inventory),
-      itemBuilder: (context) => <PopupMenuEntry<InventoryAction>>[
-        PopupMenuItem<InventoryAction>(
-          value: InventoryAction.MOVE,
-          child: Text('Move')
-        ),
-        PopupMenuItem<InventoryAction>(
-          value: InventoryAction.SPLIT,
-          child: Text('Split')
-        ),
-        PopupMenuItem<InventoryAction>(
-          value: InventoryAction.CONSUME,
-          child: Text('Consume')
-        )
-      ]
-    );
-  }
 
   List<FarmForgeDataTableColumn> generateColumns() {
     return [
@@ -108,7 +39,8 @@ class _LargeInventoryState extends State<LargeInventory> {
       ),
       FarmForgeDataTableColumn(
         label: '',
-        propertyFunc: (InventoryDTO s) => getColumnActionButton(s)
+        propertyFunc: (InventoryDTO s) => 
+          InventoryActionButton(inventory: s)
       )
     ];
   }
