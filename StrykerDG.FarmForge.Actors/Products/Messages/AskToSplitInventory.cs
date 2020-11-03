@@ -8,7 +8,7 @@ namespace StrykerDG.FarmForge.Actors.Products.Messages
     {
         public List<int> ProductIds { get; private set; }
         public int UnitTypeConversionId { get; private set; }
-        public int LocationId { get; set; }
+        public int LocationId { get; private set; }
 
         public AskToSplitInventory(List<int> productIds, int unitTypeConversionId, int locationId)
         {
