@@ -9,12 +9,22 @@ sidebar_label: 'Road Map'
     - [x] Log observations, actions, and inputs for each crop you plant
     - [x] Tie crops to a specific location
 
-- January 2021: Release 1
-    - [x] Crop Tracking
-    - [ ] Inventory Tracking
-    - [x] Ability to add users
-    - [ ] Installation and Setup Documentation
+- November 2020: Inventory Management
+    - [x] Keep track of current inventory
+    - [x] Add to inventory when harvesting a crop
+    - [x] Group inventory by units
 
-- June 2021: Release 2
+- January 2021: Order Managmenet
+    - [ ] Keep track of customers and orders
+    - [ ] Specify prices for items
+
+- March 2021: IoT Device Management
     - [ ] Ability to connect and view IoT devices
     - [ ] 2-3 Pre-built Devices
+
+- : Release 1
+    - [x] Crop management
+    - [x] Inventory management
+    - [ ] Order management
+    - [ ] IoT Device management
+    - [ ] Installation and setup documentation

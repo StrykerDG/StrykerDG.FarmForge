@@ -189,26 +189,29 @@ Delicious (apple)
 | ProductId | Int | Primary Key |
 | ProductTypeId | Int | Foreign Key to the type of product this is |
 | Price | Double | The price of this product |
-| SourceId | Int | Foreign Key to the source of this product |
-| DestinationId | Int | Foreign Key to the destination of this product |
 | LocationId | Int | Foreign Key to the current location of this product |
 | StatusId | Int | Foreign Key to the status of this product |
+| UnitTypeId | Int | Foreign Key to the unit of this product |
 
 **ProductSource**: A table that maps a product to its source
 
 | Column        | Type          | Description  |
 |:-------------:|:-------------:|:------------:|
 | ProductSourceId | Int | Primary Key |
+| ProductId | Int | The Id of the product that this source is for |
 | SupplierId | Int | The supplier a product came from |
 | CropId | Int | The Crop a product came from |
+| SourceProductId | Int | A parent product that this product came from |
 
 **ProductDestination**: A table that maps a product to its destination
 
 | Column        | Type          | Description  |
 |:-------------:|:-------------:|:------------:|
 | ProductDestinationId | Int | Primary Key |
+| ProductId | Int | The Id of the product that this destination is for |
 | OrderId | Int | The order that a product went to |
 | CropId | Int | The crop that a product went into |
+| DestinationProductId | Int | A child product that this product went into |
 
 **Customer**: A customer that purchased something from you
 
@@ -220,6 +223,7 @@ Delicious (apple)
 | Address | String | Customers address |
 | Phone | String | Customers phone number | 
 | Email | String | Customers email |
+| Company | String | Customers company |
 
 **Order**: Describes an order from a customer
 
@@ -255,3 +259,22 @@ Delicious (apple)
 | SupplierProductTypeMapId | Int | Primary Key |
 | SupplierId | Int | Foreign Key to the supplier |
 | ProductTypeId | Int | Foreign Key to the product type |
+
+**UnitType**: A table that describes the units of a particular item
+
+| Column        | Type          | Description  |
+|:-------------:|:-------------:|:------------:|
+| UnitTypeId | Int | Primary Key |
+| Name | String | The name of the unit |
+| Label | String | The user facing label for the unit |
+| Description | String | A description of the unit |
+
+**UnitTypeConversion**: A table describing how to convert from one unit to another
+
+| Column        | Type          | Description  |
+|:-------------:|:-------------:|:------------:|
+| UnitTypeConversionId | Int | Primary Key |
+| FromUnitId | Int | The id of the beginning unit type |
+| ToUnitId | Int | The id of the ending unit type |
+| FromQuantity | Int | How many of the original unit this conversion requires |
+| ToQuantity | Int |  How many of the new unit this conversion will create |
