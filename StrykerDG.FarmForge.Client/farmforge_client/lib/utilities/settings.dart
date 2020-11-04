@@ -3,7 +3,7 @@ import 'dart:html';
 import 'package:farmforge_client/services/farmforge_api_service.dart';
 
 class Settings {
-  static String version = '0.1';
+  static String version = '0.2.0';
 
   static String developmentUrl = 'https://localhost:44310';
   static String testUrl = 'https://localhost:443';
