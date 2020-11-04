@@ -180,6 +180,7 @@ namespace StrykerDG.FarmForge.Migrations.Release_0001
                 .WithColumn("ProductId").AsInt32().NotNullable()
                 .WithColumn("OrderId").AsInt32().Nullable()
                 .WithColumn("CropId").AsInt32().Nullable()
+                .WithColumn("DestinationProductId").AsInt32().Nullable()
                 .WithBaseModel();
 
             Create.Table("ProductSource")
@@ -187,6 +188,7 @@ namespace StrykerDG.FarmForge.Migrations.Release_0001
                 .WithColumn("ProductId").AsInt32().NotNullable()
                 .WithColumn("SupplierId").AsInt32().Nullable()
                 .WithColumn("CropId").AsInt32().Nullable()
+                .WithColumn("SourceProductId").AsInt32().Nullable()
                 .WithBaseModel();
 
             Create.Table("ProductType")
