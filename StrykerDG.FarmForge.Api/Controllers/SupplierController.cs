@@ -28,7 +28,10 @@ namespace StrykerDG.FarmForge.LocalApi.Controllers
         [Authorize(Policy = "AuthenticatedWebClient")]
         public async Task<IActionResult> GetSuppliers(string includes)
         {
-            var result = await SupplierActor.Ask(new AskForSuppliers(includes));
+            var result = await SupplierActor.Ask(
+                new AskForSuppliers(includes),
+                TimeSpan.FromSeconds(15)
+            );
             return Ok(FarmForgeApiResponse.Success(result));
         }
 
@@ -36,10 +39,13 @@ namespace StrykerDG.FarmForge.LocalApi.Controllers
         [Authorize(Policy = "AuthenticatedWebClient")]
         public async Task<IActionResult> AddSupplier([FromBody]NewSupplierDTO supplier)
         {
-            var result = await SupplierActor.Ask(new AskToCreateSupplier(
-                supplier.Supplier,
-                supplier.ProductIds
-            ));
+            var result = await SupplierActor.Ask(
+                new AskToCreateSupplier(
+                    supplier.Supplier,
+                    supplier.ProductIds
+                ),
+                TimeSpan.FromSeconds(15)
+            );
             return ValidateActorResult(result);
         }
 
@@ -47,10 +53,13 @@ namespace StrykerDG.FarmForge.LocalApi.Controllers
         [Authorize(Policy = "AuthenticatedWebClient")]
         public async Task<IActionResult> UpdateSupplier([FromBody]NewSupplierDTO supplier)
         {
-            var result = await SupplierActor.Ask(new AskToUpdateSupplier(
-                supplier.Supplier,
-                supplier.ProductIds
-            ));
+            var result = await SupplierActor.Ask(
+                new AskToUpdateSupplier(
+                    supplier.Supplier,
+                    supplier.ProductIds
+                ),
+                TimeSpan.FromSeconds(15)
+            );
             return ValidateActorResult(result);
         }
 
@@ -58,7 +67,10 @@ namespace StrykerDG.FarmForge.LocalApi.Controllers
         [Authorize(Policy = "AuthenticatedWebClient")]
         public async Task<IActionResult> DeleteSupplier(int supplierId)
         {
-            var result = await SupplierActor.Ask(new AskToDeleteSupplier(supplierId));
+            var result = await SupplierActor.Ask(
+                new AskToDeleteSupplier(supplierId),
+                TimeSpan.FromSeconds(15)
+            );
             return ValidateActorResult(result);
         }
 
@@ -66,7 +78,10 @@ namespace StrykerDG.FarmForge.LocalApi.Controllers
         [Authorize(Policy = "AuthenticatedWebClient")]
         public async Task<IActionResult> GetSupplierProducts(int supplierId)
         {
-            var result = await SupplierActor.Ask(new AskForSupplierProducts(supplierId));
+            var result = await SupplierActor.Ask(
+                new AskForSupplierProducts(supplierId),
+                TimeSpan.FromSeconds(15)
+            );
             return Ok(FarmForgeApiResponse.Success(result));
         }
     }

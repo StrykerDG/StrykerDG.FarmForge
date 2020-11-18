@@ -51,7 +51,7 @@ namespace StrykerDG.FarmForge.LocalApi.Controllers
                     status,
                     location
                 ),
-                TimeSpan.FromSeconds(10)
+                TimeSpan.FromSeconds(15)
             );
 
             return ValidateActorResult(result);
@@ -61,13 +61,16 @@ namespace StrykerDG.FarmForge.LocalApi.Controllers
         [Authorize(Policy = "AuthenticatedWebClient")]
         public async Task<IActionResult> CreateCrop([FromBody]NewCropDTO newCrop)
         {
-            var result = await CropActor.Ask(new AskToCreateCrop(
-                newCrop.CropTypeId,
-                newCrop.VarietyId,
-                newCrop.LocationId,
-                newCrop.Quantity,
-                newCrop.Date
-            ));
+            var result = await CropActor.Ask(
+                new AskToCreateCrop(
+                    newCrop.CropTypeId,
+                    newCrop.VarietyId,
+                    newCrop.LocationId,
+                    newCrop.Quantity,
+                    newCrop.Date
+                ),
+                TimeSpan.FromSeconds(15)
+            );
 
             return ValidateActorResult(result);
         }
@@ -80,7 +83,8 @@ namespace StrykerDG.FarmForge.LocalApi.Controllers
                 new AskToUpdateCrop(
                     updatedCrop.Fields,
                     updatedCrop.Crop
-                )
+                ),
+                TimeSpan.FromSeconds(15)
             );
 
             return ValidateActorResult(result);
@@ -90,14 +94,17 @@ namespace StrykerDG.FarmForge.LocalApi.Controllers
         [Authorize(Policy = "AuthenticatedWebClient")]
         public async Task<IActionResult> CreateLogForCrop([FromBody]NewCropLogDTO logDto, int cropId)
         {
-            var result = await CropActor.Ask(new AskToCreateLog(
-                cropId,
-                logDto.LogTypeId,
-                logDto.CropStatusId,
-                logDto.Notes,
-                logDto.Quantity,
-                logDto.UnitTypeId
-            ));
+            var result = await CropActor.Ask(
+                new AskToCreateLog(
+                    cropId,
+                    logDto.LogTypeId,
+                    logDto.CropStatusId,
+                    logDto.Notes,
+                    logDto.Quantity,
+                    logDto.UnitTypeId
+                ),
+                TimeSpan.FromSeconds(15)
+            );
 
             return ValidateActorResult(result);
         }

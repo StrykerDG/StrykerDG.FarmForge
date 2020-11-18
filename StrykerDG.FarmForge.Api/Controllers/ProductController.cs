@@ -29,7 +29,10 @@ namespace StrykerDG.FarmForge.LocalApi.Controllers
         [Authorize(Policy = "AuthenticatedWebClient")]
         public async Task<IActionResult> GetCurrentInventory()
         {
-            var result = await ProductActor.Ask(new AskForInventory());
+            var result = await ProductActor.Ask(
+                new AskForInventory(),
+                TimeSpan.FromSeconds(15)
+            );
             return Ok(FarmForgeApiResponse.Success(result));
         }
 
@@ -37,13 +40,16 @@ namespace StrykerDG.FarmForge.LocalApi.Controllers
         [Authorize(Policy = "AuthenticatedWebClient")]
         public async Task<IActionResult> AddInventory([FromBody]NewInventoryDTO newInventory)
         {
-            var result = await ProductActor.Ask(new AskToAddInventory(
-                newInventory.SupplierId,
-                newInventory.ProductTypeId,
-                newInventory.LocationId,
-                newInventory.Quantity,
-                newInventory.UnitTypeId
-            ));
+            var result = await ProductActor.Ask(
+                new AskToAddInventory(
+                    newInventory.SupplierId,
+                    newInventory.ProductTypeId,
+                    newInventory.LocationId,
+                    newInventory.Quantity,
+                    newInventory.UnitTypeId
+                ),
+                TimeSpan.FromSeconds(15)
+            );
             return ValidateActorResult(result);
         }
 
@@ -51,7 +57,10 @@ namespace StrykerDG.FarmForge.LocalApi.Controllers
         [Authorize(Policy = "AuthenticatedWebClient")]
         public async Task<IActionResult> ConsumeInventory([FromBody]ConsumeInventoryDTO consumedInventory)
         {
-            var result = await ProductActor.Ask(new AskToConsumeInventory(consumedInventory.ProductIds));
+            var result = await ProductActor.Ask(
+                new AskToConsumeInventory(consumedInventory.ProductIds),
+                TimeSpan.FromSeconds(15)
+            );
             return Ok(FarmForgeApiResponse.Success(result));
         }
 
@@ -59,10 +68,13 @@ namespace StrykerDG.FarmForge.LocalApi.Controllers
         [Authorize(Policy = "AuthenticatedWebClient")]
         public async Task<IActionResult> TransferInventoryToNewLocation([FromBody]TransferInventoryDTO transferData)
         {
-            var result = await ProductActor.Ask(new AskToTransferInventory(
-                transferData.ProductIds.ToList(),
-                transferData.LocationId
-            ));
+            var result = await ProductActor.Ask(
+                new AskToTransferInventory(
+                    transferData.ProductIds.ToList(),
+                    transferData.LocationId
+                ),
+                TimeSpan.FromSeconds(15)
+            );
 
             return ValidateActorResult(result);
         }
@@ -71,11 +83,14 @@ namespace StrykerDG.FarmForge.LocalApi.Controllers
         [Authorize(Policy = "AuthenticatedWebClient")]
         public async Task<IActionResult> SplitInventory([FromBody]SplitInventoryDTO request)
         {
-            var result = await ProductActor.Ask(new AskToSplitInventory(
-                request.ProductIds, 
-                request.UnitTypeConversionId,
-                request.LocationId
-            ));
+            var result = await ProductActor.Ask(
+                new AskToSplitInventory(
+                    request.ProductIds, 
+                    request.UnitTypeConversionId,
+                    request.LocationId
+                ),
+                TimeSpan.FromSeconds(15)
+            );
             return ValidateActorResult(result);
         }
 
@@ -83,7 +98,10 @@ namespace StrykerDG.FarmForge.LocalApi.Controllers
         [Authorize(Policy = "AuthenticatedWebClient")]
         public async Task<IActionResult> GetProductTypes()
         {
-            var result = await ProductActor.Ask(new AskForProductTypes());
+            var result = await ProductActor.Ask(
+                new AskForProductTypes(),
+                TimeSpan.FromSeconds(15)
+            );
             return Ok(FarmForgeApiResponse.Success(result));
         }
 
@@ -91,9 +109,12 @@ namespace StrykerDG.FarmForge.LocalApi.Controllers
         [Authorize(Policy = "AuthenticatedWebClient")]
         public async Task<IActionResult> CreateProductType([FromBody]ProductType newProduct)
         {
-            var result = await ProductActor.Ask(new AskToCreateProductType(
-                newProduct
-            ));
+            var result = await ProductActor.Ask(
+                new AskToCreateProductType(
+                    newProduct
+                ),
+                TimeSpan.FromSeconds(15)
+            );
 
             return ValidateActorResult(result);
         }
@@ -102,7 +123,10 @@ namespace StrykerDG.FarmForge.LocalApi.Controllers
         [Authorize(Policy = "AuthenticatedWebClient")]
         public async Task<IActionResult> UpdateProductType([FromBody]ProductType product)
         {
-            var result = await ProductActor.Ask(new AskToUpdateProductType(product));
+            var result = await ProductActor.Ask(
+                new AskToUpdateProductType(product),
+                TimeSpan.FromSeconds(15)
+            );
             return ValidateActorResult(result);
         }
 
@@ -110,7 +134,10 @@ namespace StrykerDG.FarmForge.LocalApi.Controllers
         [Authorize(Policy = "AuthenticatedWebClient")]
         public async Task<IActionResult> DeleteProductType(int productTypeId)
         {
-            var result = await ProductActor.Ask(new AskToDeleteProductType(productTypeId));
+            var result = await ProductActor.Ask(
+                new AskToDeleteProductType(productTypeId),
+                TimeSpan.FromSeconds(15)
+            );
             return ValidateActorResult(result);
         }
 
@@ -118,7 +145,10 @@ namespace StrykerDG.FarmForge.LocalApi.Controllers
         [Authorize(Policy = "AuthenticatedWebClient")]
         public async Task<IActionResult> GetProductCategories()
         {
-            var result = await ProductActor.Ask(new AskForProductCategories());
+            var result = await ProductActor.Ask(
+                new AskForProductCategories(),
+                TimeSpan.FromSeconds(15)
+            );
             return Ok(FarmForgeApiResponse.Success(result));
         }
 
@@ -126,7 +156,10 @@ namespace StrykerDG.FarmForge.LocalApi.Controllers
         [Authorize(Policy = "AuthenticatedWebClient")]
         public async Task<IActionResult> CreateProductCategory([FromBody]ProductCategory productCategory)
         {
-            var result = await ProductActor.Ask(new AskToCreateProductCategory(productCategory));
+            var result = await ProductActor.Ask(
+                new AskToCreateProductCategory(productCategory),
+                TimeSpan.FromSeconds(15)
+            );
             return ValidateActorResult(result);
         }
 
@@ -134,7 +167,10 @@ namespace StrykerDG.FarmForge.LocalApi.Controllers
         [Authorize(Policy = "AuthenticatedWebClient")]
         public async Task<IActionResult> DeleteProductCategory(int productCategoryId)
         {
-            var result = await ProductActor.Ask(new AskToDeleteProductCategory(productCategoryId));
+            var result = await ProductActor.Ask(
+                new AskToDeleteProductCategory(productCategoryId),
+                TimeSpan.FromSeconds(15)
+            );
             return ValidateActorResult(result);
         }
     }

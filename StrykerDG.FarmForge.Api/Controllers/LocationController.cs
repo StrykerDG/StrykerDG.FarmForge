@@ -29,7 +29,10 @@ namespace StrykerDG.FarmForge.LocalApi.Controllers
         [Authorize(Policy = "AuthenticatedWebClient")]
         public async Task<IActionResult> GetLocations()
         {
-            var result = await LocationActor.Ask(new AskForLocations());
+            var result = await LocationActor.Ask(
+                new AskForLocations(),
+                TimeSpan.FromSeconds(15)
+            );
             return Ok(FarmForgeApiResponse.Success(result));
         }
 
@@ -41,7 +44,8 @@ namespace StrykerDG.FarmForge.LocalApi.Controllers
                 new AskToCreateLocation(
                     newLocation.Label,
                     newLocation.ParentId
-                )
+                ),
+                TimeSpan.FromSeconds(15)
             );
 
             return ValidateActorResult(result);
@@ -55,7 +59,8 @@ namespace StrykerDG.FarmForge.LocalApi.Controllers
                 new AskToUpdateLocation(
                     updatedLocation.Fields,
                     updatedLocation.Location
-               )
+                ),
+                TimeSpan.FromSeconds(15)
             );
 
             return ValidateActorResult(result);
@@ -65,7 +70,10 @@ namespace StrykerDG.FarmForge.LocalApi.Controllers
         [Authorize(Policy = "AuthenticatedWebClient")]
         public async Task<IActionResult> DeleteLocation(int locationId)
         {
-            var result = await LocationActor.Ask(new AskToDeleteLocation(locationId));
+            var result = await LocationActor.Ask(
+                new AskToDeleteLocation(locationId),
+                TimeSpan.FromSeconds(15)
+            );
 
             return ValidateActorResult(result);
         }
