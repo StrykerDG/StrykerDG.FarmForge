@@ -241,6 +241,7 @@ namespace StrykerDG.FarmForge.Migrations.Release_0001
                 .Row(new { EntityType = "Crop.Status", Name = "ripening", Label = "Ripening", Created = now, Modified = now, IsDeleted = false })
                 .Row(new { EntityType = "Crop.Status", Name = "harvested", Label = "Harvested", Created = now, Modified = now, IsDeleted = false })
                 .Row(new { EntityType = "Crop.Status", Name = "transplanted", Label = "Transplanted", Created = now, Modified = now, IsDeleted = false })
+                .Row(new { EntityType = "Crop.Status", Name = "plowed", Label = "Plowed", Created = now, Modified = now, IsDeleted = false })
                 .Row(new { EntityType = "Product.Status", Name = "inventory", Label = "Inventory", Created = now, Modified = now, IsDeleted = false })
                 .Row(new { EntityType = "Product.Status", Name = "sold", Label = "Sold", Created = now, Modified = now, IsDeleted = false })
                 .Row(new { EntityType = "Product.Status", Name = "consumed", Label = "Consumed", Created = now, Modified = now, IsDeleted = false });

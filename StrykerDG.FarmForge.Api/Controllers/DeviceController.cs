@@ -41,13 +41,16 @@ namespace StrykerDG.FarmForge.LocalApi.Controllers
         [Route("Register")]
         public async Task<IActionResult> RegisterDevice([FromBody]DeviceRegistrationDTO registrationRequest)
         {
-            await DeviceActor.Ask(new AskToRegisterDevice(
-                registrationRequest.DeviceName,
-                registrationRequest.IpAddress,
-                registrationRequest.SerialNumber,
-                registrationRequest.SecurityToken,
-                registrationRequest.InterfaceEndpoint
-            ));
+            await DeviceActor.Ask(
+                new AskToRegisterDevice(
+                    registrationRequest.DeviceName,
+                    registrationRequest.IpAddress,
+                    registrationRequest.SerialNumber,
+                    registrationRequest.SecurityToken,
+                    registrationRequest.InterfaceEndpoint
+                ),
+                TimeSpan.FromSeconds(15)
+            );
 
             // TODO: Create standard api response object
             return Ok();

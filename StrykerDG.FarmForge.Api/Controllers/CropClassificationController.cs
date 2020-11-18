@@ -27,7 +27,10 @@ namespace StrykerDG.FarmForge.LocalApi.Controllers
         [Authorize(Policy = "AuthenticatedWebClient")]
         public async Task<IActionResult> GetClassifications()
         {
-            var result = await CropClassificationActor.Ask(new AskForCropClassifications());
+            var result = await CropClassificationActor.Ask(
+                new AskForCropClassifications(),
+                TimeSpan.FromSeconds(15)
+            );
             return Ok(FarmForgeApiResponse.Success(result));
         }
     }

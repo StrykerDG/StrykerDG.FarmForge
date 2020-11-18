@@ -28,7 +28,10 @@ namespace StrykerDG.FarmForge.LocalApi.Controllers
         [Authorize(Policy = "AuthenticatedWebClient")]
         public async Task<IActionResult> GetUnitTypes()
         {
-            var results = await UnitActor.Ask(new AskForUnitTypes());
+            var results = await UnitActor.Ask(
+                new AskForUnitTypes(),
+                TimeSpan.FromSeconds(15)
+            );
             return Ok(FarmForgeApiResponse.Success(results));
         }
 
@@ -36,7 +39,10 @@ namespace StrykerDG.FarmForge.LocalApi.Controllers
         [Authorize(Policy = "AuthenticatedWebClient")]
         public async Task<IActionResult> CreateUnitType([FromBody]UnitType newType)
         {
-            var result = await UnitActor.Ask(new AskToCreateUnitType(newType));
+            var result = await UnitActor.Ask(
+                new AskToCreateUnitType(newType),
+                TimeSpan.FromSeconds(15)
+            );
             return ValidateActorResult(result);
         }
 
@@ -44,7 +50,10 @@ namespace StrykerDG.FarmForge.LocalApi.Controllers
         [Authorize(Policy = "AuthenticatedWebClient")]
         public async Task<IActionResult> DeleteUnitType(int unitTypeId)
         {
-            var result = await UnitActor.Ask(new AskToDeleteUnitType(unitTypeId));
+            var result = await UnitActor.Ask(
+                new AskToDeleteUnitType(unitTypeId),
+                TimeSpan.FromSeconds(15)
+            );
             return ValidateActorResult(result);
         }
 
@@ -52,7 +61,10 @@ namespace StrykerDG.FarmForge.LocalApi.Controllers
         [Authorize(Policy = "AuthenticatedWebClient")]
         public async Task<IActionResult> GetUnitConversions()
         {
-            var results = await UnitActor.Ask(new AskForUnitConversions());
+            var results = await UnitActor.Ask(
+                new AskForUnitConversions(),
+                TimeSpan.FromSeconds(15)
+            );
             return Ok(FarmForgeApiResponse.Success(results));
         }
 
@@ -60,7 +72,10 @@ namespace StrykerDG.FarmForge.LocalApi.Controllers
         [Authorize(Policy = "AuthenticatedWebClient")]
         public async Task<IActionResult> GetUnitConversionsForUnit(int unitId)
         {
-            var results = await UnitActor.Ask(new AskForConversionsByUnit(unitId));
+            var results = await UnitActor.Ask(
+                new AskForConversionsByUnit(unitId),
+                TimeSpan.FromSeconds(15)
+            );
             return Ok(FarmForgeApiResponse.Success(results));
         }
 
@@ -68,7 +83,10 @@ namespace StrykerDG.FarmForge.LocalApi.Controllers
         [Authorize(Policy = "AuthenticatedWebClient")]
         public async Task<IActionResult> CreateUnitConversion([FromBody]UnitTypeConversion conversion)
         {
-            var result = await UnitActor.Ask(new AskToCreateUnitConversion(conversion));
+            var result = await UnitActor.Ask(
+                new AskToCreateUnitConversion(conversion),
+                TimeSpan.FromSeconds(15)
+            );
             return ValidateActorResult(result);
         }
 
@@ -76,7 +94,10 @@ namespace StrykerDG.FarmForge.LocalApi.Controllers
         [Authorize(Policy = "AuthenticatedWebClient")]
         public async Task<IActionResult> UpdateUnitConversion([FromBody] UnitTypeConversion conversion)
         {
-            var result = await UnitActor.Ask(new AskToUpdateUnitConversion(conversion));
+            var result = await UnitActor.Ask(
+                new AskToUpdateUnitConversion(conversion),
+                TimeSpan.FromSeconds(15)
+            );
             return ValidateActorResult(result);
         }
 
@@ -84,7 +105,10 @@ namespace StrykerDG.FarmForge.LocalApi.Controllers
         [Authorize(Policy = "AuthenticatedWebClient")]
         public async Task<IActionResult> DeleteUnitConversion(int conversionId)
         {
-            var result = await UnitActor.Ask(new AskToDeleteUnitConversion(conversionId));
+            var result = await UnitActor.Ask(
+                new AskToDeleteUnitConversion(conversionId),
+                TimeSpan.FromSeconds(15)
+            );
             return ValidateActorResult(result);
         }
     }

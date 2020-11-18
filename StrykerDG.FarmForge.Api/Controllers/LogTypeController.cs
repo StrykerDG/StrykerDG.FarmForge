@@ -27,7 +27,10 @@ namespace StrykerDG.FarmForge.LocalApi.Controllers
         [Authorize(Policy = "AuthenticatedWebClient")]
         public async Task<IActionResult> GetLogTypesByEntity(string entityType)
         {
-            var results = await LogTypeActor.Ask(new AskForLogsByEntity(entityType));
+            var results = await LogTypeActor.Ask(
+                new AskForLogsByEntity(entityType),
+                TimeSpan.FromSeconds(15)
+            );
             return Ok(FarmForgeApiResponse.Success(results));
         }
     }

@@ -28,7 +28,10 @@ namespace StrykerDG.FarmForge.LocalApi.Controllers
         [Authorize(Policy = "AuthenticatedWebClient")]
         public async Task<IActionResult> GetCropTypes(string includes = null)
         {
-            var result = await CropTypeActor.Ask(new AskForCropTypes(includes));
+            var result = await CropTypeActor.Ask(
+                new AskForCropTypes(includes),
+                TimeSpan.FromSeconds(15)
+            );
             return Ok(FarmForgeApiResponse.Success(result));
         }
 
@@ -40,7 +43,9 @@ namespace StrykerDG.FarmForge.LocalApi.Controllers
                 new AskToCreateCropType(
                     newType.Name, 
                     newType.ClassificationId
-                ));
+                ),
+                TimeSpan.FromSeconds(15)
+            );
 
             return ValidateActorResult(result);
         }
@@ -49,7 +54,10 @@ namespace StrykerDG.FarmForge.LocalApi.Controllers
         [Authorize(Policy = "AuthenticatedWebClient")]
         public async Task<IActionResult> DeleteCropType(int id)
         {
-            var result = await CropTypeActor.Ask(new AskToDeleteCropType(id));
+            var result = await CropTypeActor.Ask(
+                new AskToDeleteCropType(id),
+                TimeSpan.FromSeconds(15)
+            );
             return ValidateActorResult(result);
         }
 
@@ -61,7 +69,9 @@ namespace StrykerDG.FarmForge.LocalApi.Controllers
                 new AskToCreateCropTypeVariety(
                     cropTypeId,
                     varietyName
-                ));
+                ),
+                TimeSpan.FromSeconds(15)
+            );
 
             return ValidateActorResult(result);
         }
@@ -74,7 +84,9 @@ namespace StrykerDG.FarmForge.LocalApi.Controllers
                 new AskToDeleteCropTypeVariety(
                     cropTypeId,
                     varietyId
-                ));
+                ),
+                TimeSpan.FromSeconds(15)
+            );
 
             return ValidateActorResult(result);
         }

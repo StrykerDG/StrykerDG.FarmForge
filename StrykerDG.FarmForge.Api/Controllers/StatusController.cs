@@ -27,7 +27,10 @@ namespace StrykerDG.FarmForge.LocalApi.Controllers
         [Authorize(Policy = "AuthenticatedWebClient")]
         public async Task<IActionResult> GetStatusesByEntityType(string entityType)
         {
-            var results = await StatusActor.Ask(new AskForStatusesByEntity(entityType));
+            var results = await StatusActor.Ask(
+                new AskForStatusesByEntity(entityType),
+                TimeSpan.FromSeconds(15)
+            );
             return Ok(FarmForgeApiResponse.Success(results));
         }
     }

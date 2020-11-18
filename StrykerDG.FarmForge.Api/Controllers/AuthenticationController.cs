@@ -32,7 +32,10 @@ namespace StrykerDG.FarmForge.LocalApi.Controllers
             if (login == null)
                 return BadRequest("No login credentials present");
 
-            var result = await AuthActor.Ask(new AskToLogin(login.Username, login.Password));
+            var result = await AuthActor.Ask(
+                new AskToLogin(login.Username, login.Password), 
+                TimeSpan.FromSeconds(15)
+            );
 
             return ValidateActorResult(result);
         }
@@ -41,7 +44,10 @@ namespace StrykerDG.FarmForge.LocalApi.Controllers
         [Authorize(Policy = "AuthenticatedWebClient")]
         public async Task<IActionResult> GetUsers()
         {
-            var result = await AuthActor.Ask(new AskForUsers());
+            var result = await AuthActor.Ask(
+                new AskForUsers(),
+                TimeSpan.FromSeconds(15)
+            );
             return Ok(FarmForgeApiResponse.Success(result));
         }
 
@@ -49,7 +55,10 @@ namespace StrykerDG.FarmForge.LocalApi.Controllers
         [Authorize(Policy = "AuthenticatedWebClient")]
         public async Task<IActionResult> CreateUser([FromBody]LoginDTO user)
         {
-            var result = await AuthActor.Ask(new AskToCreateUser(user.Username, user.Password));
+            var result = await AuthActor.Ask(
+                new AskToCreateUser(user.Username, user.Password),
+                TimeSpan.FromSeconds(15)
+            );
             return ValidateActorResult(result);
         }
 
@@ -62,7 +71,10 @@ namespace StrykerDG.FarmForge.LocalApi.Controllers
                 .FirstOrDefault()
                 ?.Value;
 
-            var result = await AuthActor.Ask(new AskToDeleteUser(userId, requestor));
+            var result = await AuthActor.Ask(
+                new AskToDeleteUser(userId, requestor),
+                TimeSpan.FromSeconds(15)
+            );
             return ValidateActorResult(result);
         }
     }

@@ -27,7 +27,10 @@ namespace StrykerDG.FarmForge.LocalApi.Controllers
         [Authorize(Policy = "AuthenticatedWebClient")]
         public async Task<IActionResult> GetCropLogs(string type)
         {
-            var result = await CropLogActor.Ask(new AskForCropLogs(type));
+            var result = await CropLogActor.Ask(
+                new AskForCropLogs(type),
+                TimeSpan.FromSeconds(15)
+            );
             return Ok(FarmForgeApiResponse.Success(result));
         }
     }
