@@ -21,6 +21,7 @@ const IconData kDashboardIcon = Icons.dashboard;
 const IconData kCropIcon = Icons.agriculture;
 const IconData kInventoryIcon = Icons.inventory;
 const IconData kSettingsIcon = Icons.settings;
+const IconData kCustomerIcon = Icons.people;
 
 // Padding
 const double kSmallPadding = 8.0;

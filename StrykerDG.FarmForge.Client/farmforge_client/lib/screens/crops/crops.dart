@@ -106,7 +106,7 @@ class _CropsState extends State<Crops> {
     );
   }
 
-  generateColumns() {
+  List<FarmForgeDataTableColumn> generateColumns() {
     return [
       FarmForgeDataTableColumn(
         label: 'Type',

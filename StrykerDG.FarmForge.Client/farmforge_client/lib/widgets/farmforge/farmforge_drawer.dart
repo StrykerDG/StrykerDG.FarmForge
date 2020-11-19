@@ -6,6 +6,7 @@ import 'package:farmforge_client/provider/core_provider.dart';
 import 'package:farmforge_client/screens/crops/crops.dart';
 import 'package:farmforge_client/screens/dashboard/dashboard.dart';
 import 'package:farmforge_client/screens/inventory/inventory.dart';
+import 'package:farmforge_client/screens/customers/customers.dart';
 import 'package:farmforge_client/screens/settings/settings.dart';
 
 import 'package:farmforge_client/utilities/constants.dart';
@@ -70,6 +71,19 @@ class FarmForgeDrawer extends StatelessWidget {
                   Inventory.title, 
                   Inventory.fabIcon,
                   Inventory.fabAction
+                );
+              },
+            ),
+            ListTile(
+              leading: Icon(kCustomerIcon),
+              title: Text('Customers'),
+              onTap: () {
+                handleNavigation(
+                  context,
+                  Customers(),
+                  Customers.title,
+                  Customers.fabIcon,
+                  Customers.fabAction
                 );
               },
             ),

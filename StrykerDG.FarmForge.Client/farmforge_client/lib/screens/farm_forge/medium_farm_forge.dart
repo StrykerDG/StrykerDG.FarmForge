@@ -7,6 +7,7 @@ import 'package:farmforge_client/provider/user_provider.dart';
 import 'package:farmforge_client/screens/dashboard/dashboard.dart';
 import 'package:farmforge_client/screens/crops/crops.dart';
 import 'package:farmforge_client/screens/inventory/inventory.dart';
+import 'package:farmforge_client/screens/customers/customers.dart';
 import 'package:farmforge_client/screens/settings/settings.dart';
 
 import 'package:farmforge_client/utilities/constants.dart';
@@ -99,6 +100,17 @@ class _MediumFarmForgeState extends State<MediumFarmForge> {
                           Inventory.fabAction
                         );
                       },
+                    ),
+                    IconButton(
+                      icon: Icon(kCustomerIcon),
+                      onPressed: () {
+                        handleNavigation(
+                          Customers(),
+                          Customers.title,
+                          Customers.fabIcon,
+                          Customers.fabAction
+                        );
+                      }
                     ),
                     Expanded(
                       child: Container(),
